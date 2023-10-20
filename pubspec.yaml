@@ -38,6 +38,8 @@ dependencies:
   http: ^1.1.0
   bottom_sheet: ^4.0.0
   flutter_otp_text_field: ^1.1.1
+  google_maps_flutter: ^2.5.0
+  geolocator: ^10.1.0
 
 
   # The following adds the Cupertino Icons font to your application.
