@@ -56,7 +56,7 @@ class SplashScreen extends StatelessWidget {
                     press: () => Get.offAll(const RegisterScreen()),
                     text: "تسجيل الدخول"),
               ),
-            )
+            ),
           ],
         ),
       ),
