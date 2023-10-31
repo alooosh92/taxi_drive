@@ -1,8 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application
+    <application    
         android:label="taxi_drive"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyCqD5v4AceyjtYXeIm231NHeoRM73INiJo"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
