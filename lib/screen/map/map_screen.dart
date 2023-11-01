@@ -95,6 +95,6 @@ Future<void> addPolyLine() async {
       list.add(LatLng(element.latitude, element.longitude));
     }
   } catch (e) {
-    print(e);
+    rethrow;
   }
 }
