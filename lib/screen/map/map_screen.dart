@@ -40,6 +40,8 @@ class _MapScreenState extends State<MapScreen> {
             Polyline(
               polylineId: const PolylineId("aaaa"),
               points: list,
+              width: 6,
+              color: Colors.blueAccent,
             )
           },
           initialCameraPosition: camPos,
@@ -72,10 +74,15 @@ Future<void> addMarker() async {
 Future<void> addPolyLine() async {
   PolylinePoints polylinePoints = PolylinePoints();
   PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      "AIzaSyAcShnaQHgtZPtGcqy24uNN6Wb9ziQgIxQ",
-      const PointLatLng(36.199084, 37.158289),
-      const PointLatLng(36.198090, 37.168222));
+      "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8",
+      const PointLatLng(36.221476, 37.168481),
+      const PointLatLng(36.210604, 37.149414));
   for (var element in result.points) {
     list.add(LatLng(element.latitude, element.longitude));
   }
+  var masafa = result.distance;
+  var time = result.duration;
+  var timeInS = result.durationValue;
+  var locS = result.startAddress;
+  var locE = result.endAddress;
 }
