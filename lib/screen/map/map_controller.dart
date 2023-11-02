@@ -24,12 +24,12 @@ class MapController extends GetxController {
       position: const LatLng(36.198090, 37.168222),
       icon: ic,
     ));
-    var loc = await Geolocator.getCurrentPosition();
-    myLocation = LatLng(loc.latitude, loc.longitude);
-    mark.add(Marker(
-      markerId: const MarkerId("myLocation"),
-      position: myLocation!,
-    ));
+    // var loc = await Geolocator.getCurrentPosition();
+    // myLocation = LatLng(loc.latitude, loc.longitude);
+    // mark.add(Marker(
+    //   markerId: const MarkerId("myLocation"),
+    //   position: myLocation!,
+    // ));
     update();
   }
 
