@@ -14,6 +14,8 @@ class TextFormFieldRadius extends StatelessWidget {
     this.radius,
     this.validator,
     this.line,
+    this.label,
+    this.enabled,
   });
 
   final TextEditingController controller;
@@ -25,12 +27,15 @@ class TextFormFieldRadius extends StatelessWidget {
   final double? radius;
   final String? Function(String?)? validator;
   final int? line;
+  final String? label;
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(top: topPadding ?? 0),
       child: TextFormField(
+        enabled: enabled,
         validator: validator,
         controller: controller,
         keyboardType: keyType,
@@ -38,6 +43,7 @@ class TextFormFieldRadius extends StatelessWidget {
         style: FontManager.w400s14cB,
         decoration: inputDecorationDef(
             radius: radius ?? 30,
+            label: label,
             hint: hint,
             iconEnd: iconEnd,
             iconStart: iconStart),
@@ -50,8 +56,10 @@ InputDecoration inputDecorationDef(
     {required double radius,
     String? hint,
     IconData? iconStart,
-    IconData? iconEnd}) {
+    IconData? iconEnd,
+    String? label}) {
   return InputDecoration(
+    label: Text(label ?? ""),
     isDense: true,
     hintText: hint,
     hintStyle: FontManager.w500s16cG,
