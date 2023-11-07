@@ -18,9 +18,9 @@ class Auth extends StatelessWidget {
     Timer(const Duration(seconds: 2), () async {
       var b = await authController.userProfile();
       if (b != null) {
-        //       Get.offAll(const TripScreen());
+        Get.offAll(const TripScreen());
       } else {
-        //      Get.offAll(const SplashScreen());
+        Get.offAll(const SplashScreen());
       }
     });
     return Scaffold(
@@ -52,16 +52,21 @@ class Auth extends StatelessWidget {
                     'Taxi',
                     style: FontManager.w600s33cW,
                   ),
-                  Positioned(
-                    bottom: 20,
-                    right: 0,
-                    left: 0,
-                    child: Text(
-                      'تنقل بسرعة و أمان',
-                      style: FontManager.w600s33cW,
-                    ),
+                  Text(
+                    'تنقل بسرعة و أمان',
+                    style: FontManager.w600s33cW,
                   ),
                 ],
+              ),
+            ),
+            const Positioned(
+              bottom: 20,
+              left: 10,
+              right: 10,
+              child: Text(
+                'في كل مكان وأي مكان نحن معك',
+                textAlign: TextAlign.center,
+                style: FontManager.w600s33cW,
               ),
             ),
           ],
