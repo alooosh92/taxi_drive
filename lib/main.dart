@@ -1,11 +1,22 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:taxi_drive/res/binding_def.dart';
 import 'package:taxi_drive/res/color_manager.dart';
-import 'package:taxi_drive/screen/trip/trip_screen.dart';
+import 'package:taxi_drive/screen/auth/auth.dart';
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
 
@@ -25,7 +36,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       initialBinding: BindingDef(),
-      home: const TripScreen(),
+      home: const Auth(),
     );
   }
 }

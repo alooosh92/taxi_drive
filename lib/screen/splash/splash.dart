@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
-import 'package:taxi_drive/screen/auth/register.dart';
+import 'package:taxi_drive/screen/auth/page/login.dart';
 import 'package:taxi_drive/widget/button_primary.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -53,7 +53,7 @@ class SplashScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(15),
                 child: ButtonPrimary(
-                    press: () => Get.offAll(const RegisterScreen()),
+                    press: () => Get.offAll(const LoginScreen()),
                     text: "تسجيل الدخول"),
               ),
             ),
@@ -63,3 +63,5 @@ class SplashScreen extends StatelessWidget {
     );
   }
 }
+
+var vis = false;

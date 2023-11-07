@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -30,7 +31,7 @@ class TripController extends GetxController {
     super.onInit();
   }
 
-  void addMarker(LatLng pos) {
+  void addMarker(LatLng pos) async {
     var icG = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
     var icY = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
     if (isStart != null) {
@@ -42,8 +43,15 @@ class TripController extends GetxController {
           icon: isStart!.value ? icG : icY,
         ),
       );
-      isStart!.value ? startPostion = pos : endPostion = pos;
-      isStart!.value = !(isStart!.value);
+      var loc = await placemarkFromCoordinates(pos.latitude, pos.longitude);
+      if (isStart!.value) {
+        startPostion = pos;
+        start.text = loc.first.street.toString();
+      } else {
+        endPostion = pos;
+        end.text = loc.first.street.toString();
+      }
+
       if (startPostion != null && endPostion != null) {
         addPolyLine();
       }
