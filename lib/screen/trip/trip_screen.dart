@@ -64,7 +64,7 @@ class _TripScreenState extends State<TripScreen> {
                       },
                     ),
                     Positioned(
-                        top: 30,
+                        top: 10,
                         left: 20,
                         child: IconButton(
                           onPressed: () {
