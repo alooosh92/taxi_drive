@@ -33,6 +33,9 @@ class AuthController extends GetxController {
       var storeg = GetStorage();
       var body = UserVerify.fromJson(jsonDecode(response.body)["data"]);
       storeg.write("token", body.token);
+      storeg.write("name", body.name);
+      storeg.write("phone", body.phone);
+      storeg.write("email", body.email ?? "");
       return true;
     }
     return false;

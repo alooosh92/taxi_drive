@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:taxi_drive/screen/home/widget/drawer_home.dart';
+import 'package:taxi_drive/widget/drawer_home.dart';
 import 'package:taxi_drive/widget/app_bar_all.dart';
 
 class HomeScreen extends StatelessWidget {
