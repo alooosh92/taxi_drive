@@ -25,6 +25,7 @@ class TripController extends GetxController {
   @override
   void onInit() async {
     if (startPostion == null) {
+      await checkPermission();
       var loc = await Geolocator.getCurrentPosition();
       startPostion = LatLng(loc.latitude, loc.longitude);
     }
@@ -119,20 +120,10 @@ class TripController extends GetxController {
       DropdownMenuItem(
         value: -1,
         onTap: () {
-          print("object");
-          Get.off(MapScreen(title: "title"));
+          Get.off(const MapScreen(title: "title"));
         },
         child: const Text("إختيار موقع من الخريطة"),
       )
     ];
   }
 }
-
-    // var masafa = result.distance;
-    // var time = result.duration;
-    // var timeInS = result.durationValue;
-    // var locS = result.startAddress;
-    // var locE = result.endAddress;
-    // var tar = await placemarkFromCoordinates(
-    //     startPostion!.latitude, startPostion!.longitude);
-    // textStartPostion.text = "${tar[4].street}";

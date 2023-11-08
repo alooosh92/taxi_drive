@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taxi_drive/widget/drawer_home.dart';
 import 'package:taxi_drive/widget/app_bar_all.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -13,7 +12,7 @@ class HomeScreen extends StatelessWidget {
       appBar: appBarAll(
           press: () => scaffoldKey.currentState!.openDrawer(),
           icon: Icons.menu_sharp),
-      drawer: const DrawerHome(name: "علاء بعاج"),
+      //  drawer: const DrawerHome(name: "علاء بعاج"),
     );
   }
 }
