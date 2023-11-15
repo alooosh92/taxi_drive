@@ -3,7 +3,8 @@ import 'package:get_storage/get_storage.dart';
 class Hostting {
   var storeg = GetStorage();
   //hostting
-  static const String host = "https://taxi.arg-tr.com";
+  //static const String host = "https://taxi.arg-tr.com";
+  static const String host = "https://10.0.2.2:7215";
   static const String websocket = "wss://10.0.2.2:7215/car";
   static const String mapKey = "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8";
   //api
@@ -14,11 +15,13 @@ class Hostting {
     if (token != null && token.toString().isNotEmpty) {
       return {
         'Accept': 'application/json',
+        'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       };
     }
     return {
       'Accept': 'application/json',
+      'Content-Type': 'application/json',
     };
   }
 
@@ -26,11 +29,14 @@ class Hostting {
   static String sendLocation(
           String name, double late, double long, bool isCar, bool isFree) =>
       '{"arguments":["$name",$late,$long,$isCar,$isFree],"invocationId":"0","target":"send","type":1}';
-  //api
-  static Uri register = Uri.parse("$api/register");
-  static Uri login = Uri.parse("$api/login");
-  static Uri verify = Uri.parse("$api/verifyRegister");
-  static Uri showProfile = Uri.parse("$api/show");
-  static Uri updateProfile = Uri.parse("$api/updateProfile");
-  static Uri support = Uri.parse("$api/support");
+  //Auth
+  static Uri register = Uri.parse("$api/Authentication/Register");
+  static Uri login(String phone) =>
+      Uri.parse("$api/Authentication/Login?phone=$phone");
+  static Uri verify = Uri.parse("$api/Authentication/VerifyPhone");
+  static Uri refreshToken = Uri.parse("$api/Authentication/RefreshToken");
+  static Uri checkToken = Uri.parse("$api/Authentication/CheckToken");
+  //APP
+  static Uri updateProfile = Uri.parse("$api/app/UpdateUserInfo");
+  static Uri showProfile = Uri.parse("$api/app/GetUserInfo");
 }

@@ -1,27 +1,42 @@
 class UserVerify {
-  late int id;
-  late String name;
-  late String phone;
-  late String role;
+  late bool isAuthanticated;
+  late String message;
   late String? email;
-  late String token;
+  late List<String>? roles;
+  late String? token;
+  late String? refreshToken;
+  late String? phone;
+  late DateTime? refreshTokenExpireson;
 
   UserVerify({
-    this.email,
-    required this.id,
-    required this.name,
+    required this.email,
+    required this.isAuthanticated,
+    required this.message,
     required this.phone,
-    required this.role,
+    required this.refreshToken,
+    required this.refreshTokenExpireson,
+    required this.roles,
     required this.token,
   });
 
   factory UserVerify.fromJson(Map<String, dynamic> json) {
+    List<String> roles = [];
+    if (json["roles"] != null) {
+      for (var element in json["roles"]) {
+        roles.add(element);
+      }
+    }
     return UserVerify(
-        id: json["id"],
-        name: json["name"],
-        phone: json["phone"],
-        role: json["role"],
-        token: json["token"],
-        email: json["email"] ?? "");
+      email: json["email"],
+      isAuthanticated: json["isAuthanticated"],
+      message: json["message"],
+      phone: json["phone"],
+      refreshToken: json["refreshToken"],
+      refreshTokenExpireson: json["refreshTokenExpireson"] == null
+          ? null
+          : DateTime.parse(json["refreshTokenExpireson"]),
+      roles: roles,
+      token: json["token"],
+    );
   }
 }

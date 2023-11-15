@@ -1,20 +1,14 @@
 class StoreSupport {
-  late String name;
-  late String phone;
   late String subject;
-  late String message;
+  late String body;
 
   StoreSupport({
-    required this.message,
-    required this.name,
-    required this.phone,
+    required this.body,
     required this.subject,
   });
 
   Map<String, dynamic> toJson() => {
-        "message": message,
-        "name": name,
-        "phone": phone,
+        "body": body,
         "subject": subject,
       };
 }

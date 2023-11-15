@@ -54,13 +54,15 @@ class TripController extends GetxController {
         startPostion = pos;
         start.text =
             (await placemarkFromCoordinates(pos.latitude, pos.longitude))
-                .first
-                .street!;
+                    .first
+                    .street ??
+                "لا يوجد معلومات";
       } else {
         endPostion = pos;
         end.text = (await placemarkFromCoordinates(pos.latitude, pos.longitude))
-            .first
-            .street!;
+                .first
+                .street ??
+            "لا يوجد معلومات";
       }
       if (startPostion != null && endPostion != null) {
         addPolyLine("test");

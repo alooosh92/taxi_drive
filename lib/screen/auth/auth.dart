@@ -16,8 +16,8 @@ class Auth extends StatelessWidget {
     AuthController authController = Get.find();
     GetStorage();
     Timer(const Duration(seconds: 2), () async {
-      var b = await authController.userProfile();
-      if (b != null) {
+      var b = await authController.checkToken();
+      if (b) {
         Get.offAll(const TripScreen());
       } else {
         Get.offAll(const SplashScreen());

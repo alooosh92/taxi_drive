@@ -9,20 +9,20 @@ import 'package:taxi_drive/models/verify.dart';
 import 'package:taxi_drive/res/hostting.dart';
 
 class AuthController extends GetxController {
-  UserVerify? user;
+  UserRegister? user;
 
   Future<bool> register(UserRegister user) async {
     http.Response response = await http.post(Hostting.register,
-        headers: Hostting().getHeader(), body: user.toJson());
-    if (response.statusCode == 201) {
+        headers: Hostting().getHeader(), body: jsonEncode(user.toJson()));
+    if (response.statusCode == 200) {
       return true;
     }
     return false;
   }
 
   Future<bool> login(String phone) async {
-    http.Response response = await http.post(Hostting.login,
-        headers: Hostting().getHeader(), body: {"phone": phone});
+    http.Response response =
+        await http.post(Hostting.login(phone), headers: Hostting().getHeader());
     if (response.statusCode == 200) {
       return true;
     }
@@ -31,23 +31,23 @@ class AuthController extends GetxController {
 
   Future<bool> verify(Verify verify) async {
     http.Response response = await http.post(Hostting.verify,
-        headers: Hostting().getHeader(), body: verify.toJson());
+        headers: Hostting().getHeader(), body: jsonEncode(verify.toJson()));
     if (response.statusCode == 200) {
       var storeg = GetStorage();
-      var body = UserVerify.fromJson(jsonDecode(response.body)["data"]);
+      var body = UserVerify.fromJson(jsonDecode(response.body));
       storeg.write("token", body.token);
-      user = body;
+      await userProfile();
       return true;
     }
     return false;
   }
 
-  Future<UserVerify?> userProfile() async {
+  Future<UserRegister?> userProfile() async {
     http.Response response =
         await http.get(Hostting.showProfile, headers: Hostting().getHeader());
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
-      user = UserVerify.fromJson(body["data"]);
+      user = UserRegister.fromJson(body);
       return user;
     }
     return null;
@@ -55,10 +55,20 @@ class AuthController extends GetxController {
 
   Future<bool> updateProfile(UpdateUser userUpdate) async {
     http.Response response = await http.post(Hostting.updateProfile,
-        headers: Hostting().getHeader(), body: userUpdate.toJson());
+        headers: Hostting().getHeader(), body: jsonEncode(userUpdate.toJson()));
     if (response.statusCode == 200) {
-      var body = UserVerify.fromJson(jsonDecode(response.body)["data"]);
+      var body = UserRegister.fromJson(jsonDecode(response.body));
       user = body;
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> checkToken() async {
+    http.Response response =
+        await http.get(Hostting.checkToken, headers: Hostting().getHeader());
+    if (response.statusCode == 200) {
+      await userProfile();
       return true;
     }
     return false;
