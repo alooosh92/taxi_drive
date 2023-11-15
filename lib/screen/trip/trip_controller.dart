@@ -1,23 +1,29 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:taxi_drive/res/hostting.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
 
 class TripController extends GetxController {
-  List<LatLng> listPostionForPolyline = [];
-  Set<Marker> mark = {};
-  List<DropdownMenuItem<int?>> listLoction = [];
+  //for map
   CameraPosition? cam;
+  Set<Marker> mark = {};
+  Set<Polyline> polyline = {};
+  List<LatLng> listPostionForPolyline = [];
+  List<DropdownMenuItem<int?>> listLoction = [];
+  //for start and end trip
   LatLng? startPostion;
   LatLng? endPostion;
   int? textStartPostion;
   int? textEndPostion;
-  RxBool? isStart = RxBool(true);
+  RxBool? isStart;
   TextEditingController start = TextEditingController();
   TextEditingController end = TextEditingController();
+  // for trip
   String? masafa;
   String? time;
   String? price;
@@ -32,7 +38,7 @@ class TripController extends GetxController {
     super.onInit();
   }
 
-  void addMarker(LatLng pos) async {
+  void addTripMarker(LatLng pos) async {
     var icG = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
     var icY = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
     if (isStart != null) {
@@ -44,18 +50,49 @@ class TripController extends GetxController {
           icon: isStart!.value ? icG : icY,
         ),
       );
-      var loc = await placemarkFromCoordinates(pos.latitude, pos.longitude);
       if (isStart!.value) {
         startPostion = pos;
-        start.text = loc.first.street.toString();
+        start.text =
+            (await placemarkFromCoordinates(pos.latitude, pos.longitude))
+                .first
+                .street!;
       } else {
         endPostion = pos;
-        end.text = loc.first.street.toString();
+        end.text = (await placemarkFromCoordinates(pos.latitude, pos.longitude))
+            .first
+            .street!;
       }
-
       if (startPostion != null && endPostion != null) {
-        addPolyLine();
+        addPolyLine("test");
       }
+      update();
+    }
+  }
+
+  Future<void> addPolyLine(String name) async {
+    if (startPostion != null && endPostion != null) {
+      PolylinePoints polylinePoints = PolylinePoints();
+      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+          Hostting.mapKey,
+          PointLatLng(startPostion!.latitude, startPostion!.longitude),
+          PointLatLng(endPostion!.latitude, endPostion!.longitude));
+      listPostionForPolyline.clear();
+      for (var element in result.points) {
+        listPostionForPolyline.add(LatLng(element.latitude, element.longitude));
+      }
+      start.text = result.startAddress!;
+      end.text = result.endAddress!;
+      masafa = result.distance;
+      time = result.duration;
+      price = (result.distanceValue! * 2).toString();
+      polyline.add(
+        Polyline(
+          polylineId: PolylineId(name),
+          points: listPostionForPolyline,
+          width: 6,
+          color: Colors.blueAccent,
+        ),
+      );
       update();
     }
   }
@@ -68,42 +105,6 @@ class TripController extends GetxController {
       zoom: 14,
     );
     update();
-  }
-
-  Future<void> addCar() async {
-    var ic = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(), 'lib/asset/images/car.png');
-    mark.add(Marker(
-      markerId: const MarkerId("alaa"),
-      position: const LatLng(36.199084, 37.158289),
-      icon: ic,
-    ));
-    mark.add(Marker(
-      markerId: const MarkerId("baaj"),
-      position: const LatLng(36.198090, 37.168222),
-      icon: ic,
-    ));
-    update();
-  }
-
-  Future<void> addPolyLine() async {
-    if (startPostion != null && endPostion != null) {
-      PolylinePoints polylinePoints = PolylinePoints();
-      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-          "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8",
-          PointLatLng(startPostion!.latitude, startPostion!.longitude),
-          PointLatLng(endPostion!.latitude, endPostion!.longitude));
-      listPostionForPolyline.clear();
-      for (var element in result.points) {
-        listPostionForPolyline.add(LatLng(element.latitude, element.longitude));
-      }
-      start.text = result.startAddress!;
-      end.text = result.endAddress!;
-      masafa = result.distance;
-      time = result.duration;
-      price = (result.distanceValue! * 2).toString();
-      update();
-    }
   }
 
   Future<void> checkPermission() async {
@@ -125,5 +126,70 @@ class TripController extends GetxController {
         child: const Text("إختيار موقع من الخريطة"),
       )
     ];
+  }
+
+  Future<void> addMarkerFromSocket(dynamic data) async {
+    var json = data.toString().substring(0, data.toString().indexOf(""));
+    var body = jsonDecode(json);
+    var arguments = body["arguments"] ?? "";
+    if (arguments != "") {
+      var icon = BitmapDescriptor.defaultMarker;
+      if (arguments[3]) {
+        if (arguments[4]) {
+          icon = await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(),
+            'lib/asset/images/car_raedy.png',
+          );
+        } else {
+          icon = await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(),
+            'lib/asset/images/car_work.png',
+          );
+        }
+      } else {
+        icon = await BitmapDescriptor.fromAssetImage(
+          const ImageConfiguration(),
+          'lib/asset/images/trip2.png',
+        );
+      }
+      mark.add(
+        Marker(
+          markerId: MarkerId(arguments[0]),
+          position: LatLng(arguments[1], arguments[2]),
+          icon: icon,
+          // onTap: !arguments[3] ? null : () {}
+        ),
+      );
+    }
+    //update();
+  }
+
+  Future<void> addMyloction(double lat, double long) async {
+    var icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(), 'lib/asset/images/myLocation.png');
+    mark.add(
+      Marker(
+        markerId: const MarkerId("my"),
+        position: LatLng(lat, long),
+        icon: icon,
+      ),
+    );
+    update();
+  }
+
+  Future<void> addCar() async {
+    var ic = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(), 'lib/asset/images/car.png');
+    mark.add(Marker(
+      markerId: const MarkerId("alaa"),
+      position: const LatLng(36.199084, 37.158289),
+      icon: ic,
+    ));
+    mark.add(Marker(
+      markerId: const MarkerId("baaj"),
+      position: const LatLng(36.198090, 37.168222),
+      icon: ic,
+    ));
+    update();
   }
 }

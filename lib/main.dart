@@ -4,7 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:taxi_drive/res/binding_def.dart';
 import 'package:taxi_drive/res/color_manager.dart';
-import 'package:taxi_drive/screen/auth/auth.dart';
+import 'package:taxi_drive/screen/trip/trip_screen.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -15,7 +15,7 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-void main() {
+void main() async {
   HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       initialBinding: BindingDef(),
-      home: const Auth(),
+      home: const TripScreen(),
     );
   }
 }
