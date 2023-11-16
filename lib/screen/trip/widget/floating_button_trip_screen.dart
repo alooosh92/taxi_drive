@@ -5,13 +5,16 @@ import 'package:taxi_drive/res/font_manager.dart';
 import 'package:taxi_drive/screen/trip/trip_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/buttom_sheet.dart';
 import 'package:taxi_drive/screen/trip/widget/choise_trip.dart';
+import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:taxi_drive/widget/text_form_fiels_def.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class FloatingButtonTripScreen extends StatelessWidget {
   const FloatingButtonTripScreen({
     super.key,
+    required this.chanal,
   });
-
+  final WebSocketChannel chanal;
   @override
   Widget build(BuildContext context) {
     TripController tripController = Get.find();
@@ -56,13 +59,24 @@ class FloatingButtonTripScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                //width: MediaQuery.sizeOf(context).width * 0.3,
                 child: FloatingActionButton(
-                  onPressed: () => buttomSheet(
-                    context: context,
-                    headerText: "إضافة طلب",
-                    contener: const ChoiseTrip(),
-                  ),
+                  onPressed: () => {
+                    if (tripController.startPostion != null &&
+                        tripController.endPostion != null &&
+                        tripController.price != null)
+                      {
+                        buttomSheet(
+                          context: context,
+                          headerText: "إضافة طلب",
+                          contener: ChoiseTrip(chanal: chanal),
+                        )
+                      }
+                    else
+                      {
+                        snackbarDef(
+                            "تحزير", "يجب تحديد نقطة البدايو والنهاية للرحلة")
+                      }
+                  },
                   backgroundColor: ColorManager.primary,
                   child: const Icon(
                     Icons.add,

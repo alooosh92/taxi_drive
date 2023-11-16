@@ -40,7 +40,9 @@ class _TripScreenState extends State<TripScreen> {
     return Scaffold(
       key: scaffoldKey,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      floatingActionButton: const FloatingButtonTripScreen(),
+      floatingActionButton: FloatingButtonTripScreen(
+        chanal: channel,
+      ),
       drawer: const DrawerHome(),
       body: FutureBuilder(
         //==> for cam positione

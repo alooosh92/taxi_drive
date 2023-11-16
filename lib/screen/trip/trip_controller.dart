@@ -5,8 +5,12 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:taxi_drive/models/add_trip.dart';
 import 'package:taxi_drive/res/hostting.dart';
+import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
+import 'package:http/http.dart' as http;
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class TripController extends GetxController {
   //for map
@@ -69,6 +73,33 @@ class TripController extends GetxController {
       }
       update();
     }
+  }
+
+  Future<bool> addTripToDB(WebSocketChannel chanal) async {
+    if (startPostion == null || endPostion == null || price == null) {
+      return false;
+    }
+    var trip = AddTrip(
+        fromLate: startPostion!.latitude,
+        fromLong: startPostion!.longitude,
+        toLate: endPostion!.latitude,
+        toLong: endPostion!.longitude,
+        price: double.parse(price!));
+    http.Response response = await http.post(Hostting.addTrip,
+        headers: Hostting().getHeader(), body: jsonEncode(trip.toJson()));
+    if (response.statusCode == 200 && jsonDecode(response.body)) {
+      AuthController authController = Get.find();
+      chanal.sink.add(Hostting.sendLocation(
+        authController.user!.phone,
+        startPostion!.latitude,
+        startPostion!.longitude,
+        false,
+        false,
+      ));
+      isStart = null;
+      return true;
+    }
+    return false;
   }
 
   Future<void> addPolyLine(String name) async {

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:taxi_drive/res/color_manager.dart';
@@ -5,13 +7,16 @@ import 'package:taxi_drive/res/font_manager.dart';
 import 'package:taxi_drive/screen/trip/trip_controller.dart';
 import 'package:taxi_drive/widget/button_primary.dart';
 import 'package:taxi_drive/widget/progress_def.dart';
+import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:taxi_drive/widget/text_form_fiels_def.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChoiseTrip extends StatelessWidget {
   const ChoiseTrip({
     super.key,
+    required this.chanal,
   });
-
+  final WebSocketChannel chanal;
   @override
   Widget build(BuildContext context) {
     TripController tripController = Get.find();
@@ -38,7 +43,6 @@ class ChoiseTrip extends StatelessWidget {
                           iconStart: Icons.location_on_outlined,
                           line: 1,
                         ),
-                        // const DropDawnListLocations(isStart: true),
                         const SizedBox(height: 10),
                         TextFormFieldRadius(
                           readOnly: true,
@@ -48,7 +52,6 @@ class ChoiseTrip extends StatelessWidget {
                           iconStart: Icons.location_on_outlined,
                           line: 1,
                         ),
-                        // const DropDawnListLocations(isStart: false),
                         const SizedBox(height: 10),
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -63,7 +66,21 @@ class ChoiseTrip extends StatelessWidget {
                               Get.dialog(AlertDialog(
                                 actions: [
                                   ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () async {
+                                        var b = await tripController
+                                            .addTripToDB(chanal);
+                                        if (b) {
+                                          snackbarDef("ملاحظة",
+                                              "تمت اضافة الرحلة بنجاح");
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context).pop();
+                                        } else {
+                                          snackbarDef("خطأ",
+                                              "لا يمكن انشاء رحلتين في ان واحد");
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context).pop();
+                                        }
+                                      },
                                       style: const ButtonStyle(
                                           backgroundColor:
                                               MaterialStatePropertyAll(
@@ -73,7 +90,9 @@ class ChoiseTrip extends StatelessWidget {
                                         style: FontManager.w500s15cW,
                                       )),
                                   ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Get.back();
+                                      },
                                       style: const ButtonStyle(
                                           backgroundColor:
                                               MaterialStatePropertyAll(
