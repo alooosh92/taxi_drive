@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
+import 'package:taxi_drive/screen/app_info/app_info.dart';
+import 'package:taxi_drive/screen/app_info/app_info_controller.dart';
 import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/auth/page/update_profile.dart';
 import 'package:taxi_drive/screen/location/loction_screen.dart';
@@ -15,6 +17,7 @@ class DrawerHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthController authController = Get.find();
+    AppInfoController appInfoController = Get.find();
     return Drawer(
       backgroundColor: ColorManager.primary,
       width: MediaQuery.sizeOf(context).width,
@@ -54,11 +57,23 @@ class DrawerHome extends StatelessWidget {
               ),
               RowTextPress(
                   icon: Icons.private_connectivity_outlined,
-                  press: () {},
+                  press: () async => Get.to(
+                        AppInfo(
+                          tileAppBar: "شروط الاستخدام",
+                          isRegister: false,
+                          list: await appInfoController.getTream(false),
+                        ),
+                      ),
                   text: "شروط الاستخدام"),
               RowTextPress(
                 icon: Icons.privacy_tip_outlined,
-                press: () {},
+                press: () async => Get.to(
+                  AppInfo(
+                    tileAppBar: "الخصوصية",
+                    isRegister: false,
+                    list: await appInfoController.getTream(true),
+                  ),
+                ),
                 text: "الخصوصية",
               ),
               RowTextPress(

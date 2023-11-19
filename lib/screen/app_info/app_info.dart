@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:taxi_drive/models/term.dart';
 import 'package:taxi_drive/res/font_manager.dart';
 import 'package:taxi_drive/widget/app_bar_all.dart';
 import 'package:taxi_drive/widget/button_primary.dart';
@@ -8,13 +9,11 @@ class AppInfo extends StatelessWidget {
   const AppInfo({
     super.key,
     required this.tileAppBar,
-    this.listTile,
-    this.listText,
+    this.list,
     this.isRegister,
   });
   final String tileAppBar;
-  final List<String>? listTile;
-  final List<String>? listText;
+  final List<TreamModel>? list;
   final bool? isRegister;
   @override
   Widget build(BuildContext context) {
@@ -34,26 +33,26 @@ class AppInfo extends StatelessWidget {
               children: [
                 Image.asset(
                   'lib/asset/images/logo.png',
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                   height: MediaQuery.sizeOf(context).height * 0.2,
-                  width: MediaQuery.sizeOf(context).height * 0.2,
+                  width: MediaQuery.sizeOf(context).height * 0.3,
                 ),
                 SizedBox(
                   height: MediaQuery.sizeOf(context).height * 0.6,
                   width: MediaQuery.sizeOf(context).width,
                   child: ListView.builder(
-                    itemCount: listText!.length,
+                    itemCount: list!.length,
                     itemBuilder: (context, index) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            listTile == null ? "" : listTile![index],
+                            list == null ? "" : list![index].title,
                             style: FontManager.w400s16cB,
                             overflow: TextOverflow.fade,
                           ),
                           Text(
-                            listText == null ? "" : listText![index],
+                            list == null ? "" : list![index].text,
                             style: FontManager.w400s14cG,
                             overflow: TextOverflow.fade,
                           ),

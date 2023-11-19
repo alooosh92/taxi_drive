@@ -44,4 +44,6 @@ class Hostting {
   static Uri getUserLocation = Uri.parse("$api/app/GetUserLocations");
   static Uri deleteUserLoction(String id) =>
       Uri.parse("$api/app/DeleteUserLocation?locationId=$id");
+  static Uri getTream(bool isPrive) =>
+      Uri.parse("$api/app/GetTermsOfUseAndPrivacy?isPrivacy=$isPrive");
 }
