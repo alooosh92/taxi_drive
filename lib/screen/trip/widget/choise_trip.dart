@@ -42,6 +42,7 @@ class ChoiseTrip extends StatelessWidget {
                           hint: "نقطة الانطلاق",
                           iconStart: Icons.location_on_outlined,
                           line: 1,
+                          iconEnd: Icons.favorite,
                         ),
                         const SizedBox(height: 10),
                         TextFormFieldRadius(
@@ -51,6 +52,7 @@ class ChoiseTrip extends StatelessWidget {
                           hint: "نقطة الوصول",
                           iconStart: Icons.location_on_outlined,
                           line: 1,
+                          iconEnd: Icons.favorite,
                         ),
                         const SizedBox(height: 10),
                         Row(

@@ -1,0 +1,36 @@
+import 'dart:convert';
+import 'package:get/get.dart';
+import 'package:taxi_drive/models/add_user_location.dart';
+import 'package:http/http.dart' as http;
+import 'package:taxi_drive/res/hostting.dart';
+import 'package:taxi_drive/screen/trip/trip_controller.dart';
+
+class LocationController extends GetxController {
+  List<UserLocation> locations = [];
+  Future<List<UserLocation>> getLocation() async {
+    http.Response response = await http.get(Hostting.getUserLocation,
+        headers: Hostting().getHeader());
+    locations = [];
+    if (response.statusCode == 200) {
+      var body = jsonDecode(response.body);
+      for (var element in body) {
+        locations.add(UserLocation.frommJson(element));
+      }
+      return locations;
+    }
+    return List.empty();
+  }
+
+  Future<bool> deleteLocation(String id) async {
+    http.Response response = await http.delete(Hostting.deleteUserLoction(id),
+        headers: Hostting().getHeader());
+    if (response.statusCode == 200 && jsonDecode(response.body)) {
+      locations.removeWhere((element) => element.id == id);
+      TripController tripController = Get.find();
+      tripController.mark.removeWhere((marker) => marker.markerId.value == id);
+      update();
+      return true;
+    }
+    return false;
+  }
+}

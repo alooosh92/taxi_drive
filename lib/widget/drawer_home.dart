@@ -5,6 +5,7 @@ import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
 import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/auth/page/update_profile.dart';
+import 'package:taxi_drive/screen/location/loction_screen.dart';
 import 'package:taxi_drive/widget/row_text_press.dart';
 
 class DrawerHome extends StatelessWidget {
@@ -47,18 +48,23 @@ class DrawerHome extends StatelessWidget {
                 text: "حسابي",
               ),
               RowTextPress(
-                icon: Icons.factory_outlined,
-                press: () {},
-                text: "من نحن",
+                icon: Icons.account_box,
+                press: () => Get.to(const LoctionScreen()),
+                text: "مفضلة العناوين",
               ),
               RowTextPress(
                   icon: Icons.private_connectivity_outlined,
-                  press: () async {},
+                  press: () {},
                   text: "شروط الاستخدام"),
               RowTextPress(
                 icon: Icons.privacy_tip_outlined,
                 press: () {},
                 text: "الخصوصية",
+              ),
+              RowTextPress(
+                icon: Icons.factory_outlined,
+                press: () {},
+                text: "من نحن",
               ),
               RowTextPress(
                 icon: Icons.contact_emergency_outlined,

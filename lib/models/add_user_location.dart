@@ -9,8 +9,8 @@ class UserLocation {
 
   factory UserLocation.frommJson(Map<String, dynamic> json) {
     return UserLocation(
-      lat: double.parse(json["late"]),
-      long: double.parse(json["long"]),
+      lat: double.parse(json["late"].toString()),
+      long: double.parse(json["long"].toString()),
       name: json["name"],
       id: json["id"],
     );

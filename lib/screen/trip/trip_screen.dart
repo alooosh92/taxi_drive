@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_drive/res/hostting.dart';
+import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/trip_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/drawer_button.dart';
 import 'package:taxi_drive/screen/trip/widget/floating_button_trip_screen.dart';
@@ -36,7 +37,19 @@ class _TripScreenState extends State<TripScreen> {
     final Completer<GoogleMapController> mapControllerMap =
         Completer<GoogleMapController>();
     WebSocketChannel channel = IOWebSocketChannel.connect(Hostting.websocket);
+    AuthController authController = Get.find();
     channel.sink.add('{"protocol":"json","version":1}');
+    Timer.periodic(const Duration(seconds: 10), (timer) async {
+      var myMarker = await Geolocator.getCurrentPosition();
+      channel.sink.add(Hostting.sendLocation(
+        authController.user!.phone,
+        myMarker.latitude,
+        myMarker.longitude,
+        true,
+        false,
+      ));
+    });
+
     return Scaffold(
       key: scaffoldKey,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
@@ -59,15 +72,6 @@ class _TripScreenState extends State<TripScreen> {
                     StreamBuilder<Position>(
                         stream: Geolocator.getPositionStream(),
                         builder: (context, myMarker) {
-                          if (myMarker.hasData) {
-                            channel.sink.add(Hostting.sendLocation(
-                              "My",
-                              myMarker.data!.latitude,
-                              myMarker.data!.longitude,
-                              true,
-                              false,
-                            ));
-                          }
                           return StreamBuilder(
                               stream: channel.stream,
                               builder: (context, mapMarker) {

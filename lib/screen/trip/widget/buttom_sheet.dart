@@ -1,4 +1,3 @@
-import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/screen/trip/widget/header_bottom_sheet.dart';
@@ -8,14 +7,10 @@ Future<dynamic> buttomSheet({
   required String headerText,
   required Widget contener,
 }) {
-  return showFlexibleBottomSheet(
-    minHeight: 0.5,
-    initHeight: 0.5,
-    maxHeight: 0.5,
+  return showModalBottomSheet(
+    isScrollControlled: true,
     context: context,
-    isExpand: true,
-    bottomSheetColor: Colors.transparent,
-    builder: (context, scrollController, bottomSheetOffset) {
+    builder: (context) {
       return Container(
         padding: const EdgeInsets.all(20),
         height: MediaQuery.sizeOf(context).height / 2,

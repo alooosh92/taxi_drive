@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:taxi_drive/models/add_user_location.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
+import 'package:taxi_drive/screen/trip/trip_controller.dart';
+import 'package:taxi_drive/widget/snackbar_def.dart';
 
 class TextFormFieldRadius extends StatelessWidget {
   const TextFormFieldRadius({
@@ -59,20 +63,23 @@ class TextFormFieldRadius extends StatelessWidget {
               hint: hint,
               iconEnd: iconEnd,
               iconStart: iconStart,
-              textStyle: textStyle),
+              textStyle: textStyle,
+              val: controller.text),
         ),
       ),
     );
   }
 }
 
-InputDecoration inputDecorationDef(
-    {required double radius,
-    String? hint,
-    IconData? iconStart,
-    IconData? iconEnd,
-    String? label,
-    TextStyle? textStyle}) {
+InputDecoration inputDecorationDef({
+  required double radius,
+  String? hint,
+  IconData? iconStart,
+  IconData? iconEnd,
+  String? label,
+  TextStyle? textStyle,
+  String? val,
+}) {
   return InputDecoration(
     //label: Text(label ?? ""),
     isDense: true,
@@ -80,7 +87,11 @@ InputDecoration inputDecorationDef(
     labelStyle: textStyle ?? FontManager.w500s16cG,
     hintStyle: textStyle ?? FontManager.w500s16cG,
     prefixIcon: iconStart == null ? null : Icon(iconStart),
-    suffixIcon: iconEnd == null ? null : Icon(iconEnd),
+    suffixIcon: iconEnd == null
+        ? null
+        : iconEnd == Icons.favorite
+            ? Favorite(isStart: val)
+            : Icon(iconEnd),
     prefixIconColor: ColorManager.black,
     suffixIconColor: ColorManager.black,
     contentPadding:
@@ -95,4 +106,77 @@ InputDecoration inputDecorationDef(
         borderRadius: BorderRadius.circular(radius),
         borderSide: const BorderSide(color: ColorManager.primary, width: 3)),
   );
+}
+
+class Favorite extends StatelessWidget {
+  const Favorite({
+    super.key,
+    required this.isStart,
+  });
+  final String? isStart;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        TextEditingController name = TextEditingController();
+        Get.dialog(AlertDialog(
+          title: const Column(
+            children: [
+              Text(
+                "إضافة الموقع الى المفضلة",
+                style: FontManager.w400s14cB,
+              ),
+              Divider(),
+            ],
+          ),
+          content: TextFormFieldRadius(
+            controller: name,
+            hint: "اسم الموقع",
+          ),
+          actions: [
+            TextButton(
+                onPressed: () async {
+                  TripController tripController = Get.find();
+                  UserLocation loc = UserLocation(
+                    lat: tripController.start.text == isStart
+                        ? tripController.startPostion!.latitude
+                        : tripController.endPostion!.latitude,
+                    long: tripController.start.text == isStart
+                        ? tripController.startPostion!.longitude
+                        : tripController.endPostion!.longitude,
+                    name: name.text,
+                  );
+                  var b = await tripController.addUserLocation(loc);
+                  Get.back();
+                  if (b) {
+                    snackbarDef("ملاحظة", "تم اضافة الموقع الى المفضلة");
+                  } else {
+                    snackbarDef("تحذير", "حدث خطأ ما");
+                  }
+                },
+                child: const Text("اضافة", style: FontManager.w400s14cP)),
+            TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text("إلغاء", style: FontManager.w400s14cB)),
+          ],
+        ));
+      },
+      child: Container(
+        width: 25,
+        decoration: const BoxDecoration(
+            color: ColorManager.primary,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              bottomLeft: Radius.circular(30),
+            )),
+        child: const Center(
+            child: Icon(
+          Icons.favorite_outlined,
+          color: ColorManager.white,
+        )),
+      ),
+    );
+  }
 }

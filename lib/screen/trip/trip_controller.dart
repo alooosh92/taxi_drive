@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_drive/models/add_trip.dart';
+import 'package:taxi_drive/models/add_user_location.dart';
 import 'package:taxi_drive/res/hostting.dart';
 import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
@@ -34,6 +35,7 @@ class TripController extends GetxController {
 
   @override
   void onInit() async {
+    await getFavoritLocation();
     if (startPostion == null) {
       await checkPermission();
       var loc = await Geolocator.getCurrentPosition();
@@ -42,7 +44,7 @@ class TripController extends GetxController {
     super.onInit();
   }
 
-  void addTripMarker(LatLng pos) async {
+  Future<void> addTripMarker(LatLng pos) async {
     var icG = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
     var icY = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow);
     if (isStart != null) {
@@ -54,22 +56,48 @@ class TripController extends GetxController {
           icon: isStart!.value ? icG : icY,
         ),
       );
+      var info = await placemarkFromCoordinates(pos.latitude, pos.longitude);
       if (isStart!.value) {
         startPostion = pos;
-        start.text =
-            (await placemarkFromCoordinates(pos.latitude, pos.longitude))
-                    .first
-                    .street ??
-                "لا يوجد معلومات";
+        start.text = info.first.street ?? "لا يوجد معلومات";
       } else {
         endPostion = pos;
-        end.text = (await placemarkFromCoordinates(pos.latitude, pos.longitude))
-                .first
-                .street ??
-            "لا يوجد معلومات";
+        end.text = info.first.street ?? "لا يوجد معلومات";
       }
       if (startPostion != null && endPostion != null) {
         addPolyLine("test");
+      }
+      update();
+    }
+  }
+
+  Future<bool> addUserLocation(UserLocation location) async {
+    http.Response response = await http.post(Hostting.addUserLocation,
+        headers: Hostting().getHeader(), body: jsonEncode(location.toJson()));
+    if (response.statusCode == 200 && jsonDecode(response.body)) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> getFavoritLocation() async {
+    http.Response response = await http.get(Hostting.getUserLocation,
+        headers: Hostting().getHeader());
+    if (response.statusCode == 200) {
+      var body = jsonDecode(response.body);
+      for (var element in body) {
+        UserLocation loc = UserLocation.frommJson(element);
+        var mar = Marker(
+            markerId: MarkerId(loc.id!),
+            position: LatLng(loc.lat, loc.long),
+            infoWindow: InfoWindow(title: loc.name),
+            onTap: () {
+              if (isStart != null) {
+                addTripMarker(LatLng(loc.lat, loc.long));
+              }
+            });
+
+        mark.add(mar);
       }
       update();
     }
@@ -187,14 +215,13 @@ class TripController extends GetxController {
       }
       mark.add(
         Marker(
-          markerId: MarkerId(arguments[0]),
-          position: LatLng(arguments[1], arguments[2]),
-          icon: icon,
-          // onTap: !arguments[3] ? null : () {}
-        ),
+            markerId: MarkerId(arguments[0]),
+            position: LatLng(arguments[1], arguments[2]),
+            icon: icon,
+            onTap: !arguments[3] ? null : () {}),
       );
+      update();
     }
-    //update();
   }
 
   Future<void> addMyloction(double lat, double long) async {

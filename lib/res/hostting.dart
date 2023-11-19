@@ -40,4 +40,8 @@ class Hostting {
   static Uri updateProfile = Uri.parse("$api/app/UpdateUserInfo");
   static Uri showProfile = Uri.parse("$api/app/GetUserInfo");
   static Uri addTrip = Uri.parse("$api/app/AddTrip");
+  static Uri addUserLocation = Uri.parse("$api/app/AddUserLocation");
+  static Uri getUserLocation = Uri.parse("$api/app/GetUserLocations");
+  static Uri deleteUserLoction(String id) =>
+      Uri.parse("$api/app/DeleteUserLocation?locationId=$id");
 }

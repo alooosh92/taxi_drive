@@ -137,4 +137,9 @@ class FontManager {
     fontSize: 17,
     color: ColorManager.primary,
   );
+  static const TextStyle w400s14cP = TextStyle(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+    color: ColorManager.primary,
+  );
 }
