@@ -4,9 +4,12 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_drive/models/add_trip.dart';
 import 'package:taxi_drive/models/add_user_location.dart';
+import 'package:taxi_drive/models/car_model_for_socket.dart';
+import 'package:taxi_drive/models/trip_model_for_socket.dart';
 import 'package:taxi_drive/res/hostting.dart';
 import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
@@ -36,6 +39,7 @@ class TripController extends GetxController {
   @override
   void onInit() async {
     await getFavoritLocation();
+    await getTripForDriver();
     if (startPostion == null) {
       await checkPermission();
       var loc = await Geolocator.getCurrentPosition();
@@ -80,6 +84,76 @@ class TripController extends GetxController {
     return false;
   }
 
+  Future<void> getTripForDriver() async {
+    var g = await Geolocator.getCurrentPosition();
+    http.Response response = await http.get(
+        Hostting.getAllTripForDriver(g.latitude, g.longitude),
+        headers: Hostting().getHeader());
+    if (response.statusCode == 200) {
+      var icon = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(),
+        'lib/asset/images/trip2.png',
+      );
+      var body = jsonDecode(response.body);
+      for (var element in body) {
+        var trip = TripModelForSocket.fromJson(element);
+        mark.add(Marker(
+            markerId: MarkerId(trip.id),
+            position: LatLng(trip.fromLate, trip.fromLong),
+            icon: icon,
+            onTap: () {
+              Get.dialog(
+                AlertDialog(
+                  title: const Text("معلومات الرحلة"),
+                  content: Text(
+                      "نقطة البداية: ${trip.start} \n نقطة النهاية: ${trip.end} \n اجور التوصيل: ${trip.price}"),
+                ),
+              );
+              startPostion = LatLng(trip.fromLate, trip.fromLong);
+              endPostion = LatLng(trip.toLate, trip.toLong);
+              addPolyLine(trip.id);
+            }));
+        update();
+        //   mark.add(
+        //     Marker(
+        //         markerId: MarkerId(tr.id),
+        //         position: LatLng(tr.fromLate, tr.fromLong),
+        //         icon: icon,
+        //         onTap: () async {
+        //           PolylinePoints polylinePoints = PolylinePoints();
+        //           PolylineResult result =
+        //               await polylinePoints.getRouteBetweenCoordinates(
+        //                   Hostting.mapKey,
+        //                   PointLatLng(tr.fromLate, tr.fromLong),
+        //                   PointLatLng(tr.toLate, tr.toLong));
+        //           listPostionForPolyline.clear();
+        //           for (var element in result.points) {
+        //             listPostionForPolyline
+        //                 .add(LatLng(element.latitude, element.longitude));
+        //           }
+        //           start.text = result.startAddress!;
+        //           end.text = result.endAddress!;
+        //           masafa = result.distance;
+        //           time = result.duration;
+        //           price = tr.price.toString();
+        //           polyline.add(
+        //             Polyline(
+        //               polylineId: PolylineId(tr.id),
+        //               points: listPostionForPolyline,
+        //               width: 6,
+        //               color: Colors.blueAccent,
+        //             ),
+        //           );
+        //           update();
+        //         },
+        //         infoWindow: InfoWindow(
+        //             title: tr.phone, snippet: "اجور التوصيل: ${tr.price}")),
+        //   );
+      }
+      update();
+    }
+  }
+
   Future<void> getFavoritLocation() async {
     http.Response response = await http.get(Hostting.getUserLocation,
         headers: Hostting().getHeader());
@@ -117,13 +191,7 @@ class TripController extends GetxController {
         headers: Hostting().getHeader(), body: jsonEncode(trip.toJson()));
     if (response.statusCode == 200 && jsonDecode(response.body)) {
       AuthController authController = Get.find();
-      chanal.sink.add(Hostting.sendLocation(
-        authController.user!.phone,
-        startPostion!.latitude,
-        startPostion!.longitude,
-        false,
-        false,
-      ));
+      chanal.sink.add(Hostting.sendTrip(authController.user!.phone));
       isStart = null;
       return true;
     }
@@ -163,7 +231,7 @@ class TripController extends GetxController {
     var loc = await Geolocator.getCurrentPosition();
     cam = CameraPosition(
       target: LatLng(loc.latitude, loc.longitude),
-      zoom: 14,
+      zoom: 12,
     );
     update();
   }
@@ -190,13 +258,16 @@ class TripController extends GetxController {
   }
 
   Future<void> addMarkerFromSocket(dynamic data) async {
+    var storeg = GetStorage();
     var json = data.toString().substring(0, data.toString().indexOf(""));
     var body = jsonDecode(json);
-    var arguments = body["arguments"] ?? "";
-    if (arguments != "") {
+    var type = body["type"] ?? "";
+    if (type == 1) {
       var icon = BitmapDescriptor.defaultMarker;
-      if (arguments[3]) {
-        if (arguments[4]) {
+      var arguments = body["arguments"];
+      if (arguments[0] == "car" && storeg.read("role")[0] == "User") {
+        var car = CarModelForSocket.fromJson(arguments[1]);
+        if (car.isEmpty!) {
           icon = await BitmapDescriptor.fromAssetImage(
             const ImageConfiguration(),
             'lib/asset/images/car_raedy.png',
@@ -207,20 +278,45 @@ class TripController extends GetxController {
             'lib/asset/images/car_work.png',
           );
         }
-      } else {
+        mark.add(Marker(
+            markerId: MarkerId(car.phone!),
+            position: LatLng(arguments[2], arguments[3]),
+            icon: icon,
+            onTap: () {
+              Get.dialog(
+                AlertDialog(
+                  title: const Text("معلومات السيارة"),
+                  content: Text(
+                      "اسم السائق: ${car.name} \n رقم الجوال: ${car.phone} \n لون السيارة: ${car.carColor} \n نوع السيارة: ${car.carType} \n رقم اللوحة: ${car.carNumber}"),
+                ),
+              );
+            }));
+        update();
+      }
+      if (arguments[0] == "trip" && storeg.read("role")[0] == "Driver") {
+        var trip = TripModelForSocket.fromJson(arguments[1]);
         icon = await BitmapDescriptor.fromAssetImage(
           const ImageConfiguration(),
           'lib/asset/images/trip2.png',
         );
-      }
-      mark.add(
-        Marker(
-            markerId: MarkerId(arguments[0]),
-            position: LatLng(arguments[1], arguments[2]),
+        mark.add(Marker(
+            markerId: MarkerId(trip.id),
+            position: LatLng(trip.fromLate, trip.fromLong),
             icon: icon,
-            onTap: !arguments[3] ? null : () {}),
-      );
-      update();
+            onTap: () {
+              Get.dialog(
+                AlertDialog(
+                  title: const Text("معلومات الرحلة"),
+                  content: Text(
+                      "نقطة البداية: ${trip.start} \n نقطة النهاية: ${trip.end} \n اجور التوصيل: ${trip.price}"),
+                ),
+              );
+              startPostion = LatLng(trip.fromLate, trip.fromLong);
+              endPostion = LatLng(trip.toLate, trip.toLong);
+              addPolyLine(trip.id);
+            }));
+        update();
+      }
     }
   }
 
@@ -234,22 +330,6 @@ class TripController extends GetxController {
         icon: icon,
       ),
     );
-    update();
-  }
-
-  Future<void> addCar() async {
-    var ic = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(), 'lib/asset/images/car.png');
-    mark.add(Marker(
-      markerId: const MarkerId("alaa"),
-      position: const LatLng(36.199084, 37.158289),
-      icon: ic,
-    ));
-    mark.add(Marker(
-      markerId: const MarkerId("baaj"),
-      position: const LatLng(36.198090, 37.168222),
-      icon: ic,
-    ));
     update();
   }
 }

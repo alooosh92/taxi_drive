@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_drive/res/hostting.dart';
 import 'package:taxi_drive/screen/auth/auth_controller.dart';
@@ -38,18 +39,15 @@ class _TripScreenState extends State<TripScreen> {
         Completer<GoogleMapController>();
     WebSocketChannel channel = IOWebSocketChannel.connect(Hostting.websocket);
     AuthController authController = Get.find();
+    var storeg = GetStorage();
     channel.sink.add('{"protocol":"json","version":1}');
-    Timer.periodic(const Duration(seconds: 10), (timer) async {
-      var myMarker = await Geolocator.getCurrentPosition();
-      channel.sink.add(Hostting.sendLocation(
-        authController.user!.phone,
-        myMarker.latitude,
-        myMarker.longitude,
-        true,
-        false,
-      ));
-    });
-
+    if (storeg.read("role")[0] == "Driver") {
+      Timer.periodic(const Duration(seconds: 10), (timer) async {
+        var myMarker = await Geolocator.getCurrentPosition();
+        channel.sink.add(Hostting.sendDriverLocation(
+            authController.user!.phone, myMarker.latitude, myMarker.longitude));
+      });
+    }
     return Scaffold(
       key: scaffoldKey,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
@@ -58,7 +56,6 @@ class _TripScreenState extends State<TripScreen> {
       ),
       drawer: const DrawerHome(),
       body: FutureBuilder(
-        //==> for cam positione
         future: tripController.getPosition(),
         builder: (BuildContext context, AsyncSnapshot camPostine) {
           if (camPostine.connectionState == ConnectionState.waiting) {
@@ -85,15 +82,13 @@ class _TripScreenState extends State<TripScreen> {
                                   zoomControlsEnabled: false,
                                   initialCameraPosition: controllerGet.cam!,
                                   markers: controllerGet.mark,
-                                  //test if user?
                                   onTap: (late) =>
-                                      controllerGet.addTripMarker(late),
-                                  //test if user?
+                                      storeg.read("role")[0] == "User"
+                                          ? controllerGet.addTripMarker(late)
+                                          : null,
                                   polylines: controllerGet.polyline,
                                   onMapCreated: (controller) async {
                                     mapControllerMap.complete(controller);
-                                    // add car if user
-                                    //add trip if driver
                                   },
                                 );
                               });

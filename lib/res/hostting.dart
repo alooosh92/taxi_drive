@@ -26,9 +26,10 @@ class Hostting {
   }
 
   //websocket
-  static String sendLocation(
-          String name, double late, double long, bool isCar, bool isFree) =>
-      '{"arguments":["$name",$late,$long,$isCar,$isFree],"invocationId":"0","target":"send","type":1}';
+  static String sendDriverLocation(String phone, double late, double long) =>
+      '{"arguments":["$phone",$late,$long],"invocationId":"0","target":"SendDriver","type":1}';
+  static String sendTrip(String phone) =>
+      '{"arguments":["$phone"],"invocationId":"0","target":"SendTrip","type":1}';
   //Auth
   static Uri register = Uri.parse("$api/Authentication/Register");
   static Uri login(String phone) =>
@@ -46,4 +47,11 @@ class Hostting {
       Uri.parse("$api/app/DeleteUserLocation?locationId=$id");
   static Uri getTream(bool isPrive) =>
       Uri.parse("$api/app/GetTermsOfUseAndPrivacy?isPrivacy=$isPrive");
+  static Uri acceptedTrip(String id) =>
+      Uri.parse("$api/app/AcceptedTrip?id=$id");
+  static Uri endedTrip(String id) => Uri.parse("$api/app/EndedTrip?id=$id");
+  static Uri getAllTripForDriver(double lat, double log) =>
+      Uri.parse("$api/app/GetAllTripForDriver?lat=$lat&log=$log");
+  static Uri getTrip(String id) => Uri.parse("$api/app/GetTrip?id=$id");
+  static Uri getAllTripForUser = Uri();
 }

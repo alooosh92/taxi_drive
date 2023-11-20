@@ -40,18 +40,21 @@ class ShowTrip {
   factory ShowTrip.fromJson(Map<String, dynamic> json) {
     return ShowTrip(
       id: json["id"],
-      fromLong: double.parse(json["fromLong"]),
-      fromLate: double.parse(json["fromLate"]),
-      toLate: double.parse(json["toLate"]),
-      toLong: double.parse(json["toLong"]),
+      fromLong: double.parse(json["fromLong"].toString()),
+      fromLate: double.parse(json["fromLate"].toString()),
+      toLate: double.parse(json["toLate"].toString()),
+      toLong: double.parse(json["toLong"].toString()),
       userName: json["userName"],
       phone: json["phone"],
       userRating: json["userRating"],
-      price: double.parse(json["price"]),
-      created: DateTime.parse(json["created"]),
-      accepted:
-          json["accepted"] == null ? null : DateTime.parse(json["accepted"]),
-      ended: json["ended"] == null ? null : DateTime.parse(json["ended"]),
+      price: double.parse(json["price"].toString()),
+      created: DateTime.parse(json["created"].toString()),
+      accepted: json["accepted"] == null
+          ? null
+          : DateTime.parse(json["accepted"].toString()),
+      ended: json["ended"] == null
+          ? null
+          : DateTime.parse(json["ended"].toString()),
       firtName: json["firtName"],
       lastName: json["lastName"],
       carNumber: json["carNumber"],
