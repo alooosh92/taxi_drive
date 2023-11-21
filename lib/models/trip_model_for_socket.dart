@@ -7,6 +7,7 @@ class TripModelForSocket {
   late double price;
   late String end;
   late String start;
+  late bool isAccepted;
 
   TripModelForSocket({
     required this.end,
@@ -17,6 +18,7 @@ class TripModelForSocket {
     required this.start,
     required this.toLate,
     required this.toLong,
+    required this.isAccepted,
   });
 
   factory TripModelForSocket.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class TripModelForSocket {
       start: json["start"],
       toLate: double.parse(json["toLate"].toString()),
       toLong: double.parse(json["toLong"].toString()),
+      isAccepted: json["isAccepted"],
     );
   }
 }

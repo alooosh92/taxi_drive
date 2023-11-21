@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
 import 'package:taxi_drive/screen/trip/trip_controller.dart';
@@ -18,6 +19,7 @@ class FloatingButtonTripScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TripController tripController = Get.find();
+    var storeg = GetStorage();
     return GetBuilder<TripController>(
         init: tripController,
         builder: (controller) {
@@ -58,30 +60,33 @@ class FloatingButtonTripScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                child: FloatingActionButton(
-                  onPressed: () => {
-                    if (tripController.startPostion != null &&
-                        tripController.endPostion != null &&
-                        tripController.price != null)
-                      {
-                        buttomSheet(
-                          context: context,
-                          headerText: "إضافة طلب",
-                          contener: ChoiseTrip(chanal: chanal),
-                        )
-                      }
-                    else
-                      {
-                        snackbarDef(
-                            "تحزير", "يجب تحديد نقطة البدايو والنهاية للرحلة")
-                      }
-                  },
-                  backgroundColor: ColorManager.primary,
-                  child: const Icon(
-                    Icons.add,
-                    color: ColorManager.white,
-                    size: 30,
+              Visibility(
+                visible: storeg.read("role")[0] == "User",
+                child: SizedBox(
+                  child: FloatingActionButton(
+                    onPressed: () => {
+                      if (tripController.startPostion != null &&
+                          tripController.endPostion != null &&
+                          tripController.price != null)
+                        {
+                          buttomSheet(
+                            context: context,
+                            headerText: "إضافة طلب",
+                            contener: ChoiseTrip(chanal: chanal),
+                          )
+                        }
+                      else
+                        {
+                          snackbarDef(
+                              "تحزير", "يجب تحديد نقطة البدايو والنهاية للرحلة")
+                        }
+                    },
+                    backgroundColor: ColorManager.primary,
+                    child: const Icon(
+                      Icons.add,
+                      color: ColorManager.white,
+                      size: 30,
+                    ),
                   ),
                 ),
               ),

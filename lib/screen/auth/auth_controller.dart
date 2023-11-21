@@ -70,7 +70,7 @@ class AuthController extends GetxController {
         await http.get(Hostting.checkToken, headers: Hostting().getHeader());
     if (response.statusCode == 200) {
       await userProfile();
-      return true;
+      return jsonDecode(response.body);
     }
     return false;
   }

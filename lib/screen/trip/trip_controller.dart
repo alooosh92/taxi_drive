@@ -10,10 +10,13 @@ import 'package:taxi_drive/models/add_trip.dart';
 import 'package:taxi_drive/models/add_user_location.dart';
 import 'package:taxi_drive/models/car_model_for_socket.dart';
 import 'package:taxi_drive/models/trip_model_for_socket.dart';
+import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/hostting.dart';
 import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
+import 'package:taxi_drive/widget/snackbar_def.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class TripController extends GetxController {
@@ -84,7 +87,18 @@ class TripController extends GetxController {
     return false;
   }
 
+  Future<bool> acceptedTrip(String id) async {
+    http.Response response = await http.put(Hostting.acceptedTrip(id),
+        headers: Hostting().getHeader());
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    }
+    return false;
+  }
+
   Future<void> getTripForDriver() async {
+    WebSocketChannel channel = IOWebSocketChannel.connect(Hostting.websocket);
+    channel.sink.add('{"protocol":"json","version":1}');
     var g = await Geolocator.getCurrentPosition();
     http.Response response = await http.get(
         Hostting.getAllTripForDriver(g.latitude, g.longitude),
@@ -97,60 +111,53 @@ class TripController extends GetxController {
       var body = jsonDecode(response.body);
       for (var element in body) {
         var trip = TripModelForSocket.fromJson(element);
-        mark.add(Marker(
+        mark.add(
+          Marker(
             markerId: MarkerId(trip.id),
             position: LatLng(trip.fromLate, trip.fromLong),
             icon: icon,
             onTap: () {
-              Get.dialog(
-                AlertDialog(
-                  title: const Text("معلومات الرحلة"),
-                  content: Text(
-                      "نقطة البداية: ${trip.start} \n نقطة النهاية: ${trip.end} \n اجور التوصيل: ${trip.price}"),
-                ),
-              );
               startPostion = LatLng(trip.fromLate, trip.fromLong);
               endPostion = LatLng(trip.toLate, trip.toLong);
               addPolyLine(trip.id);
-            }));
+              if (!trip.isAccepted) {
+                Get.dialog(
+                  AlertDialog(
+                    actions: [
+                      ElevatedButton(
+                          style: const ButtonStyle(
+                              backgroundColor: MaterialStatePropertyAll(
+                                  ColorManager.primary)),
+                          onPressed: () async {
+                            var b = await acceptedTrip(trip.id);
+                            if (b) {
+                              Get.back();
+                              snackbarDef("ملاحظة", "تم قبول الطلب بنجاح");
+                              trip.isAccepted = true;
+
+                              channel.sink.add(Hostting.acceptTrip(trip.id));
+                              mark.removeWhere((element) =>
+                                  element.markerId.value != trip.id);
+                            }
+                          },
+                          child: const Text("قبول")),
+                      ElevatedButton(
+                          onPressed: () {
+                            Get.back();
+                          },
+                          child: const Text("إلغاء"))
+                    ],
+                    title: const Text("معلومات الرحلة"),
+                    content: Text(
+                        "نقطة البداية: ${trip.start} \n نقطة النهاية: ${trip.end} \n اجور التوصيل: ${trip.price}"),
+                  ),
+                );
+              }
+            },
+          ),
+        );
         update();
-        //   mark.add(
-        //     Marker(
-        //         markerId: MarkerId(tr.id),
-        //         position: LatLng(tr.fromLate, tr.fromLong),
-        //         icon: icon,
-        //         onTap: () async {
-        //           PolylinePoints polylinePoints = PolylinePoints();
-        //           PolylineResult result =
-        //               await polylinePoints.getRouteBetweenCoordinates(
-        //                   Hostting.mapKey,
-        //                   PointLatLng(tr.fromLate, tr.fromLong),
-        //                   PointLatLng(tr.toLate, tr.toLong));
-        //           listPostionForPolyline.clear();
-        //           for (var element in result.points) {
-        //             listPostionForPolyline
-        //                 .add(LatLng(element.latitude, element.longitude));
-        //           }
-        //           start.text = result.startAddress!;
-        //           end.text = result.endAddress!;
-        //           masafa = result.distance;
-        //           time = result.duration;
-        //           price = tr.price.toString();
-        //           polyline.add(
-        //             Polyline(
-        //               polylineId: PolylineId(tr.id),
-        //               points: listPostionForPolyline,
-        //               width: 6,
-        //               color: Colors.blueAccent,
-        //             ),
-        //           );
-        //           update();
-        //         },
-        //         infoWindow: InfoWindow(
-        //             title: tr.phone, snippet: "اجور التوصيل: ${tr.price}")),
-        //   );
       }
-      update();
     }
   }
 
@@ -315,6 +322,10 @@ class TripController extends GetxController {
               endPostion = LatLng(trip.toLate, trip.toLong);
               addPolyLine(trip.id);
             }));
+        update();
+      }
+      if (arguments[0] == "AcceptTrip" && storeg.read("role")[0] == "Driver") {
+        mark.removeWhere((element) => element.markerId.value == arguments[1]);
         update();
       }
     }

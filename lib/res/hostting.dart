@@ -3,9 +3,11 @@ import 'package:get_storage/get_storage.dart';
 class Hostting {
   var storeg = GetStorage();
   //hostting
-  //static const String host = "https://taxi.arg-tr.com";
-  static const String host = "https://10.0.2.2:7215";
-  static const String websocket = "wss://10.0.2.2:7215/car";
+  // static const String host = "https://10.0.2.2:7215";
+  // static const String websocket = "wss://10.0.2.2:7215/car";
+  static const String host = "http://taxidrivertest-001-site1.ctempurl.com";
+  static const String websocket =
+      "ws://taxidrivertest-001-site1.ctempurl.com/car";
   static const String mapKey = "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8";
   //api
   static const String api = "$host/api";
@@ -30,6 +32,8 @@ class Hostting {
       '{"arguments":["$phone",$late,$long],"invocationId":"0","target":"SendDriver","type":1}';
   static String sendTrip(String phone) =>
       '{"arguments":["$phone"],"invocationId":"0","target":"SendTrip","type":1}';
+  static String acceptTrip(String id) =>
+      '{"arguments":["$id"],"invocationId":"0","target":"AcceptTrip","type":1}';
   //Auth
   static Uri register = Uri.parse("$api/Authentication/Register");
   static Uri login(String phone) =>
