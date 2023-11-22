@@ -41,6 +41,7 @@ class _TripScreenState extends State<TripScreen> {
     AuthController authController = Get.find();
     var storeg = GetStorage();
     channel.sink.add('{"protocol":"json","version":1}');
+
     if (storeg.read("role")[0] == "Driver") {
       Timer.periodic(const Duration(seconds: 10), (timer) async {
         var myMarker = await Geolocator.getCurrentPosition();
@@ -61,6 +62,7 @@ class _TripScreenState extends State<TripScreen> {
           if (camPostine.connectionState == ConnectionState.waiting) {
             return const ProgressDef();
           }
+          tripController.getTripForDriver(channel);
           return GetBuilder<TripController>(
               init: tripController,
               builder: (controllerGet) {

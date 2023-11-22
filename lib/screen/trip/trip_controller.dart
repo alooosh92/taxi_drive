@@ -16,7 +16,6 @@ import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
 import 'package:taxi_drive/widget/snackbar_def.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class TripController extends GetxController {
@@ -42,7 +41,6 @@ class TripController extends GetxController {
   @override
   void onInit() async {
     await getFavoritLocation();
-    await getTripForDriver();
     if (startPostion == null) {
       await checkPermission();
       var loc = await Geolocator.getCurrentPosition();
@@ -96,9 +94,7 @@ class TripController extends GetxController {
     return false;
   }
 
-  Future<void> getTripForDriver() async {
-    WebSocketChannel channel = IOWebSocketChannel.connect(Hostting.websocket);
-    channel.sink.add('{"protocol":"json","version":1}');
+  Future<void> getTripForDriver(WebSocketChannel channel) async {
     var g = await Geolocator.getCurrentPosition();
     http.Response response = await http.get(
         Hostting.getAllTripForDriver(g.latitude, g.longitude),
@@ -156,8 +152,8 @@ class TripController extends GetxController {
             },
           ),
         );
-        update();
       }
+      update();
     }
   }
 

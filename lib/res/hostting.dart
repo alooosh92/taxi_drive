@@ -33,7 +33,7 @@ class Hostting {
   static String sendTrip(String phone) =>
       '{"arguments":["$phone"],"invocationId":"0","target":"SendTrip","type":1}';
   static String acceptTrip(String id) =>
-      '{"arguments":["$id"],"invocationId":"0","target":"AcceptTrip","type":1}';
+      '{"type":1,"target":"AcceptTrip","arguments":["$id"]}';
   //Auth
   static Uri register = Uri.parse("$api/Authentication/Register");
   static Uri login(String phone) =>
