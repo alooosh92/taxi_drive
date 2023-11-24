@@ -5,9 +5,9 @@ class Hostting {
   //hostting
   // static const String host = "https://10.0.2.2:7215";
   // static const String websocket = "wss://10.0.2.2:7215/car";
-  static const String host = "http://taxidrivertest-001-site1.ctempurl.com";
+  static const String host = "https://taxidrivertest-001-site1.ctempurl.com";
   static const String websocket =
-      "ws://taxidrivertest-001-site1.ctempurl.com/car";
+      "wss://taxidrivertest-001-site1.ctempurl.com/car";
   static const String mapKey = "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8";
   //api
   static const String api = "$host/api";
@@ -28,12 +28,13 @@ class Hostting {
   }
 
   //websocket
+  //"invocationId":"0",
   static String sendDriverLocation(String phone, double late, double long) =>
-      '{"arguments":["$phone",$late,$long],"invocationId":"0","target":"SendDriver","type":1}';
+      '{"arguments":["$phone",$late,$long],"target":"SendDriver","type":1}';
   static String sendTrip(String phone) =>
-      '{"arguments":["$phone"],"invocationId":"0","target":"SendTrip","type":1}';
+      '{"arguments":["$phone"],"target":"SendTrip","type":1}';
   static String acceptTrip(String id) =>
-      '{"type":1,"target":"AcceptTrip","arguments":["$id"]}';
+      '{"arguments":["$id"],"target":"AcceptTrip","type":1}';
   //Auth
   static Uri register = Uri.parse("$api/Authentication/Register");
   static Uri login(String phone) =>

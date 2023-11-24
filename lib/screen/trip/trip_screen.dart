@@ -12,7 +12,6 @@ import 'package:taxi_drive/screen/trip/widget/floating_button_trip_screen.dart';
 import 'package:taxi_drive/widget/drawer_home.dart';
 import 'package:taxi_drive/widget/progress_def.dart';
 import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class TripScreen extends StatefulWidget {
   const TripScreen({super.key});
@@ -37,15 +36,16 @@ class _TripScreenState extends State<TripScreen> {
     TripController tripController = Get.find();
     final Completer<GoogleMapController> mapControllerMap =
         Completer<GoogleMapController>();
-    WebSocketChannel channel = IOWebSocketChannel.connect(Hostting.websocket);
+
     AuthController authController = Get.find();
     var storeg = GetStorage();
-    channel.sink.add('{"protocol":"json","version":1}');
+    tripController.channel = IOWebSocketChannel.connect(Hostting.websocket);
+    tripController.channel!.sink.add('{"protocol":"json","version":1}');
 
     if (storeg.read("role")[0] == "Driver") {
       Timer.periodic(const Duration(seconds: 10), (timer) async {
         var myMarker = await Geolocator.getCurrentPosition();
-        channel.sink.add(Hostting.sendDriverLocation(
+        tripController.channel!.sink.add(Hostting.sendDriverLocation(
             authController.user!.phone, myMarker.latitude, myMarker.longitude));
       });
     }
@@ -53,7 +53,7 @@ class _TripScreenState extends State<TripScreen> {
       key: scaffoldKey,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: FloatingButtonTripScreen(
-        chanal: channel,
+        chanal: tripController.channel!,
       ),
       drawer: const DrawerHome(),
       body: FutureBuilder(
@@ -62,7 +62,6 @@ class _TripScreenState extends State<TripScreen> {
           if (camPostine.connectionState == ConnectionState.waiting) {
             return const ProgressDef();
           }
-          tripController.getTripForDriver(channel);
           return GetBuilder<TripController>(
               init: tripController,
               builder: (controllerGet) {
@@ -72,7 +71,7 @@ class _TripScreenState extends State<TripScreen> {
                         stream: Geolocator.getPositionStream(),
                         builder: (context, myMarker) {
                           return StreamBuilder(
-                              stream: channel.stream,
+                              stream: tripController.channel!.stream,
                               builder: (context, mapMarker) {
                                 if (mapMarker.hasData) {
                                   controllerGet
