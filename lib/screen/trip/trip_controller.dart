@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -64,13 +63,16 @@ class TripController extends GetxController {
           icon: isStart!.value ? icG : icY,
         ),
       );
-      var info = await placemarkFromCoordinates(pos.latitude, pos.longitude);
+      var info = "lat:${pos.latitude} log:${pos.longitude}";
+      // await placemarkFromCoordinates(pos.latitude, pos.longitude);
       if (isStart!.value) {
         startPostion = pos;
-        start.text = info.first.street ?? "لا يوجد معلومات";
+        start.text = info;
+        //info.first.street ?? "لا يوجد معلومات";
       } else {
         endPostion = pos;
-        end.text = info.first.street ?? "لا يوجد معلومات";
+        end.text = info;
+        //info.first.street ?? "لا يوجد معلومات";
       }
       if (startPostion != null && endPostion != null) {
         addPolyLine("test");
