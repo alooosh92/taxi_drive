@@ -99,6 +99,15 @@ class TripController extends GetxController {
     return false;
   }
 
+  Future<bool> endTrip(String id) async {
+    http.Response response =
+        await http.put(Hostting.endedTrip(id), headers: Hostting().getHeader());
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    }
+    return false;
+  }
+
   Future<void> getTripForDriver() async {
     var g = await Geolocator.getCurrentPosition();
     http.Response response = await http.get(
@@ -381,6 +390,36 @@ class TripController extends GetxController {
           title: const Text("معلومات الرحلة"),
           content: Text(
               "نقطة البداية: ${trip.start} \n نقطة النهاية: ${trip.end} \n اجور التوصيل: ${trip.price}"),
+        ),
+      );
+    } else {
+      Get.dialog(
+        AlertDialog(
+          actions: [
+            ElevatedButton(
+                style: const ButtonStyle(
+                    backgroundColor:
+                        MaterialStatePropertyAll(ColorManager.primary)),
+                onPressed: () async {
+                  var b = await endTrip(trip.id);
+                  if (b) {
+                    Get.back();
+                    snackbarDef("ملاحظة", "تم انهاء الرحلة بنجاح");
+                    polyline = {};
+                    listPostionForPolyline = [];
+                    mark.removeWhere(
+                        (element) => element.markerId.value == trip.id);
+                  }
+                },
+                child: const Text("انهاء")),
+            ElevatedButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text("إلغاء"))
+          ],
+          title: const Text("انهاء الرحلة"),
+          content: const Text("انهاء الرحلة؟"),
         ),
       );
     }

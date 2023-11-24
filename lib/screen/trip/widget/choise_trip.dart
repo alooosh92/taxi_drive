@@ -102,62 +102,60 @@ class ChoiseTrip extends StatelessWidget {
                                       )),
                                 ],
                                 title: const Text("تأكيد الطلبية"),
-                                content: Expanded(
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Divider(),
-                                        Text(
-                                          "المسافة المقدرة: ${tripController.masafa}",
-                                          style: FontManager.w600s16cB,
-                                        ),
-                                        Text(
-                                          "الوقت المقدرة: ${tripController.time}",
-                                          style: FontManager.w600s16cB,
-                                        ),
-                                        Text(
-                                          "السعر المقدرة: ${tripController.price}",
-                                          style: FontManager.w600s16cB,
-                                        ),
-                                        const Divider(),
-                                        const Text(
-                                          "شروط الخدمة",
-                                          style: FontManager.w400s16cB,
-                                        ),
-                                        const Text(
-                                          "1- عند استلام الطلب من قبل سائق لا يمكن الغاء الطلب",
-                                          style: FontManager.w400s14cB,
-                                          overflow: TextOverflow.fade,
-                                        ),
-                                        const Text(
-                                          "2- يحق للسائقين عدم قبول الطلب ",
-                                          style: FontManager.w400s14cB,
-                                          overflow: TextOverflow.fade,
-                                        ),
-                                        const Text(
-                                          "3- عند تخلفك عن الطلب لاي سبب من الاسباب تمنح بطاقة صفراء",
-                                          style: FontManager.w400s14cB,
-                                          overflow: TextOverflow.fade,
-                                        ),
-                                        const Text(
-                                          "4- عند منحك ثلاث بطاقات صفراء يتم حظر رقمك من التطبيق لشهر كامل",
-                                          style: FontManager.w400s14cB,
-                                          overflow: TextOverflow.fade,
-                                        ),
-                                        const Text(
-                                          "5- عند منحك عشر بطاقات صفراء يتم حظر رقمك من التطبيق  نهائياً",
-                                          style: FontManager.w400s14cB,
-                                          overflow: TextOverflow.fade,
-                                        ),
-                                        const Text(
-                                          "6- يحق لسائق طلب تعرفة اضافية بحال طلب الزبون من السائق ايصاله الى مكان غير المكان المحدد من قبل الزبون عند الطلب كما يحق لسائق رفض ايصال الزبون ابعد من نقطة النهاية المحددة",
-                                          style: FontManager.w400s14cB,
-                                          overflow: TextOverflow.fade,
-                                        ),
-                                      ]),
-                                ),
+                                content: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Divider(),
+                                      Text(
+                                        "المسافة المقدرة: ${tripController.masafa}",
+                                        style: FontManager.w600s16cB,
+                                      ),
+                                      Text(
+                                        "الوقت المقدرة: ${tripController.time}",
+                                        style: FontManager.w600s16cB,
+                                      ),
+                                      Text(
+                                        "السعر المقدرة: ${tripController.price}",
+                                        style: FontManager.w600s16cB,
+                                      ),
+                                      const Divider(),
+                                      const Text(
+                                        "شروط الخدمة",
+                                        style: FontManager.w400s16cB,
+                                      ),
+                                      const Text(
+                                        "1- عند استلام الطلب من قبل سائق لا يمكن الغاء الطلب",
+                                        style: FontManager.w400s14cB,
+                                        overflow: TextOverflow.fade,
+                                      ),
+                                      const Text(
+                                        "2- يحق للسائقين عدم قبول الطلب ",
+                                        style: FontManager.w400s14cB,
+                                        overflow: TextOverflow.fade,
+                                      ),
+                                      const Text(
+                                        "3- عند تخلفك عن الطلب لاي سبب من الاسباب تمنح بطاقة صفراء",
+                                        style: FontManager.w400s14cB,
+                                        overflow: TextOverflow.fade,
+                                      ),
+                                      const Text(
+                                        "4- عند منحك ثلاث بطاقات صفراء يتم حظر رقمك من التطبيق لشهر كامل",
+                                        style: FontManager.w400s14cB,
+                                        overflow: TextOverflow.fade,
+                                      ),
+                                      const Text(
+                                        "5- عند منحك عشر بطاقات صفراء يتم حظر رقمك من التطبيق  نهائياً",
+                                        style: FontManager.w400s14cB,
+                                        overflow: TextOverflow.fade,
+                                      ),
+                                      const Text(
+                                        "6- يحق لسائق طلب تعرفة اضافية بحال طلب الزبون من السائق ايصاله الى مكان غير المكان المحدد من قبل الزبون عند الطلب كما يحق لسائق رفض ايصال الزبون ابعد من نقطة النهاية المحددة",
+                                        style: FontManager.w400s14cB,
+                                        overflow: TextOverflow.fade,
+                                      ),
+                                    ]),
                               ));
                             },
                             text: "المتابعة")
