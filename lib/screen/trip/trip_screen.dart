@@ -12,6 +12,7 @@ import 'package:taxi_drive/screen/trip/widget/floating_button_trip_screen.dart';
 import 'package:taxi_drive/widget/drawer_home.dart';
 import 'package:taxi_drive/widget/progress_def.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class TripScreen extends StatefulWidget {
   const TripScreen({super.key});
@@ -39,13 +40,13 @@ class _TripScreenState extends State<TripScreen> {
 
     AuthController authController = Get.find();
     var storeg = GetStorage();
-    tripController.channel = IOWebSocketChannel.connect(Hostting.websocket);
-    tripController.channel!.sink.add('{"protocol":"json","version":1}');
+    WebSocketChannel channel = IOWebSocketChannel.connect(Hostting.websocket);
+    channel.sink.add('{"protocol":"json","version":1}');
 
     if (storeg.read("role")[0] == "Driver") {
       Timer.periodic(const Duration(seconds: 10), (timer) async {
         var myMarker = await Geolocator.getCurrentPosition();
-        tripController.channel!.sink.add(Hostting.sendDriverLocation(
+        channel.sink.add(Hostting.sendDriverLocation(
             authController.user!.phone, myMarker.latitude, myMarker.longitude));
       });
     }
@@ -53,7 +54,7 @@ class _TripScreenState extends State<TripScreen> {
       key: scaffoldKey,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: FloatingButtonTripScreen(
-        chanal: tripController.channel!,
+        chanal: channel,
       ),
       drawer: const DrawerHome(),
       body: FutureBuilder(
@@ -71,11 +72,11 @@ class _TripScreenState extends State<TripScreen> {
                         stream: Geolocator.getPositionStream(),
                         builder: (context, myMarker) {
                           return StreamBuilder(
-                              stream: tripController.channel!.stream,
+                              stream: channel.stream,
                               builder: (context, mapMarker) {
                                 if (mapMarker.hasData) {
-                                  controllerGet
-                                      .addMarkerFromSocket(mapMarker.data);
+                                  controllerGet.addMarkerFromSocket(
+                                      mapMarker.data, channel);
                                 }
                                 return GoogleMap(
                                   myLocationButtonEnabled: true,

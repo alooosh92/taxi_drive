@@ -20,7 +20,6 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 class TripController extends GetxController {
   //for map
-  WebSocketChannel? channel;
   CameraPosition? cam;
   Set<Marker> mark = {};
   Set<Polyline> polyline = {};
@@ -129,7 +128,7 @@ class TripController extends GetxController {
             position: LatLng(trip.fromLate, trip.fromLong),
             icon: icon,
             onTap: () async {
-              await onTapTrip(trip);
+              await onTapTrip(trip, channel);
               // startPostion = LatLng(trip.fromLate, trip.fromLong);
               // endPostion = LatLng(trip.toLate, trip.toLong);
               // addPolyLine(trip.id);
@@ -196,7 +195,7 @@ class TripController extends GetxController {
     }
   }
 
-  Future<bool> addTripToDB() async {
+  Future<bool> addTripToDB(WebSocketChannel channel) async {
     if (startPostion == null || endPostion == null || price == null) {
       return false;
     }
@@ -210,7 +209,7 @@ class TripController extends GetxController {
         headers: Hostting().getHeader(), body: jsonEncode(trip.toJson()));
     if (response.statusCode == 200 && jsonDecode(response.body)) {
       AuthController authController = Get.find();
-      channel!.sink.add(Hostting.sendTrip(authController.user!.phone));
+      channel.sink.add(Hostting.sendTrip(authController.user!.phone));
       isStart = null;
       return true;
     }
@@ -276,7 +275,8 @@ class TripController extends GetxController {
     ];
   }
 
-  Future<void> addMarkerFromSocket(dynamic data) async {
+  Future<void> addMarkerFromSocket(
+      dynamic data, WebSocketChannel channel) async {
     var storeg = GetStorage();
     var json = data.toString().substring(0, data.toString().indexOf(""));
     var body = jsonDecode(json);
@@ -323,7 +323,7 @@ class TripController extends GetxController {
             position: LatLng(trip.fromLate, trip.fromLong),
             icon: icon,
             onTap: () async {
-              await onTapTrip(trip);
+              await onTapTrip(trip, channel);
               // Get.dialog(
               //   AlertDialog(
               //     title: const Text("معلومات الرحلة"),
@@ -357,7 +357,8 @@ class TripController extends GetxController {
     update();
   }
 
-  Future<void> onTapTrip(TripModelForSocket trip) async {
+  Future<void> onTapTrip(
+      TripModelForSocket trip, WebSocketChannel channel) async {
     startPostion = LatLng(trip.fromLate, trip.fromLong);
     endPostion = LatLng(trip.toLate, trip.toLong);
     addPolyLine(trip.id);
@@ -375,7 +376,7 @@ class TripController extends GetxController {
                     Get.back();
                     snackbarDef("ملاحظة", "تم قبول الطلب بنجاح");
                     trip.isAccepted = true;
-                    channel!.sink.add(Hostting.acceptTrip(trip.id));
+                    channel.sink.add(Hostting.acceptTrip(trip.id));
                     mark.removeWhere(
                         (element) => element.markerId.value != trip.id);
                   }
