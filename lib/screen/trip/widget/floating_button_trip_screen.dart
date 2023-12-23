@@ -35,8 +35,8 @@ class FloatingButtonTripScreen extends StatelessWidget {
                     children: [
                       TextFormFieldRadius(
                         controller: controller.start,
-                        // hint: "نقطة البداية",
                         hint: "انقر هنا لتحديد نقطة البداية",
+                        enabled: storeg.read("role")[0] == "User",
                         readOnly: true,
                         iconStart: Icons.location_on_outlined,
                         ontap: () => tripController.isStart = true.obs,
@@ -47,7 +47,7 @@ class FloatingButtonTripScreen extends StatelessWidget {
                       const SizedBox(height: 10),
                       TextFormFieldRadius(
                         controller: controller.end,
-                        // hint: "نقطة النهاية",
+                        enabled: storeg.read("role")[0] == "User",
                         hint: "انقر هنا لتحديد نقطة النهاية",
                         readOnly: true,
                         iconStart: Icons.location_on_outlined,

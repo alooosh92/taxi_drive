@@ -48,6 +48,7 @@ class Hostting {
   static Uri addTrip = Uri.parse("$api/app/AddTrip");
   static Uri addUserLocation = Uri.parse("$api/app/AddUserLocation");
   static Uri getUserLocation = Uri.parse("$api/app/GetUserLocations");
+  static Uri getUserTrip = Uri.parse("$api/app/GetAllTrip");
   static Uri deleteUserLoction(String id) =>
       Uri.parse("$api/app/DeleteUserLocation?locationId=$id");
   static Uri getTream(bool isPrive) =>

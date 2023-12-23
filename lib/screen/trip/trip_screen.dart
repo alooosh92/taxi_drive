@@ -45,6 +45,9 @@ class _TripScreenState extends State<TripScreen> {
 
     if (storeg.read("role")[0] == "Driver") {
       Timer.periodic(const Duration(seconds: 10), (timer) async {
+        if (channel.closeCode != null) {
+          channel.sink.add('{"protocol":"json","version":1}');
+        }
         var myMarker = await Geolocator.getCurrentPosition();
         channel.sink.add(Hostting.sendDriverLocation(
             authController.user!.phone, myMarker.latitude, myMarker.longitude));

@@ -8,6 +8,7 @@ import 'package:taxi_drive/screen/app_info/app_info_controller.dart';
 import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/auth/page/update_profile.dart';
 import 'package:taxi_drive/screen/location/loction_screen.dart';
+import 'package:taxi_drive/screen/user_trip/user_trip.dart';
 import 'package:taxi_drive/widget/row_text_press.dart';
 
 class DrawerHome extends StatelessWidget {
@@ -54,6 +55,11 @@ class DrawerHome extends StatelessWidget {
                 icon: Icons.account_box,
                 press: () => Get.to(const LoctionScreen()),
                 text: "مفضلة العناوين",
+              ),
+              RowTextPress(
+                icon: Icons.trip_origin,
+                press: () => Get.to(const UserTrip()),
+                text: "رحلاتي",
               ),
               RowTextPress(
                   icon: Icons.private_connectivity_outlined,

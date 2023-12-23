@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_drive/models/add_trip.dart';
 import 'package:taxi_drive/models/add_user_location.dart';
 import 'package:taxi_drive/models/car_model_for_socket.dart';
+import 'package:taxi_drive/models/show_trip.dart';
 import 'package:taxi_drive/models/trip_model_for_socket.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/hostting.dart';
@@ -42,6 +43,7 @@ class TripController extends GetxController {
   void onInit() async {
     await getFavoritLocation();
     await getTripForDriver();
+    await getUserTrips();
     if (startPostion == null) {
       await checkPermission();
       var loc = await Geolocator.getCurrentPosition();
@@ -78,6 +80,39 @@ class TripController extends GetxController {
       }
       update();
     }
+  }
+
+  Future<List<ShowTrip>> getUserTrips() async {
+    http.Response response =
+        await http.get(Hostting.getUserTrip, headers: Hostting().getHeader());
+    if (response.statusCode == 200) {
+      var body = jsonDecode(response.body);
+      List<ShowTrip> list = [];
+      for (var element in body) {
+        var trip = ShowTrip.fromJson(element);
+        if (trip.ended == null) {
+          var tr = trip;
+          var icon = await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(),
+            'lib/asset/images/trip2.png',
+          );
+          startPostion = LatLng(tr.fromLate, tr.fromLong);
+          endPostion = LatLng(tr.toLate, tr.toLong);
+          addPolyLine(tr.id);
+          mark.add(
+            Marker(
+              markerId: MarkerId(tr.id),
+              position: LatLng(tr.fromLate, tr.fromLong),
+              icon: icon,
+            ),
+          );
+          update();
+        }
+        list.add(trip);
+      }
+      return list;
+    }
+    return List.empty();
   }
 
   Future<bool> addUserLocation(UserLocation location) async {
