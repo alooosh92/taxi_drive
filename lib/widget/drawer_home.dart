@@ -43,7 +43,7 @@ class DrawerHome extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
               Text(
-                authController.user!.name,
+                authController.user == null ? "" : authController.user!.name,
                 style: FontManager.w500s22cW,
               ),
               RowTextPress(

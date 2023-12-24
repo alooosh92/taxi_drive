@@ -61,3 +61,31 @@ class Hostting {
   static Uri getTrip(String id) => Uri.parse("$api/app/GetTrip?id=$id");
   static Uri getAllTripForUser = Uri();
 }
+
+class HosttingTaxi {
+  var storeg = GetStorage();
+  static const String host = "https://srv451438.hstgr.cloud";
+  static const String mapKey = "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8";
+  static const String api = "$host/api";
+  //hrader
+  Map<String, String> getHeader() {
+    var token = storeg.read("token");
+    if (token != null && token.toString().isNotEmpty) {
+      return {
+        'Accept': 'application/json',
+        'Content-Type':
+            'multipart/form-data; boundary=<calculated when request is sent>',
+        'Authorization': 'Bearer $token',
+      };
+    }
+    return {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    };
+  }
+
+  //API
+  static Uri register = Uri.parse("$api/Register");
+  static Uri login = Uri.parse("$api/Login");
+  static Uri verify = Uri.parse("$api/VerifyPhone");
+}

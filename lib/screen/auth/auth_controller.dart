@@ -12,8 +12,8 @@ class AuthController extends GetxController {
   UserRegister? user;
 
   Future<bool> register(UserRegister user) async {
-    http.Response response = await http.post(Hostting.register,
-        headers: Hostting().getHeader(), body: jsonEncode(user.toJson()));
+    http.Response response =
+        await http.post(HosttingTaxi.register, body: user.toJson());
     if (response.statusCode == 200) {
       return true;
     }
@@ -22,7 +22,7 @@ class AuthController extends GetxController {
 
   Future<bool> login(String phone) async {
     http.Response response =
-        await http.post(Hostting.login(phone), headers: Hostting().getHeader());
+        await http.post(HosttingTaxi.login, body: {'phone': phone});
     if (response.statusCode == 200) {
       return true;
     }
@@ -30,9 +30,10 @@ class AuthController extends GetxController {
   }
 
   Future<bool> verify(Verify verify) async {
-    http.Response response = await http.post(Hostting.verify,
-        headers: Hostting().getHeader(), body: jsonEncode(verify.toJson()));
-    if (response.statusCode == 200) {
+    http.Response response =
+        await http.post(HosttingTaxi.verify, body: verify.toJson());
+    if (response.statusCode == 200 &&
+        jsonDecode(response.body)["isAuthanticated"] == true) {
       var storeg = GetStorage();
       var body = UserVerify.fromJson(jsonDecode(response.body));
       storeg.write("token", body.token);
@@ -66,12 +67,12 @@ class AuthController extends GetxController {
   }
 
   Future<bool> checkToken() async {
-    http.Response response =
-        await http.get(Hostting.checkToken, headers: Hostting().getHeader());
-    if (response.statusCode == 200) {
-      await userProfile();
-      return jsonDecode(response.body);
-    }
+    // http.Response response =
+    //     await http.get(Hostting.checkToken, headers: Hostting().getHeader());
+    // if (response.statusCode == 200) {
+    //   await userProfile();
+    //   return jsonDecode(response.body);
+    // }
     return false;
   }
 }
