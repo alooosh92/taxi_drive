@@ -36,6 +36,7 @@ class AuthController extends GetxController {
         jsonDecode(response.body)["isAuthanticated"] == true) {
       var storeg = GetStorage();
       var body = UserVerify.fromJson(jsonDecode(response.body));
+      storeg.write("id", body.id);
       storeg.write("token", body.token);
       storeg.write("role", body.roles);
       await userProfile();

@@ -36,10 +36,10 @@ class Hostting {
   static String acceptTrip(String id) =>
       '{"arguments":["$id"],"target":"AcceptTrip","type":1}';
   //Auth
-  static Uri register = Uri.parse("$api/Authentication/Register");
-  static Uri login(String phone) =>
-      Uri.parse("$api/Authentication/Login?phone=$phone");
-  static Uri verify = Uri.parse("$api/Authentication/VerifyPhone");
+  // static Uri register = Uri.parse("$api/Authentication/Register");
+  // static Uri login(String phone) =>
+  //     Uri.parse("$api/Authentication/Login?phone=$phone");
+  // static Uri verify = Uri.parse("$api/Authentication/VerifyPhone");
   static Uri refreshToken = Uri.parse("$api/Authentication/RefreshToken");
   static Uri checkToken = Uri.parse("$api/Authentication/CheckToken");
   //APP
@@ -73,8 +73,6 @@ class HosttingTaxi {
     if (token != null && token.toString().isNotEmpty) {
       return {
         'Accept': 'application/json',
-        'Content-Type':
-            'multipart/form-data; boundary=<calculated when request is sent>',
         'Authorization': 'Bearer $token',
       };
     }

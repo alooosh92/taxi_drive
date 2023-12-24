@@ -1,13 +1,11 @@
 class UserVerify {
+  late int id;
   late bool isAuthanticated;
   late String? name;
-  //late String message;
   late String? email;
   late String? roles;
   late String? token;
-  // late String? refreshToken;
   late String? phone;
-  // late DateTime? refreshTokenExpireson;
 
   UserVerify({
     required this.email,
@@ -16,10 +14,12 @@ class UserVerify {
     required this.phone,
     required this.roles,
     required this.token,
+    required this.id,
   });
 
   factory UserVerify.fromJson(Map<String, dynamic> json) {
     return UserVerify(
+      id: json["id"],
       email: json["email"],
       isAuthanticated: json["isAuthanticated"],
       phone: json["phone"],
