@@ -240,8 +240,8 @@ class TripController extends GetxController {
         toLate: endPostion!.latitude,
         toLong: endPostion!.longitude,
         price: double.parse(price!));
-    http.Response response = await http.post(Hostting.addTrip,
-        headers: Hostting().getHeader(), body: jsonEncode(trip.toJson()));
+    http.Response response = await http.post(HosttingTaxi.addTrip,
+        headers: HosttingTaxi().getHeader(), body: trip.toJson());
     if (response.statusCode == 200 && jsonDecode(response.body)) {
       AuthController authController = Get.find();
       channel.sink.add(Hostting.sendTrip(authController.user!.phone));

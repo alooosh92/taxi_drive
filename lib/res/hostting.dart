@@ -45,7 +45,7 @@ class Hostting {
   //APP
   static Uri updateProfile = Uri.parse("$api/app/UpdateUserInfo");
   static Uri showProfile = Uri.parse("$api/app/GetUserInfo");
-  static Uri addTrip = Uri.parse("$api/app/AddTrip");
+  // static Uri addTrip = Uri.parse("$api/app/AddTrip");
   static Uri addUserLocation = Uri.parse("$api/app/AddUserLocation");
   static Uri getUserLocation = Uri.parse("$api/app/GetUserLocations");
   static Uri getUserTrip = Uri.parse("$api/app/GetAllTrip");
@@ -73,12 +73,13 @@ class HosttingTaxi {
     if (token != null && token.toString().isNotEmpty) {
       return {
         'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
         'Authorization': 'Bearer $token',
       };
     }
     return {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
     };
   }
 
@@ -86,4 +87,5 @@ class HosttingTaxi {
   static Uri register = Uri.parse("$api/Register");
   static Uri login = Uri.parse("$api/Login");
   static Uri verify = Uri.parse("$api/VerifyPhone");
+  static Uri addTrip = Uri.parse("$api/AddTrip");
 }

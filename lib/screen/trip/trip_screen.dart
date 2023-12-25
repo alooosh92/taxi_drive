@@ -87,10 +87,9 @@ class _TripScreenState extends State<TripScreen> {
                                   zoomControlsEnabled: false,
                                   initialCameraPosition: controllerGet.cam!,
                                   markers: controllerGet.mark,
-                                  onTap: (late) =>
-                                      storeg.read("role")[0] == "User"
-                                          ? controllerGet.addTripMarker(late)
-                                          : null,
+                                  onTap: (late) => storeg.read("role") == "user"
+                                      ? controllerGet.addTripMarker(late)
+                                      : null,
                                   polylines: controllerGet.polyline,
                                   onMapCreated: (controller) async {
                                     mapControllerMap.complete(controller);
