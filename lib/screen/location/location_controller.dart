@@ -8,8 +8,8 @@ import 'package:taxi_drive/screen/trip/trip_controller.dart';
 class LocationController extends GetxController {
   List<UserLocation> locations = [];
   Future<List<UserLocation>> getLocation() async {
-    http.Response response = await http.get(HosttingTaxi.getUserLocation,
-        headers: HosttingTaxi().getHeader());
+    http.Response response = await http.get(Hostting.getUserLocation,
+        headers: Hostting().getHeader());
     locations = [];
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
@@ -22,8 +22,8 @@ class LocationController extends GetxController {
   }
 
   Future<bool> deleteLocation(String id) async {
-    http.Response response = await http.delete(HosttingTaxi.deleteUserLoction(id),
-        headers: HosttingTaxi().getHeader());
+    http.Response response = await http.delete(Hostting.deleteUserLoction(id),
+        headers: Hostting().getHeader());
     if (response.statusCode == 200 && jsonDecode(response.body)) {
       locations.removeWhere((element) => element.id == id);
       TripController tripController = Get.find();
