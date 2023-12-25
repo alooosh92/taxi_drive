@@ -7,7 +7,7 @@ import 'package:taxi_drive/res/hostting.dart';
 
 class AppInfoController extends GetxController {
   Future<List<TreamModel>> getTream(bool isPrive) async {
-    http.Response response = await http.get(Hostting.getTream(isPrive));
+    http.Response response = await http.get(HosttingTaxi.getTream(isPrive));
     List<TreamModel> list = [];
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);

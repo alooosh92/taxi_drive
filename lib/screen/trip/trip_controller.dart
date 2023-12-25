@@ -116,8 +116,8 @@ class TripController extends GetxController {
   }
 
   Future<bool> addUserLocation(UserLocation location) async {
-    http.Response response = await http.post(Hostting.addUserLocation,
-        headers: Hostting().getHeader(), body: jsonEncode(location.toJson()));
+    http.Response response = await http.post(HosttingTaxi.addUserLocation(location.name, location.lat, location.long),
+        headers: HosttingTaxi().getHeader(), body: jsonEncode(location.toJson()));
     if (response.statusCode == 200 && jsonDecode(response.body)) {
       return true;
     }
@@ -125,8 +125,8 @@ class TripController extends GetxController {
   }
 
   Future<bool> acceptedTrip(String id) async {
-    http.Response response = await http.put(Hostting.acceptedTrip(id),
-        headers: Hostting().getHeader());
+    http.Response response = await http.put(HosttingTaxi.acceptedTrip(id),
+        headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     }
@@ -135,7 +135,7 @@ class TripController extends GetxController {
 
   Future<bool> endTrip(String id) async {
     http.Response response =
-        await http.put(Hostting.endedTrip(id), headers: Hostting().getHeader());
+        await http.put(HosttingTaxi.endedTrip(id), headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     }
@@ -208,8 +208,8 @@ class TripController extends GetxController {
   }
 
   Future<void> getFavoritLocation() async {
-    http.Response response = await http.get(Hostting.getUserLocation,
-        headers: Hostting().getHeader());
+    http.Response response = await http.get(HosttingTaxi.getUserLocation,
+        headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
       for (var element in body) {
@@ -240,8 +240,9 @@ class TripController extends GetxController {
         toLate: endPostion!.latitude,
         toLong: endPostion!.longitude,
         price: double.parse(price!));
-    http.Response response = await http.post(Hostting.addTrip,
-        headers: Hostting().getHeader(), body: jsonEncode(trip.toJson()));
+    http.Response response = await http.post(HosttingTaxi.addTrip(
+      trip.fromLate, trip.toLate, trip.fromLong, trip.toLong, trip.price as int, ),
+        headers: HosttingTaxi().getHeader(), body: jsonEncode(trip.toJson()));
     if (response.statusCode == 200 && jsonDecode(response.body)) {
       AuthController authController = Get.find();
       channel.sink.add(Hostting.sendTrip(authController.user!.phone));
@@ -411,7 +412,7 @@ class TripController extends GetxController {
                     Get.back();
                     snackbarDef("ملاحظة", "تم قبول الطلب بنجاح");
                     trip.isAccepted = true;
-                    channel.sink.add(Hostting.acceptTrip(trip.id));
+                    channel.sink.add(HosttingTaxi.acceptTrip(trip.id));
                     mark.removeWhere(
                         (element) => element.markerId.value != trip.id);
                   }

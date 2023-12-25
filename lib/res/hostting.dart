@@ -33,8 +33,8 @@ class Hostting {
       '{"arguments":["$phone",$late,$long],"target":"SendDriver","type":1}';
   static String sendTrip(String phone) =>
       '{"arguments":["$phone"],"target":"SendTrip","type":1}';
-  static String acceptTrip(String id) =>
-      '{"arguments":["$id"],"target":"AcceptTrip","type":1}';
+  // static String acceptTrip(String id) =>
+  //     '{"arguments":["$id"],"target":"AcceptTrip","type":1}';
   //Auth
   // static Uri register = Uri.parse("$api/Authentication/Register");
   // static Uri login(String phone) =>
@@ -43,28 +43,29 @@ class Hostting {
   static Uri refreshToken = Uri.parse("$api/Authentication/RefreshToken");
   static Uri checkToken = Uri.parse("$api/Authentication/CheckToken");
   //APP
-  static Uri updateProfile = Uri.parse("$api/app/UpdateUserInfo");
-  static Uri showProfile = Uri.parse("$api/app/GetUserInfo");
-  static Uri addTrip = Uri.parse("$api/app/AddTrip");
-  static Uri addUserLocation = Uri.parse("$api/app/AddUserLocation");
-  static Uri getUserLocation = Uri.parse("$api/app/GetUserLocations");
+  // static Uri updateProfile = Uri.parse("$api/app/UpdateUserInfo");
+  // static Uri showProfile = Uri.parse("$api/app/GetUserInfo");
+  // static Uri addTrip = Uri.parse("$api/app/AddTrip");
+  // static Uri addUserLocation = Uri.parse("$api/app/AddUserLocation");
+  // static Uri getUserLocation = Uri.parse("$api/app/GetUserLocations");
   static Uri getUserTrip = Uri.parse("$api/app/GetAllTrip");
-  static Uri deleteUserLoction(String id) =>
-      Uri.parse("$api/app/DeleteUserLocation?locationId=$id");
-  static Uri getTream(bool isPrive) =>
-      Uri.parse("$api/app/GetTermsOfUseAndPrivacy?isPrivacy=$isPrive");
-  static Uri acceptedTrip(String id) =>
-      Uri.parse("$api/app/AcceptedTrip?id=$id");
-  static Uri endedTrip(String id) => Uri.parse("$api/app/EndedTrip?id=$id");
+  // static Uri deleteUserLoction(String id) =>
+  //     Uri.parse("$api/app/DeleteUserLocation?locationId=$id");
+  // static Uri getTream(bool isPrive) =>
+  //     Uri.parse("$api/app/GetTermsOfUseAndPrivacy?isPrivacy=$isPrive");
+  // static Uri acceptedTrip(String id) =>
+  //     Uri.parse("$api/app/AcceptedTrip?id=$id");
+  // static Uri endedTrip(String id) => Uri.parse("$api/app/EndedTrip?id=$id");
   static Uri getAllTripForDriver(double lat, double log) =>
       Uri.parse("$api/app/GetAllTripForDriver?lat=$lat&log=$log");
-  static Uri getTrip(String id) => Uri.parse("$api/app/GetTrip?id=$id");
+  // static Uri getTrip(String id) => Uri.parse("$api/app/GetTrip?id=$id");
   static Uri getAllTripForUser = Uri();
 }
 
 class HosttingTaxi {
   var storeg = GetStorage();
-  static const String host = "https://srv451438.hstgr.cloud";
+  static const String host =
+      "https://62.72.22.182:8090/preview/srv451438.hstgr.cloud";
   static const String mapKey = "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8";
   static const String api = "$host/api";
   //hrader
@@ -86,4 +87,26 @@ class HosttingTaxi {
   static Uri register = Uri.parse("$api/Register");
   static Uri login = Uri.parse("$api/Login");
   static Uri verify = Uri.parse("$api/VerifyPhone");
+  static Uri addTrip(
+    double fromlate,
+    double fromlong,
+    double tolate,
+    double tolong,
+    int price,
+  ) => Uri.parse("$api/app/Addtrip?fromlate$fromlate&fromlong=$fromlong&tolate=$tolate&tolong=$tolong&price=$price");
+  //  static Uri getTrip(String id) => Uri.parse("$api/app/GetTrip?id=$id");
+  static Uri addUserLocation(String name, double late, double long) =>
+      Uri.parse("$api/app/AddUserLocation?name=$name&late=$late&long=$long");
+  static Uri getUserLocation = Uri.parse("$api/app/GetUserLocations");
+  static Uri deleteUserLoction(String id) =>
+      Uri.parse("$api/app/DeleteUserLocation?locationId=$id");
+  static Uri getTream(bool isPrive) =>
+      Uri.parse("$api/app/GetTermsOfUseAndPrivacy?isPrivacy=$isPrive");
+  static Uri acceptedTrip(String id) =>
+      Uri.parse("$api/app/AcceptedTrip?id=$id");
+  static Uri endedTrip(String id) => Uri.parse("$api/app/EndedTrip?id=$id");
+  static String acceptTrip(String id) =>
+      '{"arguments":["$id"],"target":"AcceptTrip","type":1}';
+  static Uri showProfile = Uri.parse("$api/app/showProfile");
+  static Uri updateProfile = Uri.parse("$api/app/updateProfile");
 }
