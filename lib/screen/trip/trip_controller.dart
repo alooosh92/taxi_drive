@@ -12,7 +12,6 @@ import 'package:taxi_drive/models/show_trip.dart';
 import 'package:taxi_drive/models/trip_model_for_socket.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/hostting.dart';
-import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
 import 'package:taxi_drive/widget/snackbar_def.dart';
@@ -235,17 +234,17 @@ class TripController extends GetxController {
       return false;
     }
     var trip = AddTrip(
-        fromLate: startPostion!.latitude,
-        fromLong: startPostion!.longitude,
-        toLate: endPostion!.latitude,
-        toLong: endPostion!.longitude,
-        price: double.parse(price!));
+        fromLate: startPostion!.latitude.toString(),
+        fromLong: startPostion!.longitude.toString(),
+        toLate: endPostion!.latitude.toString(),
+        toLong: endPostion!.longitude.toString(),
+        price: double.parse(price!).toString());
     http.Response response = await http.post(HosttingTaxi.addTrip,
-        headers: HosttingTaxi().getHeader(), body: trip.toJson());
-    if (response.statusCode == 200 && jsonDecode(response.body)) {
-      AuthController authController = Get.find();
-      channel.sink.add(Hostting.sendTrip(authController.user!.phone));
-      isStart = null;
+        headers: HosttingTaxi().getHeader(), body: jsonEncode(trip.toJson()));
+    if (response.statusCode == 200 && jsonDecode(response.body)["message"]) {
+      // AuthController authController = Get.find();
+      // channel.sink.add(Hostting.sendTrip(authController.user!.phone));
+      //   isStart = null;
       return true;
     }
     return false;

@@ -1,9 +1,9 @@
 class AddTrip {
-  late double fromLate;
-  late double fromLong;
-  late double toLate;
-  late double toLong;
-  late double price;
+  late String fromLate;
+  late String fromLong;
+  late String toLate;
+  late String toLong;
+  late String price;
 
   AddTrip({
     required this.fromLate,
@@ -14,10 +14,10 @@ class AddTrip {
   });
 
   Map<String, dynamic> toJson() => {
-        "fromLate": fromLate,
-        "fromLong": fromLong,
-        "toLate": toLate,
-        "toLong": toLong,
+        "fromlate": fromLate,
+        "fromlong": fromLong,
+        "tolate": toLate,
+        "tolong": toLong,
         "price": price,
       };
 }

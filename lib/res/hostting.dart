@@ -72,14 +72,14 @@ class HosttingTaxi {
     var token = storeg.read("token");
     if (token != null && token.toString().isNotEmpty) {
       return {
-        'Accept': 'application/json',
-        'Content-Type': 'application/x-www-form-urlencoded',
+        //  'Accept': 'application/json',
+        'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       };
     }
     return {
-      'Accept': 'application/json',
-      'Content-Type': 'application/x-www-form-urlencoded',
+      //  'Accept': 'application/json',
+      'Content-Type': 'application/json',
     };
   }
 
@@ -87,5 +87,5 @@ class HosttingTaxi {
   static Uri register = Uri.parse("$api/Register");
   static Uri login = Uri.parse("$api/Login");
   static Uri verify = Uri.parse("$api/VerifyPhone");
-  static Uri addTrip = Uri.parse("$api/AddTrip");
+  static Uri addTrip = Uri.parse("$api/Addtrip");
 }
