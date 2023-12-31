@@ -151,7 +151,7 @@ class Favorite extends StatelessWidget {
                   if (b) {
                     snackbarDef("ملاحظة", "تم اضافة الموقع الى المفضلة");
                   } else {
-                    snackbarDef("تحذير", "حدث خطأ ما");
+                    snackbarDef("تحذير", "هذا الموقع مضاف مسبقاً");
                   }
                 },
                 child: const Text("اضافة", style: FontManager.w400s14cP)),
