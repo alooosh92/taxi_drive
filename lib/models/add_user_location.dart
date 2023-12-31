@@ -1,5 +1,5 @@
 class UserLocation {
-  late String? id;
+  late int? id;
   late double lat;
   late double long;
   late String name;

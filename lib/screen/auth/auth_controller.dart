@@ -46,8 +46,8 @@ class AuthController extends GetxController {
   }
 
   Future<UserRegister?> userProfile() async {
-    http.Response response =
-        await http.get(Hostting.showProfile, headers: Hostting().getHeader());
+    http.Response response = await http.get(HosttingTaxi.showProfile,
+        headers: Hostting().getHeader());
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
       user = UserRegister.fromJson(body);
@@ -57,7 +57,7 @@ class AuthController extends GetxController {
   }
 
   Future<bool> updateProfile(UpdateUser userUpdate) async {
-    http.Response response = await http.post(Hostting.updateProfile,
+    http.Response response = await http.post(HosttingTaxi.updateProfile,
         headers: Hostting().getHeader(), body: jsonEncode(userUpdate.toJson()));
     if (response.statusCode == 200) {
       var body = UserRegister.fromJson(jsonDecode(response.body));

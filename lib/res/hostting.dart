@@ -43,14 +43,14 @@ class Hostting {
   static Uri refreshToken = Uri.parse("$api/Authentication/RefreshToken");
   static Uri checkToken = Uri.parse("$api/Authentication/CheckToken");
   //APP
-  static Uri updateProfile = Uri.parse("$api/app/UpdateUserInfo");
-  static Uri showProfile = Uri.parse("$api/app/GetUserInfo");
-  // static Uri addTrip = Uri.parse("$api/app/AddTrip");
-  static Uri addUserLocation = Uri.parse("$api/app/AddUserLocation");
-  static Uri getUserLocation = Uri.parse("$api/app/GetUserLocations");
+  //static Uri updateProfile = Uri.parse("$api/app/UpdateUserInfo");
+  //static Uri showProfile = Uri.parse("$api/app/GetUserInfo");
+  //static Uri addTrip = Uri.parse("$api/app/AddTrip");
+  //static Uri addUserLocation = Uri.parse("$api/app/AddUserLocation");
+  //static Uri getUserLocation = Uri.parse("$api/app/GetUserLocations");
   static Uri getUserTrip = Uri.parse("$api/app/GetAllTrip");
-  static Uri deleteUserLoction(String id) =>
-      Uri.parse("$api/app/DeleteUserLocation?locationId=$id");
+  //static Uri deleteUserLoction(String id) =>
+  //    Uri.parse("$api/app/DeleteUserLocation?locationId=$id");
   static Uri getTream(bool isPrive) =>
       Uri.parse("$api/app/GetTermsOfUseAndPrivacy?isPrivacy=$isPrive");
   static Uri acceptedTrip(String id) =>
@@ -72,13 +72,11 @@ class HosttingTaxi {
     var token = storeg.read("token");
     if (token != null && token.toString().isNotEmpty) {
       return {
-        //  'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       };
     }
     return {
-      //  'Accept': 'application/json',
       'Content-Type': 'application/json',
     };
   }
@@ -88,4 +86,10 @@ class HosttingTaxi {
   static Uri login = Uri.parse("$api/Login");
   static Uri verify = Uri.parse("$api/VerifyPhone");
   static Uri addTrip = Uri.parse("$api/Addtrip");
+  static Uri updateProfile = Uri.parse("$api/updateProfile");
+  static Uri showProfile = Uri.parse("$api/showProfile");
+  static Uri addUserLocation = Uri.parse("$api/AddUserLocation");
+  static Uri getUserLocation = Uri.parse("$api/GetUserLocations");
+  static Uri deleteUserLoction(int id) =>
+      Uri.parse("$api/DeleteUserLocation?location_id=$id");
 }

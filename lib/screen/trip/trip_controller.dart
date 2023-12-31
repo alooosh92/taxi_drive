@@ -115,9 +115,9 @@ class TripController extends GetxController {
   }
 
   Future<bool> addUserLocation(UserLocation location) async {
-    http.Response response = await http.post(Hostting.addUserLocation,
+    http.Response response = await http.post(HosttingTaxi.addUserLocation,
         headers: Hostting().getHeader(), body: jsonEncode(location.toJson()));
-    if (response.statusCode == 200 && jsonDecode(response.body)) {
+    if (response.statusCode == 200 && jsonDecode(response.body)["message"]) {
       return true;
     }
     return false;
@@ -207,14 +207,14 @@ class TripController extends GetxController {
   }
 
   Future<void> getFavoritLocation() async {
-    http.Response response = await http.get(Hostting.getUserLocation,
+    http.Response response = await http.get(HosttingTaxi.getUserLocation,
         headers: Hostting().getHeader());
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
       for (var element in body) {
         UserLocation loc = UserLocation.frommJson(element);
         var mar = Marker(
-            markerId: MarkerId(loc.id!),
+            markerId: MarkerId(loc.id!.toString()),
             position: LatLng(loc.lat, loc.long),
             infoWindow: InfoWindow(title: loc.name),
             onTap: () {
