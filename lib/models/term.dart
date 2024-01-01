@@ -1,5 +1,5 @@
 class TreamModel {
-  late String id;
+  late int id;
   late String title;
   late String text;
 
@@ -7,7 +7,7 @@ class TreamModel {
 
   factory TreamModel.fromJson(Map<String, dynamic> json) {
     return TreamModel(
-      id: json["id"],
+      id: json["policy_id"],
       text: json["text"],
       title: json["title"],
     );

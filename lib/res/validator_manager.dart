@@ -20,7 +20,7 @@ class ValidatorManager {
     if (value == null || value.isEmpty) {
       return "لا يمكن ترك هذا الحقل فارغاً";
     }
-    if (value.length < 12) {
+    if (value.length < 9) {
       return "الرجاء ادخال رقم صحيح مع النداء القطري";
     }
     return null;

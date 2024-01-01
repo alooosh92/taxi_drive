@@ -8,6 +8,7 @@ import 'package:taxi_drive/screen/app_info/app_info_controller.dart';
 import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/auth/page/update_profile.dart';
 import 'package:taxi_drive/screen/location/loction_screen.dart';
+import 'package:taxi_drive/screen/make_a_complaint/make_a_complaint_screen.dart';
 import 'package:taxi_drive/screen/user_trip/user_trip.dart';
 import 'package:taxi_drive/widget/row_text_press.dart';
 
@@ -67,7 +68,7 @@ class DrawerHome extends StatelessWidget {
                         AppInfo(
                           tileAppBar: "شروط الاستخدام",
                           isRegister: false,
-                          list: await appInfoController.getTream(false),
+                          list: await appInfoController.getTream(0),
                         ),
                       ),
                   text: "شروط الاستخدام"),
@@ -77,7 +78,7 @@ class DrawerHome extends StatelessWidget {
                   AppInfo(
                     tileAppBar: "الخصوصية",
                     isRegister: false,
-                    list: await appInfoController.getTream(true),
+                    list: await appInfoController.getTream(1),
                   ),
                 ),
                 text: "الخصوصية",
@@ -89,7 +90,7 @@ class DrawerHome extends StatelessWidget {
               ),
               RowTextPress(
                 icon: Icons.contact_emergency_outlined,
-                press: () {},
+                press: () => Get.to(const MakeAComplaintScreen()),
                 text: "تواصل معنا",
               ),
               RowTextPress(
