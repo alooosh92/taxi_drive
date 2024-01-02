@@ -5,23 +5,7 @@ class Hostting {
   static const String host = "https://taxidrivertest-001-site1.ctempurl.com";
   static const String websocket =
       "wss://taxidrivertest-001-site1.ctempurl.com/car";
-  static const String mapKey = "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8";
   static const String api = "$host/api";
-  Map<String, String> getHeader() {
-    var token = storeg.read("token");
-    if (token != null && token.toString().isNotEmpty) {
-      return {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      };
-    }
-    return {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    };
-  }
-
   static String sendDriverLocation(String phone, double late, double long) =>
       '{"arguments":["$phone",$late,$long],"target":"SendDriver","type":1}';
   static String sendTrip(String phone) =>
@@ -38,6 +22,21 @@ class Hostting {
       Uri.parse("$api/app/GetAllTripForDriver?lat=$lat&log=$log");
   static Uri getTrip(String id) => Uri.parse("$api/app/GetTrip?id=$id");
   static Uri getAllTripForUser = Uri();
+  // static const String mapKey = "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8";
+  // Map<String, String> getHeader() {
+  //   var token = storeg.read("token");
+  //   if (token != null && token.toString().isNotEmpty) {
+  //     return {
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/json',
+  //       'Authorization': 'Bearer $token',
+  //     };
+  //   }
+  //   return {
+  //     'Accept': 'application/json',
+  //     'Content-Type': 'application/json',
+  //   };
+  // }
   // static const String host = "https://10.0.2.2:7215";
   // static const String websocket = "wss://10.0.2.2:7215/car";
   //Auth
