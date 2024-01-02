@@ -9,7 +9,7 @@ class LocationController extends GetxController {
   List<UserLocation> locations = [];
   Future<List<UserLocation>> getLocation() async {
     http.Response response = await http.get(HosttingTaxi.getUserLocation,
-        headers: Hostting().getHeader());
+        headers: HosttingTaxi().getHeader());
     locations = [];
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
@@ -24,7 +24,7 @@ class LocationController extends GetxController {
   Future<bool> deleteLocation(int id) async {
     http.Response response = await http.delete(
         HosttingTaxi.deleteUserLoction(id),
-        headers: Hostting().getHeader());
+        headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200 && jsonDecode(response.body)["message"]) {
       locations.removeWhere((element) => element.id == id);
       TripController tripController = Get.find();

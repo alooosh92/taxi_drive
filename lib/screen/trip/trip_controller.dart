@@ -82,8 +82,8 @@ class TripController extends GetxController {
   }
 
   Future<List<ShowTrip>> getUserTrips() async {
-    http.Response response =
-        await http.get(Hostting.getUserTrip, headers: Hostting().getHeader());
+    http.Response response = await http.get(Hostting.getUserTrip,
+        headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
       List<ShowTrip> list = [];
@@ -116,7 +116,8 @@ class TripController extends GetxController {
 
   Future<bool> addUserLocation(UserLocation location) async {
     http.Response response = await http.post(HosttingTaxi.addUserLocation,
-        headers: Hostting().getHeader(), body: jsonEncode(location.toJson()));
+        headers: HosttingTaxi().getHeader(),
+        body: jsonEncode(location.toJson()));
     if (response.statusCode == 200 && jsonDecode(response.body)["message"]) {
       return true;
     }
@@ -125,7 +126,7 @@ class TripController extends GetxController {
 
   Future<bool> acceptedTrip(String id) async {
     http.Response response = await http.put(Hostting.acceptedTrip(id),
-        headers: Hostting().getHeader());
+        headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     }
@@ -133,8 +134,8 @@ class TripController extends GetxController {
   }
 
   Future<bool> endTrip(String id) async {
-    http.Response response =
-        await http.put(Hostting.endedTrip(id), headers: Hostting().getHeader());
+    http.Response response = await http.put(Hostting.endedTrip(id),
+        headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     }
@@ -145,7 +146,7 @@ class TripController extends GetxController {
     var g = await Geolocator.getCurrentPosition();
     http.Response response = await http.get(
         Hostting.getAllTripForDriver(g.latitude, g.longitude),
-        headers: Hostting().getHeader());
+        headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       WebSocketChannel channel = IOWebSocketChannel.connect(Hostting.websocket);
       channel.sink.add('{"protocol":"json","version":1}');
@@ -208,7 +209,7 @@ class TripController extends GetxController {
 
   Future<void> getFavoritLocation() async {
     http.Response response = await http.get(HosttingTaxi.getUserLocation,
-        headers: Hostting().getHeader());
+        headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
       for (var element in body) {
@@ -254,7 +255,7 @@ class TripController extends GetxController {
     if (startPostion != null && endPostion != null) {
       PolylinePoints polylinePoints = PolylinePoints();
       PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-          Hostting.mapKey,
+          HosttingTaxi.mapKey,
           PointLatLng(startPostion!.latitude, startPostion!.longitude),
           PointLatLng(endPostion!.latitude, endPostion!.longitude));
       listPostionForPolyline.clear();
