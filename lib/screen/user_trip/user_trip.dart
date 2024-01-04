@@ -24,7 +24,7 @@ class UserTrip extends StatelessWidget {
                   return Card(
                     elevation: 5,
                     child: Column(
-                      children: [Text(snapshot.data![index].id)],
+                      children: [Text(snapshot.data![index].id.toString())],
                     ),
                   );
                 });

@@ -82,7 +82,7 @@ class TripController extends GetxController {
   }
 
   Future<List<ShowTrip>> getUserTrips() async {
-    http.Response response = await http.get(Hostting.getUserTrip,
+    http.Response response = await http.get(HosttingTaxi.getUserTrip,
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
@@ -97,10 +97,10 @@ class TripController extends GetxController {
           );
           startPostion = LatLng(tr.fromLate, tr.fromLong);
           endPostion = LatLng(tr.toLate, tr.toLong);
-          addPolyLine(tr.id);
+          addPolyLine(tr.id.toString());
           mark.add(
             Marker(
-              markerId: MarkerId(tr.id),
+              markerId: MarkerId(tr.id.toString()),
               position: LatLng(tr.fromLate, tr.fromLong),
               icon: icon,
             ),

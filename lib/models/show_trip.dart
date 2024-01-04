@@ -1,5 +1,5 @@
 class ShowTrip {
-  late String id;
+  late int id;
   late double fromLate;
   late double fromLong;
   late double toLate;

@@ -14,7 +14,6 @@ class Hostting {
       '{"arguments":["$id"],"target":"AcceptTrip","type":1}';
   static Uri refreshToken = Uri.parse("$api/Authentication/RefreshToken");
   static Uri checkToken = Uri.parse("$api/Authentication/CheckToken");
-  static Uri getUserTrip = Uri.parse("$api/app/GetAllTrip");
   static Uri acceptedTrip(String id) =>
       Uri.parse("$api/app/AcceptedTrip?id=$id");
   static Uri endedTrip(String id) => Uri.parse("$api/app/EndedTrip?id=$id");
@@ -22,7 +21,8 @@ class Hostting {
       Uri.parse("$api/app/GetAllTripForDriver?lat=$lat&log=$log");
   static Uri getTrip(String id) => Uri.parse("$api/app/GetTrip?id=$id");
   static Uri getAllTripForUser = Uri();
-  // static const String mapKey = "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8";
+  //static Uri getUserTrip = Uri.parse("$api/app/GetAllTrip");
+  //static const String mapKey = "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8";
   // Map<String, String> getHeader() {
   //   var token = storeg.read("token");
   //   if (token != null && token.toString().isNotEmpty) {
@@ -85,6 +85,7 @@ class HosttingTaxi {
   static Uri addUserLocation = Uri.parse("$api/AddUserLocation");
   static Uri getUserLocation = Uri.parse("$api/GetUserLocations");
   static Uri sendMessage = Uri.parse("$api/AddConnectWithUs");
+  static Uri getUserTrip = Uri.parse("$api/GetUserTrip");
   static Uri deleteUserLoction(int id) =>
       Uri.parse("$api/DeleteUserLocation?location_id=$id");
   static Uri getTream(int isPrive) =>
