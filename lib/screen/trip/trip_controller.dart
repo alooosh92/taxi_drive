@@ -7,7 +7,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_drive/models/add_trip.dart';
 import 'package:taxi_drive/models/add_user_location.dart';
-import 'package:taxi_drive/models/car_model_for_socket.dart';
+import 'package:taxi_drive/models/send_driver_state.dart';
 import 'package:taxi_drive/models/show_trip.dart';
 import 'package:taxi_drive/models/trip_model_for_socket.dart';
 import 'package:taxi_drive/res/color_manager.dart';
@@ -148,8 +148,9 @@ class TripController extends GetxController {
         Hostting.getAllTripForDriver(g.latitude, g.longitude),
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
-      WebSocketChannel channel = IOWebSocketChannel.connect(Hostting.websocket);
-      channel.sink.add('{"protocol":"json","version":1}');
+      WebSocketChannel channel =
+          IOWebSocketChannel.connect(HosttingTaxi.websocket);
+      channel.sink.add(HosttingTaxi.openSocket);
       var icon = await BitmapDescriptor.fromAssetImage(
         const ImageConfiguration(),
         'lib/asset/images/trip2.png',
@@ -313,15 +314,14 @@ class TripController extends GetxController {
   Future<void> addMarkerFromSocket(
       dynamic data, WebSocketChannel channel) async {
     var storeg = GetStorage();
-    var json = data.toString().substring(0, data.toString().indexOf(""));
-    var body = jsonDecode(json);
-    var type = body["type"] ?? "";
-    if (type == 1) {
+    var body = jsonDecode(data);
+    var data2 = jsonDecode(body['data']);
+    if (data2['data'] != null) {
       var icon = BitmapDescriptor.defaultMarker;
-      var arguments = body["arguments"];
-      if (arguments[0] == "car" && storeg.read("role")[0] == "User") {
-        var car = CarModelForSocket.fromJson(arguments[1]);
-        if (car.isEmpty!) {
+      var arguments = data2['data'];
+      if (arguments['driver_id'] != null && storeg.read("role") == "user") {
+        var car = SendDriverStateModel.fromJson(arguments);
+        if (car.isOnline) {
           icon = await BitmapDescriptor.fromAssetImage(
             const ImageConfiguration(),
             'lib/asset/images/car_raedy.png',
@@ -333,17 +333,16 @@ class TripController extends GetxController {
           );
         }
         mark.add(Marker(
-            markerId: MarkerId(car.phone!),
-            position: LatLng(arguments[2], arguments[3]),
+            markerId: MarkerId(car.id),
+            position: LatLng(double.parse(car.late), double.parse(car.long)),
             icon: icon,
             onTap: () {
-              Get.dialog(
-                AlertDialog(
-                  title: const Text("معلومات السيارة"),
-                  content: Text(
-                      "اسم السائق: ${car.name} \n رقم الجوال: ${car.phone} \n لون السيارة: ${car.carColor} \n نوع السيارة: ${car.carType} \n رقم اللوحة: ${car.carNumber}"),
-                ),
-              );
+              // Get.dialog(
+              //   AlertDialog(
+              //       title: const Text("معلومات السيارة"), content: Text('')
+              //       //    "اسم السائق: ${car.name} \n رقم الجوال: ${car.phone} \n لون السيارة: ${car.carColor} \n نوع السيارة: ${car.carType} \n رقم اللوحة: ${car.carNumber}"),
+              //       ),
+              // );
             }));
         update();
       }

@@ -1,11 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:taxi_drive/models/send_driver_state.dart';
 import 'package:taxi_drive/res/hostting.dart';
-import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/trip_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/drawer_button.dart';
 import 'package:taxi_drive/screen/trip/widget/floating_button_trip_screen.dart';
@@ -13,6 +14,7 @@ import 'package:taxi_drive/widget/drawer_home.dart';
 import 'package:taxi_drive/widget/progress_def.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:http/http.dart' as http;
 
 class TripScreen extends StatefulWidget {
   const TripScreen({super.key});
@@ -37,20 +39,25 @@ class _TripScreenState extends State<TripScreen> {
     TripController tripController = Get.find();
     final Completer<GoogleMapController> mapControllerMap =
         Completer<GoogleMapController>();
-
-    AuthController authController = Get.find();
     var storeg = GetStorage();
-    WebSocketChannel channel = IOWebSocketChannel.connect(Hostting.websocket);
-    channel.sink.add('{"protocol":"json","version":1}');
+    WebSocketChannel channel =
+        IOWebSocketChannel.connect(HosttingTaxi.websocket);
+    channel.sink.add(HosttingTaxi.openSocket);
 
-    if (storeg.read("role")[0] == "Driver") {
+    if (storeg.read("role") == "driver") {
+      var storeg = GetStorage();
       Timer.periodic(const Duration(seconds: 10), (timer) async {
         if (channel.closeCode != null) {
-          channel.sink.add('{"protocol":"json","version":1}');
+          channel.sink.add(HosttingTaxi.openSocket);
         }
         var myMarker = await Geolocator.getCurrentPosition();
-        channel.sink.add(Hostting.sendDriverLocation(
-            authController.user!.phone, myMarker.latitude, myMarker.longitude));
+        SendDriverStateModel dr = SendDriverStateModel(
+            id: storeg.read('id').toString(),
+            late: myMarker.latitude.toString(),
+            long: myMarker.longitude.toString(),
+            isOnline: true);
+        await http.post(HosttingTaxi.sendDriverState,
+            headers: HosttingTaxi().getHeader(), body: jsonEncode(dr.toJson()));
       });
     }
     return Scaffold(

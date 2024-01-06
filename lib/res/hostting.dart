@@ -1,10 +1,10 @@
+import 'dart:convert';
+
 import 'package:get_storage/get_storage.dart';
 
 class Hostting {
   var storeg = GetStorage();
   static const String host = "https://taxidrivertest-001-site1.ctempurl.com";
-  static const String websocket =
-      "wss://taxidrivertest-001-site1.ctempurl.com/car";
   static const String api = "$host/api";
   static String sendDriverLocation(String phone, double late, double long) =>
       '{"arguments":["$phone",$late,$long],"target":"SendDriver","type":1}';
@@ -21,6 +21,9 @@ class Hostting {
       Uri.parse("$api/app/GetAllTripForDriver?lat=$lat&log=$log");
   static Uri getTrip(String id) => Uri.parse("$api/app/GetTrip?id=$id");
   static Uri getAllTripForUser = Uri();
+  //static const String websocket =
+  //  "wss://taxidrivertest-001-site1.ctempurl.com/car";
+  //static const dynamic openSocket = '{"protocol":"json","version":1}';
   //static Uri getUserTrip = Uri.parse("$api/app/GetAllTrip");
   //static const String mapKey = "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8";
   // Map<String, String> getHeader() {
@@ -59,7 +62,12 @@ class Hostting {
 class HosttingTaxi {
   var storeg = GetStorage();
   static const String host = "https://srv451438.hstgr.cloud";
+  static const String websocket = "ws://srv451438.hstgr.cloud:8443/app/myKey";
   static const String mapKey = "AIzaSyCxsin6TH7ouxNCDVoRp7IJihc4JxThkG8";
+  static dynamic openSocket = jsonEncode({
+    "event": "pusher:subscribe",
+    "data": {"channel": "public-channel"}
+  });
   static const String api = "$host/api";
   //hrader
   Map<String, String> getHeader() {
@@ -76,6 +84,7 @@ class HosttingTaxi {
   }
 
   //API
+  static Uri sendDriverState = Uri.parse("$api/ChangeStateDriver");
   static Uri register = Uri.parse("$api/Register");
   static Uri login = Uri.parse("$api/Login");
   static Uri verify = Uri.parse("$api/VerifyPhone");
