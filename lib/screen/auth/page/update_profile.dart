@@ -67,7 +67,6 @@ class UpdateProfile extends StatelessWidget {
                         controller: email,
                         hint: "البريد الالكتروني",
                         topPadding: 30,
-                        //   validator: (value) => ValidatorManager.email(value),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 60),

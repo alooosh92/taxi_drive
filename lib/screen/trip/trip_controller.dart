@@ -62,15 +62,12 @@ class TripController extends GetxController {
         ),
       );
       var info = "lat:${pos.latitude} log:${pos.longitude}";
-      // await placemarkFromCoordinates(pos.latitude, pos.longitude);
       if (isStart!.value) {
         startPostion = pos;
         start.text = info;
-        //info.first.street ?? "لا يوجد معلومات";
       } else {
         endPostion = pos;
         end.text = info;
-        //info.first.street ?? "لا يوجد معلومات";
       }
       if (startPostion != null && endPostion != null) {
         addPolyLine("test");
@@ -122,8 +119,10 @@ class TripController extends GetxController {
     return false;
   }
 
-  Future<bool> acceptedTrip(String id) async {
-    http.Response response = await http.put(Hostting.acceptedTrip(id),
+  Future<bool> acceptedTrip(int tripId) async {
+    var storge = GetStorage();
+    http.Response response = await http.put(
+        HosttingTaxi.acceptedTrip(tripId, storge.read('id')),
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -131,8 +130,8 @@ class TripController extends GetxController {
     return false;
   }
 
-  Future<bool> endTrip(String id) async {
-    http.Response response = await http.put(Hostting.endedTrip(id),
+  Future<bool> endTrip(int id) async {
+    http.Response response = await http.put(HosttingTaxi.endedTrip(id),
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -143,7 +142,7 @@ class TripController extends GetxController {
   Future<void> getTripForDriver() async {
     var g = await Geolocator.getCurrentPosition();
     http.Response response = await http.get(
-        Hostting.getAllTripForDriver(g.latitude, g.longitude),
+        HosttingTaxi.getAllTripForDriver(g.latitude, g.longitude),
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       WebSocketChannel channel =
@@ -161,44 +160,44 @@ class TripController extends GetxController {
             markerId: MarkerId(trip.id.toString()),
             position: LatLng(trip.fromLate, trip.fromLong),
             icon: icon,
-            onTap: () async {
-              await onTapTrip(trip, channel);
-              // startPostion = LatLng(trip.fromLate, trip.fromLong);
-              // endPostion = LatLng(trip.toLate, trip.toLong);
-              // addPolyLine(trip.id);
-              // if (!trip.isAccepted) {
-              //   Get.dialog(
-              //     AlertDialog(
-              //       actions: [
-              //         ElevatedButton(
-              //             style: const ButtonStyle(
-              //                 backgroundColor: MaterialStatePropertyAll(
-              //                     ColorManager.primary)),
-              //             onPressed: () async {
-              //               var b = await acceptedTrip(trip.id);
-              //               if (b) {
-              //                 Get.back();
-              //                 snackbarDef("ملاحظة", "تم قبول الطلب بنجاح");
-              //                 trip.isAccepted = true;
-              //                 channel.sink.add(Hostting.acceptTrip(trip.id));
-              //                 mark.removeWhere((element) =>
-              //                     element.markerId.value != trip.id);
-              //               }
-              //             },
-              //             child: const Text("قبول")),
-              //         ElevatedButton(
-              //             onPressed: () {
-              //               Get.back();
-              //             },
-              //             child: const Text("إلغاء"))
-              //       ],
-              //       title: const Text("معلومات الرحلة"),
-              //       content: Text(
-              //           "نقطة البداية: ${trip.start} \n نقطة النهاية: ${trip.end} \n اجور التوصيل: ${trip.price}"),
-              //     ),
-              //   );
-              // }
-            },
+            // onTap: () async {
+            //   await onTapTrip(trip, channel);
+            //   // startPostion = LatLng(trip.fromLate, trip.fromLong);
+            //   // endPostion = LatLng(trip.toLate, trip.toLong);
+            //   // addPolyLine(trip.id);
+            //   // if (!trip.isAccepted) {
+            //   //   Get.dialog(
+            //   //     AlertDialog(
+            //   //       actions: [
+            //   //         ElevatedButton(
+            //   //             style: const ButtonStyle(
+            //   //                 backgroundColor: MaterialStatePropertyAll(
+            //   //                     ColorManager.primary)),
+            //   //             onPressed: () async {
+            //   //               var b = await acceptedTrip(trip.id);
+            //   //               if (b) {
+            //   //                 Get.back();
+            //   //                 snackbarDef("ملاحظة", "تم قبول الطلب بنجاح");
+            //   //                 trip.isAccepted = true;
+            //   //                 channel.sink.add(Hostting.acceptTrip(trip.id));
+            //   //                 mark.removeWhere((element) =>
+            //   //                     element.markerId.value != trip.id);
+            //   //               }
+            //   //             },
+            //   //             child: const Text("قبول")),
+            //   //         ElevatedButton(
+            //   //             onPressed: () {
+            //   //               Get.back();
+            //   //             },
+            //   //             child: const Text("إلغاء"))
+            //   //       ],
+            //   //       title: const Text("معلومات الرحلة"),
+            //   //       content: Text(
+            //   //           "نقطة البداية: ${trip.start} \n نقطة النهاية: ${trip.end} \n اجور التوصيل: ${trip.price}"),
+            //   //     ),
+            //   //   );
+            //   // }
+            // },
           ),
         );
       }
@@ -242,9 +241,6 @@ class TripController extends GetxController {
     http.Response response = await http.post(HosttingTaxi.addTrip,
         headers: HosttingTaxi().getHeader(), body: jsonEncode(trip.toJson()));
     if (response.statusCode == 200 && jsonDecode(response.body)["message"]) {
-      // AuthController authController = Get.find();
-      // channel.sink.add(Hostting.sendTrip(authController.user!.phone));
-      //   isStart = null;
       return true;
     }
     return false;
@@ -331,47 +327,31 @@ class TripController extends GetxController {
           );
         }
         mark.add(Marker(
-            markerId: MarkerId(car.id),
-            position: LatLng(double.parse(car.late), double.parse(car.long)),
-            icon: icon,
-            onTap: () {
-              // Get.dialog(
-              //   AlertDialog(
-              //       title: const Text("معلومات السيارة"), content: Text('')
-              //       //    "اسم السائق: ${car.name} \n رقم الجوال: ${car.phone} \n لون السيارة: ${car.carColor} \n نوع السيارة: ${car.carType} \n رقم اللوحة: ${car.carNumber}"),
-              //       ),
-              // );
-            }));
+          markerId: MarkerId(car.id),
+          position: LatLng(double.parse(car.late), double.parse(car.long)),
+          icon: icon,
+        ));
         update();
-      }
-      if (arguments['trip_id'] != null && storeg.read("role") == "driver") {
-        var trip = TripModelForSocket.fromJson(arguments);
-        icon = await BitmapDescriptor.fromAssetImage(
-          const ImageConfiguration(),
-          'lib/asset/images/trip2.png',
-        );
-        mark.add(Marker(
+      } else {
+        if (arguments['trip_id'] != null && storeg.read("role") == "driver") {
+          var trip = TripModelForSocket.fromJson(arguments);
+          icon = await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(),
+            'lib/asset/images/trip2.png',
+          );
+          mark.add(Marker(
             markerId: MarkerId(trip.id.toString()),
             position: LatLng(trip.fromLate, trip.fromLong),
             icon: icon,
-            onTap: () async {
-              await onTapTrip(trip, channel);
-              // Get.dialog(
-              //   AlertDialog(
-              //     title: const Text("معلومات الرحلة"),
-              //     content: Text(
-              //         "نقطة البداية: ${trip.start} \n نقطة النهاية: ${trip.end} \n اجور التوصيل: ${trip.price}"),
-              //   ),
-              // );
-              // startPostion = LatLng(trip.fromLate, trip.fromLong);
-              // endPostion = LatLng(trip.toLate, trip.toLong);
-              // addPolyLine(trip.id);
-            }));
-        update();
-      }
-      if (arguments[0] == "AcceptTrip" && storeg.read("role") == "driver") {
-        mark.removeWhere((element) => element.markerId.value == arguments[1]);
-        update();
+          ));
+          update();
+        } else {
+          if (arguments[0] == "AcceptTrip" && storeg.read("role") == "driver") {
+            mark.removeWhere(
+                (element) => element.markerId.value == arguments[1]);
+            update();
+          }
+        }
       }
     }
   }
@@ -394,68 +374,5 @@ class TripController extends GetxController {
     startPostion = LatLng(trip.fromLate, trip.fromLong);
     endPostion = LatLng(trip.toLate, trip.toLong);
     addPolyLine(trip.id.toString());
-    // if (!trip.isAccepted) {
-    //   Get.dialog(
-    //     AlertDialog(
-    //       actions: [
-    //         ElevatedButton(
-    //             style: const ButtonStyle(
-    //                 backgroundColor:
-    //                     MaterialStatePropertyAll(ColorManager.primary)),
-    //             onPressed: () async {
-    //               var b = await acceptedTrip(trip.id.toString());
-    //               if (b) {
-    //                 Get.back();
-    //                 snackbarDef("ملاحظة", "تم قبول الطلب بنجاح");
-    //                // trip.isAccepted = true;
-    //                 channel.sink.add(Hostting.acceptTrip(trip.id.toString()));
-    //                 mark.removeWhere(
-    //                     (element) => element.markerId.value != trip.id);
-    //               }
-    //             },
-    //             child: const Text("قبول")),
-    //         ElevatedButton(
-    //             onPressed: () {
-    //               Get.back();
-    //             },
-    //             child: const Text("إلغاء"))
-    //       ],
-    //       title: const Text("معلومات الرحلة"),
-    //       content: Text(""
-    //           // "نقطة البداية: ${trip.start} \n نقطة النهاية: ${trip.end} \n اجور التوصيل: ${trip.price}"
-    //           ),
-    //     ),
-    //   );
-    // } else {
-    //   Get.dialog(
-    //     AlertDialog(
-    //       actions: [
-    //         ElevatedButton(
-    //             style: const ButtonStyle(
-    //                 backgroundColor:
-    //                     MaterialStatePropertyAll(ColorManager.primary)),
-    //             onPressed: () async {
-    //               var b = await endTrip(trip.id.toString());
-    //               if (b) {
-    //                 Get.back();
-    //                 snackbarDef("ملاحظة", "تم انهاء الرحلة بنجاح");
-    //                 polyline = {};
-    //                 listPostionForPolyline = [];
-    //                 mark.removeWhere(
-    //                     (element) => element.markerId.value == trip.id);
-    //               }
-    //             },
-    //             child: const Text("انهاء")),
-    //         ElevatedButton(
-    //             onPressed: () {
-    //               Get.back();
-    //             },
-    //             child: const Text("إلغاء"))
-    //       ],
-    //       title: const Text("انهاء الرحلة"),
-    //       content: const Text("انهاء الرحلة؟"),
-    //     ),
-    //   );
-    // }
   }
 }

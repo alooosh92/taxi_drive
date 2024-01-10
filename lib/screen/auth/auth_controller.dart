@@ -69,12 +69,6 @@ class AuthController extends GetxController {
   }
 
   Future<bool> checkToken() async {
-    // http.Response response =
-    //     await http.get(Hostting.checkToken, headers: Hostting().getHeader());
-    // if (response.statusCode == 200) {
-    //   await userProfile();
-    //   return jsonDecode(response.body);
-    // }
     return false;
   }
 }
