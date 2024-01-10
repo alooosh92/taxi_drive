@@ -81,7 +81,6 @@ InputDecoration inputDecorationDef({
   String? val,
 }) {
   return InputDecoration(
-    //label: Text(label ?? ""),
     isDense: true,
     hintText: hint,
     labelStyle: textStyle ?? FontManager.w500s16cG,
