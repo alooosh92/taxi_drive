@@ -7,7 +7,9 @@ class TripModelForSocket {
   late double toLong;
   late double price;
   late String status;
-  late DateTime created;
+  late String created;
+  late String username;
+  late String phone;
 
   TripModelForSocket(
       {required this.fromLate,
@@ -18,11 +20,13 @@ class TripModelForSocket {
       required this.toLong,
       required this.created,
       required this.status,
-      required this.userId});
+      required this.userId,
+      required this.phone,
+      required this.username});
 
   factory TripModelForSocket.fromJson(Map<String, dynamic> json) {
     return TripModelForSocket(
-      created: DateTime.parse(json['created'].toString()),
+      created: json['created'],
       fromLate: double.parse(json['fromLate'].toString()),
       fromLong: double.parse(json['fromLong'].toString()),
       id: json['trip_id'],
@@ -31,6 +35,8 @@ class TripModelForSocket {
       toLate: double.parse(json['toLate'].toString()),
       toLong: double.parse(json['toLong'].toString()),
       userId: json['user_id'],
+      phone: json['phone'],
+      username: json['userName'],
     );
   }
 }

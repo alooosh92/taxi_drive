@@ -10,9 +10,11 @@ import 'package:taxi_drive/models/add_user_location.dart';
 import 'package:taxi_drive/models/send_driver_state.dart';
 import 'package:taxi_drive/models/show_trip.dart';
 import 'package:taxi_drive/models/trip_model_for_socket.dart';
+import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/hostting.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
+import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -35,6 +37,7 @@ class TripController extends GetxController {
   String? masafa;
   String? time;
   String? price;
+  String? carStat;
 
   @override
   void onInit() async {
@@ -121,11 +124,11 @@ class TripController extends GetxController {
 
   Future<bool> acceptedTrip(int tripId) async {
     var storge = GetStorage();
-    http.Response response = await http.put(
+    http.Response response = await http.post(
         HosttingTaxi.acceptedTrip(tripId, storge.read('id')),
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return jsonDecode(response.body)['message'];
     }
     return false;
   }
@@ -309,48 +312,139 @@ class TripController extends GetxController {
       dynamic data, WebSocketChannel channel) async {
     var storeg = GetStorage();
     var body = jsonDecode(data);
-    var data2 = jsonDecode(body['data']);
-    if (data2['data'] != null) {
-      var icon = BitmapDescriptor.defaultMarker;
-      var arguments = data2['data'];
-      if (arguments['driver_id'] != null && storeg.read("role") == "user") {
-        var car = SendDriverStateModel.fromJson(arguments);
-        if (car.isOnline) {
-          icon = await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(),
-            'lib/asset/images/car_free.png',
-          );
-        } else {
-          icon = await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(),
-            'lib/asset/images/car_not_free.png',
-          );
-        }
-        mark.add(Marker(
-          markerId: MarkerId(car.id),
-          position: LatLng(double.parse(car.late), double.parse(car.long)),
-          icon: icon,
-        ));
-        update();
+    var dat = jsonDecode(body['data']);
+    if (storeg.read('role') == 'driver') {
+      if (body['event'] == "App\\Events\\TripDeleteEvent") {
+        mark.removeWhere(
+            (element) => element.markerId.value == dat['trip_id'].toString());
       } else {
-        if (arguments['trip_id'] != null && storeg.read("role") == "driver") {
-          var trip = TripModelForSocket.fromJson(arguments);
-          icon = await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(),
-            'lib/asset/images/trip2.png',
-          );
+        if (body['event'] == "App\\Events\\TripOrderEvent") {
+          var trip = TripModelForSocket.fromJson(dat['trip_data']);
+          if (trip.status == 'available') {
+            var icon = await BitmapDescriptor.fromAssetImage(
+              const ImageConfiguration(),
+              'lib/asset/images/trip2.png',
+            );
+            mark.add(
+              Marker(
+                markerId: MarkerId(trip.id.toString()),
+                position: LatLng(trip.fromLate, trip.fromLong),
+                icon: icon,
+                onTap: () async {
+                  await onTapTrip(trip, channel);
+                  startPostion = LatLng(trip.fromLate, trip.fromLong);
+                  endPostion = LatLng(trip.toLate, trip.toLong);
+                  await addPolyLine(trip.id.toString());
+                  Get.dialog(
+                    AlertDialog(
+                      actions: [
+                        ElevatedButton(
+                            style: const ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                    ColorManager.primary)),
+                            onPressed: () async {
+                              var b = await acceptedTrip(trip.id);
+                              if (b) {
+                                Get.back();
+                                snackbarDef("ملاحظة", "تم قبول الطلب بنجاح");
+                                var icon =
+                                    await BitmapDescriptor.fromAssetImage(
+                                  const ImageConfiguration(),
+                                  'lib/asset/images/trip2.png',
+                                );
+                                mark.removeWhere((element) =>
+                                    element.markerId.value !=
+                                    trip.id.toString());
+                                mark.add(
+                                  Marker(
+                                    markerId: MarkerId(trip.id.toString()),
+                                    position:
+                                        LatLng(trip.fromLate, trip.fromLong),
+                                    icon: icon,
+                                    onTap: () async {
+                                      //   await onTapTrip(trip, channel);
+                                      //   startPostion =
+                                      //       LatLng(trip.fromLate, trip.fromLong);
+                                      //   endPostion =
+                                      //       LatLng(trip.toLate, trip.toLong);
+                                      //   await addPolyLine(trip.id.toString());
+                                      Get.dialog(
+                                        AlertDialog(
+                                          actions: [
+                                            ElevatedButton(
+                                                style: const ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStatePropertyAll(
+                                                            ColorManager.red)),
+                                                onPressed: () async {
+                                                  Get.back();
+                                                  Get.back();
+                                                  await endTrip(trip.id);
+                                                },
+                                                child: const Text("انهاء")),
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  Get.back();
+                                                },
+                                                child: const Text("إلغاء"))
+                                          ],
+                                          title: const Text("معلومات المستخدم"),
+                                          content: Text(
+                                              "الاسم: ${trip.username} \n رقم المبايل: ${trip.phone} \n نقطة البداية: ${start.text} \n نقطة النهاية: ${end.text} \n اجور التوصيل: ${trip.price}"),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                                update();
+                              }
+                            },
+                            child: const Text("قبول")),
+                        ElevatedButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            child: const Text("إلغاء"))
+                      ],
+                      title: const Text("معلومات الرحلة"),
+                      content: Text(
+                          "نقطة البداية: ${start.text} \n نقطة النهاية: ${end.text} \n اجور التوصيل: ${trip.price}"),
+                    ),
+                  );
+                },
+              ),
+            );
+            update();
+          } else {
+            if (trip.status == 'selected') {
+              mark.removeWhere(
+                  (element) => element.markerId.value == trip.id.toString());
+            }
+          }
+        }
+      }
+    } else {
+      if (storeg.read('role') == 'user') {
+        if (body['event'] == "App\\Events\\ChangeStatusDriverEvent") {
+          var car = SendDriverStateModel.fromJson(dat['data']);
+          BitmapDescriptor icon;
+          if (car.state == 'busy') {
+            icon = await BitmapDescriptor.fromAssetImage(
+              const ImageConfiguration(),
+              'lib/asset/images/car_not_free.png',
+            );
+          } else {
+            icon = await BitmapDescriptor.fromAssetImage(
+              const ImageConfiguration(),
+              'lib/asset/images/car_free.png',
+            );
+          }
           mark.add(Marker(
-            markerId: MarkerId(trip.id.toString()),
-            position: LatLng(trip.fromLate, trip.fromLong),
+            markerId: MarkerId(car.id),
+            position: LatLng(double.parse(car.late), double.parse(car.long)),
             icon: icon,
           ));
           update();
-        } else {
-          if (arguments[0] == "AcceptTrip" && storeg.read("role") == "driver") {
-            mark.removeWhere(
-                (element) => element.markerId.value == arguments[1]);
-            update();
-          }
         }
       }
     }
