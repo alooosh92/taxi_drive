@@ -9,11 +9,11 @@ import 'package:taxi_drive/widget/button_primary.dart';
 import 'package:taxi_drive/widget/progress_def.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:taxi_drive/widget/text_form_fiels_def.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChoiseTrip extends StatelessWidget {
-  const ChoiseTrip({super.key, required this.channel});
-  final WebSocketChannel channel;
+  const ChoiseTrip({
+    super.key,
+  });
   @override
   Widget build(BuildContext context) {
     TripController tripController = Get.find();
@@ -66,8 +66,8 @@ class ChoiseTrip extends StatelessWidget {
                                 actions: [
                                   ElevatedButton(
                                       onPressed: () async {
-                                        var b = await tripController
-                                            .addTripToDB(channel);
+                                        var b =
+                                            await tripController.addTripToDB();
                                         if (b) {
                                           snackbarDef("ملاحظة",
                                               "تمت اضافة الرحلة بنجاح");

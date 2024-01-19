@@ -72,9 +72,7 @@ class FloatingButtonTripScreen extends StatelessWidget {
                           buttomSheet(
                             context: context,
                             headerText: "إضافة طلب",
-                            contener: ChoiseTrip(
-                              channel: chanal,
-                            ),
+                            contener: const ChoiseTrip(),
                           )
                         }
                       else

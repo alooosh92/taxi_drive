@@ -43,9 +43,10 @@ class _TripScreenState extends State<TripScreen> {
     WebSocketChannel channel =
         IOWebSocketChannel.connect(HosttingTaxi.websocket);
     channel.sink.add(HosttingTaxi.openSocket);
-
+    tripController.context = context;
     if (storeg.read("role") == "driver") {
       var storeg = GetStorage();
+      tripController.getTripForDriver();
       Timer.periodic(const Duration(seconds: 10), (timer) async {
         if (channel.closeCode != null) {
           channel.sink.add(HosttingTaxi.openSocket);
