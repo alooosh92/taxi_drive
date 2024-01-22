@@ -12,12 +12,12 @@ import 'package:taxi_drive/models/show_trip.dart';
 import 'package:taxi_drive/models/trip_model_for_socket.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/hostting.dart';
+import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/buttom_sheet.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
 import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class TripController extends GetxController {
   //for map
@@ -40,6 +40,7 @@ class TripController extends GetxController {
   String? price;
   String? carStat;
   BuildContext? context;
+  TripModelForSocket? tripUserAdd;
 
   @override
   void onInit() async {
@@ -269,56 +270,6 @@ class TripController extends GetxController {
     ];
   }
 
-  Future<void> addMarkerFromSocket(
-      dynamic data, WebSocketChannel channel) async {
-    var storeg = GetStorage();
-    var body = jsonDecode(data);
-    var dat = jsonDecode(body['data']);
-    if (storeg.read('role') == 'driver') {
-      if (body['event'] == "App\\Events\\TripDeleteEvent") {
-        mark.removeWhere(
-            (element) => element.markerId.value == dat['trip_id'].toString());
-      } else {
-        if (body['event'] == "App\\Events\\TripOrderEvent") {
-          var trip = TripModelForSocket.fromJson(dat['trip_data']);
-          if (trip.status == 'available') {
-            await addTripInMap(trip);
-            update();
-          } else {
-            if (trip.status == 'selected') {
-              mark.removeWhere(
-                  (element) => element.markerId.value == trip.id.toString());
-            }
-          }
-        }
-      }
-    } else {
-      if (storeg.read('role') == 'user') {
-        if (body['event'] == "App\\Events\\ChangeStatusDriverEvent") {
-          var car = SendDriverStateModel.fromJson(dat['data']);
-          BitmapDescriptor icon;
-          if (car.state == 'busy') {
-            icon = await BitmapDescriptor.fromAssetImage(
-              const ImageConfiguration(),
-              'lib/asset/images/car_not_free.png',
-            );
-          } else {
-            icon = await BitmapDescriptor.fromAssetImage(
-              const ImageConfiguration(),
-              'lib/asset/images/car_free.png',
-            );
-          }
-          mark.add(Marker(
-            markerId: MarkerId(car.id),
-            position: LatLng(double.parse(car.late), double.parse(car.long)),
-            icon: icon,
-          ));
-          update();
-        }
-      }
-    }
-  }
-
   Future<void> addMyloction(double lat, double long) async {
     var icon = await BitmapDescriptor.fromAssetImage(
         const ImageConfiguration(), 'lib/asset/images/myLocation.png');
@@ -448,5 +399,84 @@ class TripController extends GetxController {
             "الاسم: ${trip.username} \n رقم المبايل: ${trip.phone} \n نقطة البداية: ${start.text} \n نقطة النهاية: ${end.text} \n اجور التوصيل: ${trip.price}"),
       ),
     );
+  }
+
+  Future<bool> deleteTrip(int id) async {
+    http.Response response = await http.delete(HosttingTaxi.deleteTrip(id),
+        headers: HosttingTaxi().getHeader());
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['message'];
+    }
+    return false;
+  }
+
+  Future<void> addMarkerFromSocket(dynamic data) async {
+    var body = jsonDecode(data);
+    if (body['event'] == "App\\Events\\TripDeleteEvent" ||
+        body['event'] == "App\\Events\\TripOrderEvent" ||
+        body['event'] == "App\\Events\\ChangeStatusDriverEvent") {
+      var storeg = GetStorage();
+      var dat = jsonDecode(body['data']);
+      if (storeg.read('role') == 'driver') {
+        if (body['event'] == "App\\Events\\TripDeleteEvent") {
+          mark.removeWhere(
+              (element) => element.markerId.value == dat['trip_id'].toString());
+          update();
+        } else {
+          if (body['event'] == "App\\Events\\TripOrderEvent") {
+            var trip = TripModelForSocket.fromJson(dat['trip_data']);
+            if (trip.status == 'available') {
+              await addTripInMap(trip);
+              update();
+            } else {
+              if (trip.status == 'selected') {
+                mark.removeWhere(
+                    (element) => element.markerId.value == trip.id.toString());
+                update();
+              }
+            }
+          }
+        }
+      } else {
+        if (storeg.read('role') == 'user') {
+          if (body['event'] == "App\\Events\\ChangeStatusDriverEvent") {
+            var car = SendDriverStateModel.fromJson(dat['data']);
+            BitmapDescriptor icon;
+            if (car.state == 'busy') {
+              icon = await BitmapDescriptor.fromAssetImage(
+                const ImageConfiguration(),
+                'lib/asset/images/car_not_free.png',
+              );
+            } else {
+              icon = await BitmapDescriptor.fromAssetImage(
+                const ImageConfiguration(),
+                'lib/asset/images/car_free.png',
+              );
+            }
+            mark.add(Marker(
+              markerId: MarkerId(car.id),
+              position: LatLng(double.parse(car.late), double.parse(car.long)),
+              icon: icon,
+            ));
+            update();
+          } else {
+            if (body['event'] == "App\\Events\\TripOrderEvent") {
+              var trip = TripModelForSocket.fromJson(dat['trip_data']);
+              AuthController authController = Get.find();
+              if (trip.phone == authController.user!.phone) {
+                if (trip.status == 'available') {
+                  tripUserAdd = trip;
+                } else {
+                  if (trip.status == 'selected') {
+                    tripUserAdd = null;
+                    Get.back();
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

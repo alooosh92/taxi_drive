@@ -24,13 +24,21 @@ class TripScreen extends StatefulWidget {
 }
 
 class _TripScreenState extends State<TripScreen> {
+  WebSocketChannel channel = IOWebSocketChannel.connect(HosttingTaxi.websocket);
   @override
   void initState() {
+    channel.sink.add(HosttingTaxi.openSocket);
     Geolocator.getPositionStream().listen((event) {
       TripController tripController = Get.find();
       tripController.addMyloction(event.latitude, event.longitude);
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    channel.sink.close();
+    super.dispose();
   }
 
   @override
@@ -40,9 +48,7 @@ class _TripScreenState extends State<TripScreen> {
     final Completer<GoogleMapController> mapControllerMap =
         Completer<GoogleMapController>();
     var storeg = GetStorage();
-    WebSocketChannel channel =
-        IOWebSocketChannel.connect(HosttingTaxi.websocket);
-    channel.sink.add(HosttingTaxi.openSocket);
+
     tripController.context = context;
     if (storeg.read("role") == "driver") {
       var storeg = GetStorage();
@@ -64,9 +70,7 @@ class _TripScreenState extends State<TripScreen> {
     return Scaffold(
       key: scaffoldKey,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      floatingActionButton: FloatingButtonTripScreen(
-        chanal: channel,
-      ),
+      floatingActionButton: const FloatingButtonTripScreen(),
       drawer: const DrawerHome(),
       body: FutureBuilder(
         future: tripController.getPosition(),
@@ -86,8 +90,8 @@ class _TripScreenState extends State<TripScreen> {
                               stream: channel.stream,
                               builder: (context, mapMarker) {
                                 if (mapMarker.hasData) {
-                                  controllerGet.addMarkerFromSocket(
-                                      mapMarker.data, channel);
+                                  controllerGet
+                                      .addMarkerFromSocket(mapMarker.data);
                                 }
                                 return GoogleMap(
                                   myLocationButtonEnabled: true,
