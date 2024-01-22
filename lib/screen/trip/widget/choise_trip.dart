@@ -5,15 +5,17 @@ import 'package:get/get.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
 import 'package:taxi_drive/screen/trip/trip_controller.dart';
+import 'package:taxi_drive/screen/trip/widget/buttom_sheet.dart';
+import 'package:taxi_drive/screen/trip/widget/search_driver.dart';
 import 'package:taxi_drive/widget/button_primary.dart';
 import 'package:taxi_drive/widget/progress_def.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:taxi_drive/widget/text_form_fiels_def.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class ChoiseTrip extends StatelessWidget {
-  const ChoiseTrip({super.key, required this.channel});
-  final WebSocketChannel channel;
+  const ChoiseTrip({
+    super.key,
+  });
   @override
   Widget build(BuildContext context) {
     TripController tripController = Get.find();
@@ -66,13 +68,16 @@ class ChoiseTrip extends StatelessWidget {
                                 actions: [
                                   ElevatedButton(
                                       onPressed: () async {
-                                        var b = await tripController
-                                            .addTripToDB(channel);
+                                        var b =
+                                            await tripController.addTripToDB();
                                         if (b) {
-                                          snackbarDef("ملاحظة",
-                                              "تمت اضافة الرحلة بنجاح");
                                           Navigator.of(context).pop();
                                           Navigator.of(context).pop();
+                                          buttomSheet(
+                                              heig: 400,
+                                              context: context,
+                                              headerText: "البحث عن سائق",
+                                              contener: const SaerchDriver());
                                         } else {
                                           snackbarDef("خطأ",
                                               "لا يمكن انشاء رحلتين في ان واحد");

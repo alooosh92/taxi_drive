@@ -6,6 +6,7 @@ Future<dynamic> buttomSheet({
   required BuildContext context,
   required String headerText,
   required Widget contener,
+  double? heig,
 }) {
   return showModalBottomSheet(
     isScrollControlled: true,
@@ -13,7 +14,7 @@ Future<dynamic> buttomSheet({
     builder: (context) {
       return Container(
         padding: const EdgeInsets.all(20),
-        height: MediaQuery.sizeOf(context).height / 2,
+        height: heig ?? MediaQuery.sizeOf(context).height / 2,
         decoration: const BoxDecoration(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20), topRight: Radius.circular(20)),

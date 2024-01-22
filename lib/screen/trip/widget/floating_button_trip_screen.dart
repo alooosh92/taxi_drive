@@ -8,14 +8,11 @@ import 'package:taxi_drive/screen/trip/widget/buttom_sheet.dart';
 import 'package:taxi_drive/screen/trip/widget/choise_trip.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:taxi_drive/widget/text_form_fiels_def.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class FloatingButtonTripScreen extends StatelessWidget {
   const FloatingButtonTripScreen({
     super.key,
-    required this.chanal,
   });
-  final WebSocketChannel chanal;
   @override
   Widget build(BuildContext context) {
     TripController tripController = Get.find();
@@ -72,9 +69,7 @@ class FloatingButtonTripScreen extends StatelessWidget {
                           buttomSheet(
                             context: context,
                             headerText: "إضافة طلب",
-                            contener: ChoiseTrip(
-                              channel: chanal,
-                            ),
+                            contener: const ChoiseTrip(),
                           )
                         }
                       else

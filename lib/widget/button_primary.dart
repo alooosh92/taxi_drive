@@ -7,14 +7,16 @@ class ButtonPrimary extends StatelessWidget {
     super.key,
     required this.press,
     required this.text,
+    this.color,
   });
   final String text;
   final void Function() press;
+  final Color? color;
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: ColorManager.primary,
+        backgroundColor: color ?? ColorManager.primary,
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         maximumSize: Size(MediaQuery.sizeOf(context).width, 50),
