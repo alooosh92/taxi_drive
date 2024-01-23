@@ -93,17 +93,6 @@ class UserTrip extends StatelessWidget {
                                       width: 5,
                                     ),
                                     Text(address.data!['from']!),
-                                    // Text(
-                                    //   snapshot.data![index].fromLate.toString(),
-                                    //   style: FontManager.w500s17cB,
-                                    // ),
-                                    // const SizedBox(
-                                    //   width: 5,
-                                    // ),
-                                    // Text(
-                                    //   snapshot.data![index].fromLong.toString(),
-                                    //   style: FontManager.w500s17cB,
-                                    // ),
                                   ],
                                 ),
                                 Row(
@@ -116,17 +105,6 @@ class UserTrip extends StatelessWidget {
                                       width: 5,
                                     ),
                                     Text(address.data!['to']!)
-                                    // Text(
-                                    //   snapshot.data![index].toLate.toString(),
-                                    //   style: FontManager.w500s17cB,
-                                    // ),
-                                    // const SizedBox(
-                                    //   width: 5,
-                                    // ),
-                                    // Text(
-                                    //   snapshot.data![index].toLong.toString(),
-                                    //   style: FontManager.w500s17cB,
-                                    // ),
                                   ],
                                 ),
                                 Row(
