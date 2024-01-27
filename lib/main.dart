@@ -1,12 +1,11 @@
-// shaimaa 23/1/2024 => My trip
+// ALAA 27/1/2024 => My trip
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:taxi_drive/res/binding_def.dart';
 import 'package:taxi_drive/res/color_manager.dart';
-import 'package:taxi_drive/screen/about_us/about_us.dart';
-
+import 'package:taxi_drive/screen/splash/splash.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -38,7 +37,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       initialBinding: BindingDef(),
-      home: const AboutUs(),
+      home: const SplashScreen(),
     );
   }
 }
