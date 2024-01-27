@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
+import 'package:taxi_drive/screen/about_us/about_us.dart';
 import 'package:taxi_drive/screen/app_info/app_info.dart';
 import 'package:taxi_drive/screen/app_info/app_info_controller.dart';
 import 'package:taxi_drive/screen/auth/auth_controller.dart';
@@ -85,7 +86,7 @@ class DrawerHome extends StatelessWidget {
               ),
               RowTextPress(
                 icon: Icons.factory_outlined,
-                press: () {},
+                press: () =>Get.to(const AboutUs()),
                 text: "من نحن",
               ),
               RowTextPress(

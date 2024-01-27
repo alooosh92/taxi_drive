@@ -5,7 +5,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:taxi_drive/res/binding_def.dart';
 import 'package:taxi_drive/res/color_manager.dart';
-import 'package:taxi_drive/screen/auth/auth.dart';
+import 'package:taxi_drive/screen/about_us/about_us.dart';
+
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
       ],
       initialBinding: BindingDef(),
-      home: const Auth(),
+      home: const AboutUs(),
     );
   }
 }
