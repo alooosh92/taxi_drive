@@ -12,10 +12,10 @@ import 'package:taxi_drive/models/show_trip.dart';
 import 'package:taxi_drive/models/trip_model_for_socket.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/hostting.dart';
-import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/buttom_sheet.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
+import 'package:taxi_drive/widget/button_primary.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -456,19 +456,33 @@ class TripController extends GetxController {
             mark.add(Marker(
               markerId: MarkerId(car.id),
               position: LatLng(double.parse(car.late), double.parse(car.long)),
+              onTap: () {
+                Get.dialog(AlertDialog(
+                  actions: [
+                    ButtonPrimary(
+                        press: () {
+                          Get.back();
+                        },
+                        text: 'موافق')
+                  ],
+                  title: const Text('معلومات السائق'),
+                  content: Text(
+                      'اسم السائق: ${car.firstName} ${car.lastName}\nرقم الجوال: ${car.phone}\nلون السيارة: ${car.carColor}\nنوع السيارة: ${car.carType}\nرقم اللوحة: ${car.carNumber}'),
+                ));
+              },
               icon: icon,
             ));
             update();
           } else {
             if (body['event'] == "App\\Events\\TripOrderEvent") {
               var trip = TripModelForSocket.fromJson(dat['trip_data']);
-              AuthController authController = Get.find();
-              if (trip.phone == authController.user!.phone) {
+              var storeg = GetStorage();
+              if (trip.phone == storeg.read('phone')) {
                 if (trip.status == 'available') {
                   tripUserAdd = trip;
                 } else {
                   if (trip.status == 'selected') {
-                    tripUserAdd = null;
+                    // tripUserAdd = null;
                     Get.back();
                   }
                 }

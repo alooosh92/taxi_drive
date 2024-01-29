@@ -1,5 +1,6 @@
 class SendDriverStateModel {
   late String id;
+  late int? tripId;
   late String late;
   late String long;
   late String? state;
@@ -14,6 +15,7 @@ class SendDriverStateModel {
 
   SendDriverStateModel({
     required this.id,
+    this.tripId,
     required this.late,
     required this.long,
     this.state,
@@ -30,6 +32,7 @@ class SendDriverStateModel {
   factory SendDriverStateModel.fromJson(Map<String, dynamic> json) {
     return SendDriverStateModel(
       id: json['driver_id'].toString(),
+      tripId: json['trip_id'],
       late: json['late'],
       long: json['long'],
       isOnline: json['is_online'],

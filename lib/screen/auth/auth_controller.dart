@@ -39,6 +39,7 @@ class AuthController extends GetxController {
       storeg.write("id", body.id);
       storeg.write("token", body.token);
       storeg.write("role", body.roles);
+      storeg.write('phone', body.phone);
       await userProfile();
       return true;
     }
