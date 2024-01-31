@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
+import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/trip_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/buttom_sheet.dart';
 import 'package:taxi_drive/screen/trip/widget/search_driver.dart';
@@ -64,6 +65,7 @@ class ChoiseTrip extends StatelessWidget {
                         const SizedBox(height: 20),
                         ButtonPrimary(
                             press: () {
+                              AuthController authController = Get.find();
                               Get.dialog(AlertDialog(
                                 actions: [
                                   ElevatedButton(
@@ -118,11 +120,11 @@ class ChoiseTrip extends StatelessWidget {
                                         style: FontManager.w600s16cB,
                                       ),
                                       Text(
-                                        "الوقت المقدرة: ${tripController.time}",
+                                        "الوقت المقدرة: ${tripController.time} ",
                                         style: FontManager.w600s16cB,
                                       ),
                                       Text(
-                                        "السعر المقدرة: ${tripController.price}",
+                                        "السعر المقدرة: ${tripController.price} ${authController.cityInfo!.currency}",
                                         style: FontManager.w600s16cB,
                                       ),
                                       const Divider(),

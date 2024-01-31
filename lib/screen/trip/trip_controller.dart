@@ -12,6 +12,7 @@ import 'package:taxi_drive/models/show_trip.dart';
 import 'package:taxi_drive/models/trip_model_for_socket.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/hostting.dart';
+import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/buttom_sheet.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
@@ -222,11 +223,12 @@ class TripController extends GetxController {
       for (var element in result.points) {
         listPostionForPolyline.add(LatLng(element.latitude, element.longitude));
       }
+
       start.text = result.startAddress!;
       end.text = result.endAddress!;
       masafa = result.distance;
       time = result.duration;
-      price = (result.distanceValue! * 2).toString();
+      price = priceCalculation(result);
       polyline.add(
         Polyline(
           polylineId: PolylineId(name),
@@ -236,6 +238,32 @@ class TripController extends GetxController {
         ),
       );
       update();
+    }
+  }
+
+  String? priceCalculation(PolylineResult result) {
+    AuthController authController = Get.find();
+    double s = Geolocator.distanceBetween(
+        startPostion!.latitude,
+        startPostion!.longitude,
+        authController.cityInfo!.cityCenterLate,
+        authController.cityInfo!.cityCenterLong);
+    double e = Geolocator.distanceBetween(
+        endPostion!.latitude,
+        endPostion!.longitude,
+        authController.cityInfo!.cityCenterLate,
+        authController.cityInfo!.cityCenterLong);
+    if (s <= authController.cityInfo!.farFromCity &&
+        e <= authController.cityInfo!.farFromCity) {
+      return (result.distanceValue! * authController.cityInfo!.innerPrice)
+          .toInt()
+          .toString();
+    } else {
+      return (result.distanceValue! *
+              authController.cityInfo!.innerPrice *
+              1.50)
+          .toInt()
+          .toString();
     }
   }
 
