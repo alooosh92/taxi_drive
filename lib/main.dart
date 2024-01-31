@@ -1,4 +1,4 @@
-// ALAA 27/1/2024 => My trip
+// Shaimaa about us & contact with social media /30-1-2024
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
