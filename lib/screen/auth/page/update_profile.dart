@@ -22,6 +22,7 @@ class UpdateProfile extends StatelessWidget {
     TextEditingController name = TextEditingController();
     TextEditingController phone = TextEditingController();
     TextEditingController email = TextEditingController();
+    String? region;
     return Scaffold(
       appBar: appBarAll(
           press: () => Get.back(),
@@ -33,72 +34,89 @@ class UpdateProfile extends StatelessWidget {
           width: MediaQuery.sizeOf(context).width,
           child: Padding(
             padding: const EdgeInsets.all(10),
-            child: FutureBuilder<UserRegister?>(
-              future: authController.userProfile(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const ProgressDef();
-                }
-                name.text = snapshot.data.name;
-                email.text = snapshot.data.email;
-                phone.text = snapshot.data.phone;
-                return Form(
-                  key: formKey,
-                  autovalidateMode: AutovalidateMode.always,
-                  child: Column(
-                    children: [
-                      Image.asset(
-                        'lib/asset/images/logo.png',
-                        fit: BoxFit.cover,
-                      ),
-                      TextFormFieldRadius(
-                        controller: name,
-                        hint: "الاسم",
-                        topPadding: 30,
-                        validator: (value) => ValidatorManager.name(value),
-                      ),
-                      TextFormFieldRadius(
-                        controller: phone,
-                        hint: "رقم الهاتف",
-                        topPadding: 30,
-                        validator: (value) => ValidatorManager.phone(value),
-                      ),
-                      TextFormFieldRadius(
-                        controller: email,
-                        hint: "البريد الالكتروني",
-                        topPadding: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 60),
-                        child: ButtonPrimary(
-                            press: () async {
-                              if (formKey.currentState!.validate()) {
-                                var user = UpdateUser(
-                                    name: name.text,
-                                    phone: phone.text,
-                                    email: email.text);
-                                var b =
-                                    await authController.updateProfile(user);
-                                if (b) {
-                                  snackbarDef(
-                                      "ملاحظة", "تم تعديل البيانات بنجاح");
-                                } else {
-                                  snackbarDef("تحذير",
-                                      "هناك خطأ ما الرجاء الاتصال بالمسؤول");
-                                }
+            child: FutureBuilder(
+              future: authController.getRegion(),
+              builder: (BuildContext context, AsyncSnapshot regionCity) {
+                return FutureBuilder<UserRegister?>(
+                  future: authController.userProfile(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const ProgressDef();
+                    }
+                    name.text = snapshot.data.name;
+                    email.text = snapshot.data.email ?? '';
+                    phone.text = snapshot.data.phone;
+                    region = snapshot.data.region;
+                    return Form(
+                      key: formKey,
+                      autovalidateMode: AutovalidateMode.always,
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            'lib/asset/images/logo.png',
+                            fit: BoxFit.cover,
+                          ),
+                          TextFormFieldRadius(
+                            controller: name,
+                            hint: "الاسم",
+                            topPadding: 30,
+                            validator: (value) => ValidatorManager.name(value),
+                          ),
+                          TextFormFieldRadius(
+                            controller: phone,
+                            hint: "رقم الهاتف",
+                            topPadding: 30,
+                            validator: (value) => ValidatorManager.phone(value),
+                          ),
+                          TextFormFieldRadius(
+                            controller: email,
+                            hint: "البريد الالكتروني",
+                            topPadding: 30,
+                          ),
+                          const SizedBox(height: 30),
+                          DropdownButtonFormField<String?>(
+                              value: region,
+                              validator: (value) =>
+                                  ValidatorManager.name(value),
+                              decoration: inputDecorationDef(radius: 30),
+                              items: regionCity.data,
+                              onChanged: (value) {
+                                region = value!;
+                              }),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 60),
+                            child: ButtonPrimary(
+                                press: () async {
+                                  if (formKey.currentState!.validate()) {
+                                    var user = UpdateUser(
+                                        name: name.text,
+                                        phone: phone.text,
+                                        email: email.text,
+                                        region: region!);
+                                    var b = await authController
+                                        .updateProfile(user);
+                                    if (b) {
+                                      snackbarDef(
+                                          "ملاحظة", "تم تعديل البيانات بنجاح");
+                                    } else {
+                                      snackbarDef("تحذير",
+                                          "هناك خطأ ما الرجاء الاتصال بالمسؤول");
+                                    }
 
-                                if (snapshot.data.phone != phone.text) {
-                                  await authController.login(phone.text);
-                                  Get.offAll(OptScreen(phone: phone.text));
-                                } else {
-                                  Get.off(const TripScreen());
-                                }
-                              }
-                            },
-                            text: "تحديث الملف الشخصي"),
+                                    if (snapshot.data.phone != phone.text) {
+                                      await authController.login(phone.text);
+                                      Get.offAll(OptScreen(phone: phone.text));
+                                    } else {
+                                      Get.off(const TripScreen());
+                                    }
+                                  }
+                                },
+                                text: "تحديث الملف الشخصي"),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 );
               },
             ),

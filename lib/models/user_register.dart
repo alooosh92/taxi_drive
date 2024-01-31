@@ -9,11 +9,10 @@ class UserRegister {
 
   factory UserRegister.fromJson(Map<String, dynamic> json) {
     return UserRegister(
-      name: json["name"],
-      phone: json["phone"],
-      email: json["email"],
-      //  region: json['city address'],
-    );
+        name: json["name"],
+        phone: json["phone"],
+        email: json["email"],
+        region: json['city_address']);
   }
 
   Map<String, dynamic> toJson() => {

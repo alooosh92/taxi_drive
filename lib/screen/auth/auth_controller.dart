@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:taxi_drive/models/city_info.dart';
 import 'package:taxi_drive/models/update_user.dart';
 import 'package:taxi_drive/models/user_register.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +12,7 @@ import 'package:taxi_drive/res/hostting.dart';
 
 class AuthController extends GetxController {
   UserRegister? user;
-
+  CityInfo? cityInfo;
   Future<bool> register(UserRegister user) async {
     http.Response response =
         await http.post(HosttingTaxi.register, body: user.toJson());
@@ -41,6 +42,7 @@ class AuthController extends GetxController {
       storeg.write("token", body.token);
       storeg.write("role", body.roles);
       storeg.write('phone', body.phone);
+      storeg.write('region', body.cityAddress);
       await userProfile();
       return true;
     }
@@ -71,6 +73,14 @@ class AuthController extends GetxController {
   }
 
   Future<bool> checkToken() async {
+    var storeg = GetStorage();
+    String region = storeg.read('region');
+    http.Response response = await http.post(HosttingTaxi.getMyCity(region),
+        headers: HosttingTaxi().getHeader());
+    if (response.statusCode == 200) {
+      cityInfo = CityInfo.fromJson(jsonDecode(response.body)[0]);
+      return true;
+    }
     return false;
   }
 
