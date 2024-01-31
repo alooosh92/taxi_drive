@@ -482,7 +482,6 @@ class TripController extends GetxController {
                   tripUserAdd = trip;
                 } else {
                   if (trip.status == 'selected') {
-                    // tripUserAdd = null;
                     Get.back();
                   }
                 }

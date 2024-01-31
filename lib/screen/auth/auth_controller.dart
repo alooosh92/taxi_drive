@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:taxi_drive/models/update_user.dart';
@@ -71,5 +72,21 @@ class AuthController extends GetxController {
 
   Future<bool> checkToken() async {
     return false;
+  }
+
+  Future<List<DropdownMenuItem<String>>> getRegion() async {
+    http.Response response = await http.get(HosttingTaxi.getRegion,
+        headers: HosttingTaxi().getHeader());
+    List<DropdownMenuItem<String>> list = [];
+    if (response.statusCode == 200) {
+      var body = jsonDecode(response.body);
+      for (var element in body) {
+        list.add(DropdownMenuItem<String>(
+          value: element['city'],
+          child: Text(element['city']),
+        ));
+      }
+    }
+    return list;
   }
 }

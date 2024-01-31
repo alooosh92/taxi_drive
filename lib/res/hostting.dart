@@ -37,6 +37,7 @@ class HosttingTaxi {
   static Uri getUserLocation = Uri.parse("$api/GetUserLocations");
   static Uri sendMessage = Uri.parse("$api/AddConnectWithUs");
   static Uri getUserTrip = Uri.parse("$api/GetUserTrip");
+  static Uri getRegion = Uri.parse("$api/GetAllCitiesInfo");
   static Uri deleteUserLoction(int id) =>
       Uri.parse("$api/DeleteUserLocation?location_id=$id");
   static Uri getTream(int isPrive) =>
