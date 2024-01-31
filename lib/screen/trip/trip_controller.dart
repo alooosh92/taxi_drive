@@ -255,12 +255,13 @@ class TripController extends GetxController {
         authController.cityInfo!.cityCenterLong);
     if (s <= authController.cityInfo!.farFromCity &&
         e <= authController.cityInfo!.farFromCity) {
-      return (result.distanceValue! * authController.cityInfo!.innerPrice)
+      return ((result.distanceValue! * authController.cityInfo!.innerPrice) +
+              authController.cityInfo!.plusPrice)
           .toInt()
           .toString();
     } else {
-      return (result.distanceValue! *
-              authController.cityInfo!.innerPrice *
+      return (((result.distanceValue! * authController.cityInfo!.innerPrice) +
+                  authController.cityInfo!.plusPrice) *
               1.50)
           .toInt()
           .toString();
