@@ -74,12 +74,14 @@ class AuthController extends GetxController {
 
   Future<bool> checkToken() async {
     var storeg = GetStorage();
-    String region = storeg.read('region');
-    http.Response response = await http.post(HosttingTaxi.getMyCity(region),
-        headers: HosttingTaxi().getHeader());
-    if (response.statusCode == 200) {
-      cityInfo = CityInfo.fromJson(jsonDecode(response.body)[0]);
-      return true;
+    String? region = storeg.read('region');
+    if (region != null) {
+      http.Response response = await http.post(HosttingTaxi.getMyCity(region),
+          headers: HosttingTaxi().getHeader());
+      if (response.statusCode == 200) {
+        cityInfo = CityInfo.fromJson(jsonDecode(response.body)[0]);
+        return true;
+      }
     }
     return false;
   }
