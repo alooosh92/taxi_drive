@@ -6,7 +6,7 @@ class ShowTrip {
   late double toLong;
   late String userName;
   late String phone;
-  late int userRating;
+  late int? userRating;
   late double price;
   late DateTime created;
   late DateTime? accepted;
