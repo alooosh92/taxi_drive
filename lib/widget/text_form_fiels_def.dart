@@ -24,6 +24,7 @@ class TextFormFieldRadius extends StatelessWidget {
     this.readOnly,
     this.color,
     this.textStyle,
+    this.bordarColor,
   });
 
   final TextEditingController controller;
@@ -41,6 +42,7 @@ class TextFormFieldRadius extends StatelessWidget {
   final bool? readOnly;
   final Color? color;
   final TextStyle? textStyle;
+  final Color? bordarColor;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -64,7 +66,8 @@ class TextFormFieldRadius extends StatelessWidget {
               iconEnd: iconEnd,
               iconStart: iconStart,
               textStyle: textStyle,
-              val: controller.text),
+              val: controller.text,
+              bordarCa: bordarColor),
         ),
       ),
     );
@@ -79,6 +82,7 @@ InputDecoration inputDecorationDef({
   String? label,
   TextStyle? textStyle,
   String? val,
+  Color? bordarCa,
 }) {
   return InputDecoration(
     isDense: true,
@@ -97,10 +101,10 @@ InputDecoration inputDecorationDef({
         const EdgeInsets.only(left: 20, right: 20, bottom: 10, top: 10),
     border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radius),
-        borderSide: const BorderSide(color: ColorManager.primary)),
+        borderSide: BorderSide(color: bordarCa ?? ColorManager.primary)),
     focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radius),
-        borderSide: const BorderSide(color: ColorManager.primary)),
+        borderSide: BorderSide(color: bordarCa ?? ColorManager.primary)),
     disabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radius),
         borderSide: const BorderSide(color: ColorManager.primary, width: 3)),

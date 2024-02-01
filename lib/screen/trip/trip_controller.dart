@@ -17,6 +17,7 @@ import 'package:taxi_drive/screen/trip/widget/buttom_sheet.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
 import 'package:taxi_drive/widget/button_primary.dart';
+import 'package:taxi_drive/widget/progress_def.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -214,6 +215,7 @@ class TripController extends GetxController {
 
   Future<void> addPolyLine(String name) async {
     if (startPostion != null && endPostion != null) {
+      Get.dialog(const ProgressDef());
       PolylinePoints polylinePoints = PolylinePoints();
       PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
           HosttingTaxi.mapKey,
@@ -223,7 +225,6 @@ class TripController extends GetxController {
       for (var element in result.points) {
         listPostionForPolyline.add(LatLng(element.latitude, element.longitude));
       }
-
       start.text = result.startAddress!;
       end.text = result.endAddress!;
       masafa = result.distance;
@@ -237,6 +238,7 @@ class TripController extends GetxController {
           color: Colors.blueAccent,
         ),
       );
+      Get.back();
       update();
     }
   }
@@ -260,9 +262,8 @@ class TripController extends GetxController {
           .toInt()
           .toString();
     } else {
-      return (((result.distanceValue! * authController.cityInfo!.innerPrice) +
-                  authController.cityInfo!.plusPrice) *
-              1.50)
+      return ((result.distanceValue! * authController.cityInfo!.outerPrice) +
+              authController.cityInfo!.plusPrice)
           .toInt()
           .toString();
     }
@@ -339,7 +340,7 @@ class TripController extends GetxController {
     endPostion = LatLng(trip.toLate, trip.toLong);
     await addPolyLine(trip.id.toString());
     await buttomSheet(
-      heig: 250,
+      heig: 300,
       context: context!,
       headerText: "معلومات الرحلة",
       contener: Column(
@@ -402,9 +403,8 @@ class TripController extends GetxController {
               style: const ButtonStyle(
                   backgroundColor: MaterialStatePropertyAll(ColorManager.red)),
               onPressed: () async {
-                Get.back();
-                Get.back();
                 await endTrip(trip.id);
+                Get.back();
               },
               child: const Text("انهاء")),
           ElevatedButton(

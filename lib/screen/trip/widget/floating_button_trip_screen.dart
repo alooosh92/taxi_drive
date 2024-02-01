@@ -40,6 +40,7 @@ class FloatingButtonTripScreen extends StatelessWidget {
                         color: ColorManager.white,
                         textStyle: FontManager.w500s15cB,
                         line: 1,
+                        bordarColor: ColorManager.red,
                       ),
                       const SizedBox(height: 10),
                       TextFormFieldRadius(
@@ -52,6 +53,7 @@ class FloatingButtonTripScreen extends StatelessWidget {
                         color: ColorManager.white,
                         textStyle: FontManager.w500s15cB,
                         line: 1,
+                        bordarColor: ColorManager.red,
                       ),
                     ],
                   ),
