@@ -1,4 +1,4 @@
-// alaa about us & contact with social media /31-1-2024
+// shaimaa add app & trip rating 2/2/2024
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
