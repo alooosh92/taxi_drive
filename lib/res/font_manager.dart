@@ -142,4 +142,9 @@ class FontManager {
     fontSize: 14,
     color: ColorManager.primary,
   );
+     static const TextStyle w700s25cp = TextStyle(
+    fontWeight: FontWeight.w700,
+    fontSize: 25,
+    color: ColorManager.primary,
+  );
 }

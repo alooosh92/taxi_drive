@@ -24,7 +24,7 @@ class AboutUs extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      drawer: const DrawerHome(),
+      drawer:  DrawerHome(),
       body: Column(children: [
          Expanded(
            child: Center(

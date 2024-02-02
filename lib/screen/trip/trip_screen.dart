@@ -71,7 +71,7 @@ class _TripScreenState extends State<TripScreen> {
       key: scaffoldKey,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: const FloatingButtonTripScreen(),
-      drawer: const DrawerHome(),
+      drawer:  DrawerHome(),
       body: FutureBuilder(
         future: tripController.getPosition(),
         builder: (BuildContext context, AsyncSnapshot camPostine) {

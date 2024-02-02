@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rating_dialog/rating_dialog.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:store_redirect/store_redirect.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
 import 'package:taxi_drive/screen/about_us/about_us.dart';
@@ -14,9 +16,30 @@ import 'package:taxi_drive/screen/user_trip/user_trip.dart';
 import 'package:taxi_drive/widget/row_text_press.dart';
 
 class DrawerHome extends StatelessWidget {
-  const DrawerHome({
+   DrawerHome({
     super.key,
   });
+   final _dialog = RatingDialog(
+      image: Image.asset(
+        'lib/asset/images/logo.png',
+        width: 60,
+      ),
+      title: const Text(
+        'قيم تطبيق تكسي',
+        textAlign: TextAlign.center,
+        style: TextStyle(color: ColorManager.primary),
+      ),
+      starSize: 30,
+      submitButtonText: 'أرسل',
+      commentHint: 'اخبرنا برأيك',
+      onCancelled: () => print('cancelled'),
+      onSubmitted: (Response) {
+         StoreRedirect.redirect(
+          androidAppId: '',
+          iOSAppId: '',
+        );
+      },
+    );
   @override
   Widget build(BuildContext context) {
     AuthController authController = Get.find();
@@ -102,6 +125,12 @@ class DrawerHome extends StatelessWidget {
                       await Share.shareUri(Uri.parse("https://google.com"));
                 },
                 text: "شارك التطبيق مع اصدقائك",
+              ),
+               RowTextPress(
+                icon: Icons.star,
+                press: () =>  showDialog(
+                context: context, builder: (context) => _dialog),
+                text: "قيم تطبيق تكسي",
               ),
             ],
           ),
