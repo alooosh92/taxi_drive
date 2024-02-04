@@ -101,4 +101,12 @@ class AuthController extends GetxController {
     }
     return list;
   }
+
+  Future<String?> getVersion() async {
+    http.Response response = await http.get(HosttingTaxi.getVersion);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['version'].toString();
+    }
+    return null;
+  }
 }

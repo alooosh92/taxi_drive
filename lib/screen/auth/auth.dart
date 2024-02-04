@@ -4,9 +4,11 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
+import 'package:taxi_drive/res/key.dart';
 import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/splash/splash.dart';
 import 'package:taxi_drive/screen/trip/trip_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Auth extends StatelessWidget {
   const Auth({super.key});
@@ -16,11 +18,31 @@ class Auth extends StatelessWidget {
     AuthController authController = Get.find();
     GetStorage();
     Timer(const Duration(seconds: 2), () async {
-      var b = await authController.checkToken();
-      if (b) {
-        Get.offAll(const TripScreen());
+      var v = await authController.getVersion();
+      if (version == v) {
+        var b = await authController.checkToken();
+        if (b) {
+          Get.offAll(const TripScreen());
+        } else {
+          Get.offAll(const SplashScreen());
+        }
       } else {
-        Get.offAll(const SplashScreen());
+        Get.dialog(AlertDialog(
+          title: const Text('تحديث'),
+          content: const Text('هذا الاصدار قديم الرجاء تحديث التطبيق'),
+          actions: [
+            TextButton(
+                onPressed: () async {
+                  if (await canLaunchUrl(urlGoolePlay)) {
+                    await launchUrl(urlGoolePlay);
+                  }
+                },
+                child: const Text(
+                  'تحديث',
+                  style: TextStyle(color: ColorManager.red),
+                ))
+          ],
+        ));
       }
     });
     return Scaffold(

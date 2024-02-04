@@ -18,6 +18,7 @@ import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
 import 'package:taxi_drive/widget/button_primary.dart';
 import 'package:taxi_drive/widget/progress_def.dart';
+import 'package:taxi_drive/widget/routr_button.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -520,5 +521,14 @@ class TripController extends GetxController {
         }
       }
     }
+  }
+
+  Future<bool> routtingLastTrip() async {
+    http.Response response = await http.get(HosttingTaxi.getLastTrip,
+        headers: HosttingTaxi().getHeader());
+    if (response.statusCode == 200) {
+      Get.bottomSheet(const RouteButton());
+    }
+    return false;
   }
 }
