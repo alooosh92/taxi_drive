@@ -50,14 +50,14 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
- signingConfigs {
+    signingConfigs {
        release {
             keyAlias "upload"
-            storePassword "android"
+            storePassword "taxidriver"
             storeFile file("TaxiKay.jks")
             keyPassword "taxidriver"
        }
-   }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
