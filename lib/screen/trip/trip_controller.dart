@@ -18,7 +18,8 @@ import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
 import 'package:taxi_drive/widget/button_primary.dart';
 import 'package:taxi_drive/widget/progress_def.dart';
-import 'package:taxi_drive/widget/routr_button.dart';
+import 'package:taxi_drive/widget/route_button.dart';
+import 'package:taxi_drive/widget/route_sheet.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -133,13 +134,20 @@ class TripController extends GetxController {
     return false;
   }
 
-  Future<bool> acceptedTrip(int tripId) async {
+  Future<bool?> acceptedTrip(int tripId) async {
     var storge = GetStorage();
     http.Response response = await http.post(
         HosttingTaxi.acceptedTrip(tripId, storge.read('id')),
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
-      return jsonDecode(response.body)['message'];
+      var b = jsonDecode(response.body)['message'];
+      if (b.toString() == 'true') {
+        return true;
+      } else {
+        if (b.toString().contains('The Balance not Enough')) {
+          return null;
+        }
+      }
     }
     return false;
   }
@@ -196,7 +204,7 @@ class TripController extends GetxController {
     }
   }
 
-  Future<bool> addTripToDB() async {
+  Future<bool?> addTripToDB() async {
     if (startPostion == null || endPostion == null || price == null) {
       return false;
     }
@@ -210,6 +218,13 @@ class TripController extends GetxController {
         headers: HosttingTaxi().getHeader(), body: jsonEncode(trip.toJson()));
     if (response.statusCode == 200 && jsonDecode(response.body)["message"]) {
       return true;
+    }
+    var b =
+        (jsonDecode(response.body)["message"]).toString().contains('forbidden');
+    if (b) {
+      Get.back();
+      Get.back();
+      return null;
     }
     return false;
   }
@@ -357,30 +372,46 @@ class TripController extends GetxController {
                           MaterialStatePropertyAll(ColorManager.primary)),
                   onPressed: () async {
                     var b = await acceptedTrip(trip.id);
-                    if (b) {
-                      Get.back();
-                      snackbarDef("ملاحظة", "تم قبول الطلب بنجاح");
-                      var iconFrom = await BitmapDescriptor.fromAssetImage(
-                        const ImageConfiguration(),
-                        'lib/asset/images/from_pin.png',
-                      );
-                      var iconTo = await BitmapDescriptor.fromAssetImage(
-                        const ImageConfiguration(),
-                        'lib/asset/images/to_pin.png',
-                      );
-                      mark.removeWhere((element) =>
-                          element.markerId.value != trip.id.toString());
-                      mark.add(Marker(
-                          markerId: const MarkerId("from"),
-                          position: LatLng(trip.fromLate, trip.fromLong),
-                          icon: iconFrom,
-                          onTap: () async => clickMarketTrip(trip)));
-                      mark.add(Marker(
-                          markerId: const MarkerId("to"),
-                          position: LatLng(trip.toLate, trip.toLong),
-                          icon: iconTo,
-                          onTap: () async => clickMarketTrip(trip)));
-                      update();
+                    if (b != null) {
+                      if (b) {
+                        Get.back();
+                        snackbarDef("ملاحظة", "تم قبول الطلب بنجاح");
+                        var iconFrom = await BitmapDescriptor.fromAssetImage(
+                          const ImageConfiguration(),
+                          'lib/asset/images/from_pin.png',
+                        );
+                        var iconTo = await BitmapDescriptor.fromAssetImage(
+                          const ImageConfiguration(),
+                          'lib/asset/images/to_pin.png',
+                        );
+                        mark.removeWhere((element) =>
+                            element.markerId.value != trip.id.toString());
+                        mark.add(Marker(
+                            markerId: const MarkerId("from"),
+                            position: LatLng(trip.fromLate, trip.fromLong),
+                            icon: iconFrom,
+                            onTap: () async => clickMarketTrip(trip)));
+                        mark.add(Marker(
+                            markerId: const MarkerId("to"),
+                            position: LatLng(trip.toLate, trip.toLong),
+                            icon: iconTo,
+                            onTap: () async => clickMarketTrip(trip)));
+                        update();
+                      }
+                    } else {
+                      Get.dialog(AlertDialog(
+                        actions: [
+                          TextButton(
+                              onPressed: () => Get.back(),
+                              child: const Text(
+                                'موافق',
+                                style: TextStyle(color: ColorManager.red),
+                              ))
+                        ],
+                        title: const Text('تحذير'),
+                        content: const Text(
+                            'عذراً لا تملك رصيد كافي لقبول هذه الرحلة الرجاء شحن رصيد'),
+                      ));
                     }
                   },
                   child: const Text("قبول")),
@@ -530,5 +561,19 @@ class TripController extends GetxController {
       Get.bottomSheet(const RouteButton());
     }
     return false;
+  }
+
+  Future<dynamic> routeTrip() async {
+    http.Response response = await http.get(
+        headers: HosttingTaxi().getHeader(), HosttingTaxi.getLastTrip);
+    if (response.statusCode == 200) {
+      var body = jsonDecode(response.body);
+      if (body['message'] != 'Rating') {
+        if (body['message']['trip_id'] != null &&
+            body['message']['driver_id'] != null) {
+          Get.bottomSheet(const RouteSheet());
+        }
+      }
+    }
   }
 }

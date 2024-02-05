@@ -7,7 +7,6 @@ import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
 import 'package:taxi_drive/screen/trip/trip_controller.dart';
 import 'package:taxi_drive/widget/progress_def.dart';
-import 'package:taxi_drive/widget/routr_button.dart';
 import '../../widget/drawer_home.dart';
 
 class UserTrip extends StatefulWidget {
@@ -59,7 +58,9 @@ class _UserTripState extends State<UserTrip> {
                     return Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: SizedBox(
-                        height: 230,
+                        height: 180,
+
+                        //230
                         child: Card(
                           color: Colors.white,
                           elevation: 10,
@@ -147,7 +148,7 @@ class _UserTripState extends State<UserTrip> {
                                   ],
                                 ),
                                 const SizedBox(height: 10),
-                                const RouteButton(),
+                                // const RouteButton(),
                               ],
                             ),
                           ),

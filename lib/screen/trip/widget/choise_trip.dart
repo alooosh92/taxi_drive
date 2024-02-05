@@ -72,19 +72,37 @@ class ChoiseTrip extends StatelessWidget {
                                       onPressed: () async {
                                         var b =
                                             await tripController.addTripToDB();
-                                        if (b) {
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                          buttomSheet(
-                                              heig: 400,
-                                              context: context,
-                                              headerText: "البحث عن سائق",
-                                              contener: const SaerchDriver());
+                                        if (b == null) {
+                                          Get.dialog(AlertDialog(
+                                            actions: [
+                                              TextButton(
+                                                  onPressed: () => Get.back(),
+                                                  child: const Text(
+                                                    'موافق',
+                                                    style: TextStyle(
+                                                        color:
+                                                            ColorManager.red),
+                                                  ))
+                                            ],
+                                            title: const Text('تحذير'),
+                                            content: const Text(
+                                                'تم حظرك من التطبيق بسبب انتهاك لشروط الاستخدام الرجاء التواصل مع الدعم الفني'),
+                                          ));
                                         } else {
-                                          snackbarDef("خطأ",
-                                              "لا يمكن انشاء رحلتين في ان واحد");
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
+                                          if (b) {
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                            buttomSheet(
+                                                heig: 400,
+                                                context: context,
+                                                headerText: "البحث عن سائق",
+                                                contener: const SaerchDriver());
+                                          } else {
+                                            snackbarDef("خطأ",
+                                                "لا يمكن انشاء رحلتين في ان واحد");
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          }
                                         }
                                       },
                                       style: const ButtonStyle(
