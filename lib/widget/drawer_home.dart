@@ -16,30 +16,29 @@ import 'package:taxi_drive/screen/user_trip/user_trip.dart';
 import 'package:taxi_drive/widget/row_text_press.dart';
 
 class DrawerHome extends StatelessWidget {
-   DrawerHome({
+  DrawerHome({
     super.key,
   });
-   final _dialog = RatingDialog(
-      image: Image.asset(
-        'lib/asset/images/logo.png',
-        width: 60,
-      ),
-      title: const Text(
-        'قيم تطبيق تكسي',
-        textAlign: TextAlign.center,
-        style: TextStyle(color: ColorManager.primary),
-      ),
-      starSize: 30,
-      submitButtonText: 'أرسل',
-      commentHint: 'اخبرنا برأيك',
-      onCancelled: () => print('cancelled'),
-      onSubmitted: (Response) {
-         StoreRedirect.redirect(
-          androidAppId: '',
-          iOSAppId: '',
-        );
-      },
-    );
+  final _dialog = RatingDialog(
+    image: Image.asset(
+      'lib/asset/images/logo.png',
+      width: 60,
+    ),
+    title: const Text(
+      'قيم تطبيق تكسي',
+      textAlign: TextAlign.center,
+      style: TextStyle(color: ColorManager.primary),
+    ),
+    starSize: 30,
+    submitButtonText: 'أرسل',
+    commentHint: 'اخبرنا برأيك',
+    onSubmitted: (response) {
+      StoreRedirect.redirect(
+        androidAppId: '',
+        iOSAppId: '',
+      );
+    },
+  );
   @override
   Widget build(BuildContext context) {
     AuthController authController = Get.find();
@@ -109,7 +108,7 @@ class DrawerHome extends StatelessWidget {
               ),
               RowTextPress(
                 icon: Icons.factory_outlined,
-                press: () =>Get.to(const AboutUs()),
+                press: () => Get.to(const AboutUs()),
                 text: "من نحن",
               ),
               RowTextPress(
@@ -126,10 +125,10 @@ class DrawerHome extends StatelessWidget {
                 },
                 text: "شارك التطبيق مع اصدقائك",
               ),
-               RowTextPress(
+              RowTextPress(
                 icon: Icons.star,
-                press: () =>  showDialog(
-                context: context, builder: (context) => _dialog),
+                press: () =>
+                    showDialog(context: context, builder: (context) => _dialog),
                 text: "قيم تطبيق تكسي",
               ),
             ],

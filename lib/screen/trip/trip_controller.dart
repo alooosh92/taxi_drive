@@ -18,7 +18,6 @@ import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
 import 'package:taxi_drive/widget/button_primary.dart';
 import 'package:taxi_drive/widget/progress_def.dart';
-import 'package:taxi_drive/widget/route_button.dart';
 import 'package:taxi_drive/widget/route_sheet.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -55,6 +54,7 @@ class TripController extends GetxController {
       var loc = await Geolocator.getCurrentPosition();
       startPostion = LatLng(loc.latitude, loc.longitude);
     }
+    await routeTrip();
     super.onInit();
   }
 
@@ -554,15 +554,6 @@ class TripController extends GetxController {
     }
   }
 
-  Future<bool> routtingLastTrip() async {
-    http.Response response = await http.get(HosttingTaxi.getLastTrip,
-        headers: HosttingTaxi().getHeader());
-    if (response.statusCode == 200) {
-      Get.bottomSheet(const RouteButton());
-    }
-    return false;
-  }
-
   Future<dynamic> routeTrip() async {
     http.Response response = await http.get(
         headers: HosttingTaxi().getHeader(), HosttingTaxi.getLastTrip);
@@ -571,9 +562,22 @@ class TripController extends GetxController {
       if (body['message'] != 'Rating') {
         if (body['message']['trip_id'] != null &&
             body['message']['driver_id'] != null) {
-          Get.bottomSheet(const RouteSheet());
+          Get.bottomSheet(RouteSheet(
+            driverId: body['message']['driver_id'].toString(),
+            tripId: body['message']['trip_id'].toString(),
+          ));
         }
       }
     }
+  }
+
+  Future<bool> sendRouteTrip(double route, int idTrip, int idDriver) async {
+    http.Response response = await http.post(HosttingTaxi.rating,
+        headers: HosttingTaxi().getHeader());
+    if (response.statusCode == 200) {
+      Get.back();
+      return jsonDecode(response.body)['message'];
+    }
+    return false;
   }
 }
