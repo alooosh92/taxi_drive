@@ -161,6 +161,7 @@ class TripController extends GetxController {
     if (response.statusCode == 200) {
       var b = jsonDecode(response.body)['message'];
       if (b.toString() == 'true') {
+        await getDriverBalance();
         return true;
       } else {
         if (b.toString().contains('The Balance not Enough')) {
