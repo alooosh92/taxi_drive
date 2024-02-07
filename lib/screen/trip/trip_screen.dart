@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_drive/models/send_driver_state.dart';
+import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/hostting.dart';
 import 'package:taxi_drive/screen/trip/trip_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/drawer_button.dart';
@@ -71,7 +72,7 @@ class _TripScreenState extends State<TripScreen> {
       key: scaffoldKey,
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: const FloatingButtonTripScreen(),
-      drawer:  DrawerHome(),
+      drawer: DrawerHome(),
       body: FutureBuilder(
         future: tripController.getPosition(),
         builder: (BuildContext context, AsyncSnapshot camPostine) {
@@ -79,40 +80,63 @@ class _TripScreenState extends State<TripScreen> {
             return const ProgressDef();
           }
           return GetBuilder<TripController>(
-              init: tripController,
-              builder: (controllerGet) {
-                return Stack(
-                  children: [
-                    StreamBuilder<Position>(
-                        stream: Geolocator.getPositionStream(),
-                        builder: (context, myMarker) {
-                          return StreamBuilder(
-                              stream: channel.stream,
-                              builder: (context, mapMarker) {
-                                if (mapMarker.hasData) {
-                                  controllerGet
-                                      .addMarkerFromSocket(mapMarker.data);
-                                }
-                                return GoogleMap(
-                                  myLocationButtonEnabled: true,
-                                  myLocationEnabled: false,
-                                  zoomControlsEnabled: false,
-                                  initialCameraPosition: controllerGet.cam!,
-                                  markers: controllerGet.mark,
-                                  onTap: (late) => storeg.read("role") == "user"
-                                      ? controllerGet.addTripMarker(late)
-                                      : null,
-                                  polylines: controllerGet.polyline,
-                                  onMapCreated: (controller) async {
-                                    mapControllerMap.complete(controller);
-                                  },
-                                );
-                              });
-                        }),
-                    DrawerButtonDef(scaffoldKey: scaffoldKey)
-                  ],
-                );
-              });
+            init: tripController,
+            builder: (controllerGet) {
+              return Stack(
+                children: [
+                  StreamBuilder<Position>(
+                      stream: Geolocator.getPositionStream(),
+                      builder: (context, myMarker) {
+                        return StreamBuilder(
+                            stream: channel.stream,
+                            builder: (context, mapMarker) {
+                              if (mapMarker.hasData) {
+                                controllerGet
+                                    .addMarkerFromSocket(mapMarker.data);
+                              }
+                              return GoogleMap(
+                                myLocationButtonEnabled: true,
+                                myLocationEnabled: false,
+                                zoomControlsEnabled: false,
+                                initialCameraPosition: controllerGet.cam!,
+                                markers: controllerGet.mark,
+                                onTap: (late) => storeg.read("role") == "user"
+                                    ? controllerGet.addTripMarker(late)
+                                    : null,
+                                polylines: controllerGet.polyline,
+                                onMapCreated: (controller) async {
+                                  mapControllerMap.complete(controller);
+                                },
+                              );
+                            });
+                      }),
+                  DrawerButtonDef(scaffoldKey: scaffoldKey),
+                  Visibility(
+                    visible: storeg.read('role') == 'driver',
+                    child: Positioned(
+                      top: 27,
+                      right: 10,
+                      child: Container(
+                          padding: const EdgeInsets.only(
+                              left: 20, right: 20, top: 5, bottom: 5),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: ColorManager.white),
+                          child: Text(
+                            tripController.driverBalance != null
+                                ? "رصيدك: ${tripController.driverBalance}"
+                                : "",
+                            style: const TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800),
+                          )),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
         },
       ),
     );

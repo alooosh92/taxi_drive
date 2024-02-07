@@ -18,79 +18,80 @@ class FloatingButtonTripScreen extends StatelessWidget {
     TripController tripController = Get.find();
     var storeg = GetStorage();
     return GetBuilder<TripController>(
-        init: tripController,
-        builder: (controller) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              SizedBox(
-                width: MediaQuery.sizeOf(context).width * 0.7,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 25),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextFormFieldRadius(
-                        controller: controller.start,
-                        hint: "انقر هنا لتحديد نقطة البداية",
-                        enabled: storeg.read("role") == "user",
-                        readOnly: true,
-                        iconStart: Icons.location_on_outlined,
-                        ontap: () => tripController.isStart = true.obs,
-                        color: ColorManager.white,
-                        textStyle: FontManager.w500s15cB,
-                        line: 1,
-                        bordarColor: ColorManager.red,
-                      ),
-                      const SizedBox(height: 10),
-                      TextFormFieldRadius(
-                        controller: controller.end,
-                        enabled: storeg.read("role") == "user",
-                        hint: "انقر هنا لتحديد نقطة النهاية",
-                        readOnly: true,
-                        iconStart: Icons.location_on_outlined,
-                        ontap: () => tripController.isStart = false.obs,
-                        color: ColorManager.white,
-                        textStyle: FontManager.w500s15cB,
-                        line: 1,
-                        bordarColor: ColorManager.red,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: storeg.read("role") == "user",
-                child: SizedBox(
-                  child: FloatingActionButton(
-                    onPressed: () => {
-                      if (tripController.startPostion != null &&
-                          tripController.endPostion != null &&
-                          tripController.price != null)
-                        {
-                          buttomSheet(
-                            context: context,
-                            headerText: "إضافة طلب",
-                            contener: const ChoiseTrip(),
-                          )
-                        }
-                      else
-                        {
-                          snackbarDef(
-                              "تحزير", "يجب تحديد نقطة البدايو والنهاية للرحلة")
-                        }
-                    },
-                    backgroundColor: ColorManager.primary,
-                    child: const Icon(
-                      Icons.add,
+      init: tripController,
+      builder: (controller) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width * 0.7,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 25),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormFieldRadius(
+                      controller: controller.start,
+                      hint: "انقر هنا لتحديد نقطة البداية",
+                      enabled: storeg.read("role") == "user",
+                      readOnly: true,
+                      iconStart: Icons.location_on_outlined,
+                      ontap: () => tripController.isStart = true.obs,
                       color: ColorManager.white,
-                      size: 30,
+                      textStyle: FontManager.w500s15cB,
+                      line: 1,
+                      bordarColor: ColorManager.red,
                     ),
+                    const SizedBox(height: 10),
+                    TextFormFieldRadius(
+                      controller: controller.end,
+                      enabled: storeg.read("role") == "user",
+                      hint: "انقر هنا لتحديد نقطة النهاية",
+                      readOnly: true,
+                      iconStart: Icons.location_on_outlined,
+                      ontap: () => tripController.isStart = false.obs,
+                      color: ColorManager.white,
+                      textStyle: FontManager.w500s15cB,
+                      line: 1,
+                      bordarColor: ColorManager.red,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Visibility(
+              visible: storeg.read("role") == "user",
+              child: SizedBox(
+                child: FloatingActionButton(
+                  onPressed: () => {
+                    if (tripController.startPostion != null &&
+                        tripController.endPostion != null &&
+                        tripController.price != null)
+                      {
+                        buttomSheet(
+                          context: context,
+                          headerText: "إضافة طلب",
+                          contener: const ChoiseTrip(),
+                        )
+                      }
+                    else
+                      {
+                        snackbarDef(
+                            "تحزير", "يجب تحديد نقطة البدايو والنهاية للرحلة")
+                      }
+                  },
+                  backgroundColor: ColorManager.primary,
+                  child: const Icon(
+                    Icons.add,
+                    color: ColorManager.white,
+                    size: 30,
                   ),
                 ),
               ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
+      },
+    );
   }
 }

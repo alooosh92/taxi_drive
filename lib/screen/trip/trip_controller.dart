@@ -44,9 +44,12 @@ class TripController extends GetxController {
   String? carStat;
   BuildContext? context;
   TripModelForSocket? tripUserAdd;
+  String? driverBalance;
 
   @override
   void onInit() async {
+    var storg = GetStorage();
+    var role = storg.read('role');
     await getFavoritLocation();
     await getUserTrips();
     if (startPostion == null) {
@@ -54,8 +57,24 @@ class TripController extends GetxController {
       var loc = await Geolocator.getCurrentPosition();
       startPostion = LatLng(loc.latitude, loc.longitude);
     }
-    await routeTrip();
+    if (role == 'user') {
+      await routeTrip();
+    } else {
+      await getDriverBalance();
+    }
     super.onInit();
+  }
+
+  Future<void> getDriverBalance() async {
+    var storeg = GetStorage();
+    var id = storeg.read('id');
+    http.Response response = await http.get(HosttingTaxi.getDriver(id),
+        headers: HosttingTaxi().getHeader());
+    if (response.statusCode == 200) {
+      var body = jsonDecode(response.body);
+      driverBalance = body['balance'].toString();
+      update();
+    }
   }
 
   Future<void> addTripMarker(LatLng pos) async {
@@ -572,7 +591,8 @@ class TripController extends GetxController {
   }
 
   Future<bool> sendRouteTrip(double route, int idTrip, int idDriver) async {
-    http.Response response = await http.post(HosttingTaxi.rating,
+    http.Response response = await http.post(
+        HosttingTaxi.rating(route, idTrip, idDriver),
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       Get.back();
