@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:taxi_drive/res/font_manager.dart';
 import 'package:taxi_drive/res/validator_manager.dart';
+import 'package:taxi_drive/screen/app_info/app_info.dart';
+import 'package:taxi_drive/screen/app_info/app_info_controller.dart';
 import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/auth/page/opt.dart';
-import 'package:taxi_drive/screen/auth/page/register.dart';
 import 'package:taxi_drive/screen/auth/widget/row_text_button.dart';
 import 'package:taxi_drive/widget/button_primary.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
@@ -58,10 +59,16 @@ class LoginScreen extends StatelessWidget {
                       },
                       text: "تسجيل دخول"),
                   RowTextButton(
-                    text: "لا تملك حساب بعد؟",
-                    textButton: "أنشأ حساب مجاناً",
-                    press: () => Get.offAll(const RegisterScreen()),
-                  )
+                      text: "لا تملك حساب بعد؟",
+                      textButton: "أنشأ حساب مجاناً",
+                      press: () async {
+                        AppInfoController appInfoController = Get.find();
+                        Get.offAll(AppInfo(
+                          tileAppBar: 'شروط الاستخدام',
+                          isRegister: true,
+                          list: await appInfoController.getTream(1),
+                        ));
+                      })
                 ],
               ),
             ),

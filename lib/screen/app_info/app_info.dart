@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:taxi_drive/models/term.dart';
 import 'package:taxi_drive/res/font_manager.dart';
+import 'package:taxi_drive/screen/auth/page/register.dart';
 import 'package:taxi_drive/widget/app_bar_all.dart';
 import 'package:taxi_drive/widget/button_primary.dart';
 
-class AppInfo extends StatelessWidget {
+class AppInfo extends StatefulWidget {
   const AppInfo({
     super.key,
     required this.tileAppBar,
@@ -15,13 +16,21 @@ class AppInfo extends StatelessWidget {
   final String tileAppBar;
   final List<TreamModel>? list;
   final bool? isRegister;
+
+  @override
+  State<AppInfo> createState() => _AppInfoState();
+}
+
+bool chec = false;
+
+class _AppInfoState extends State<AppInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarAll(
         press: () => Get.back(),
         icon: Icons.arrow_back_ios,
-        title: tileAppBar,
+        title: widget.tileAppBar,
       ),
       body: SizedBox(
         height: MediaQuery.sizeOf(context).height,
@@ -41,18 +50,20 @@ class AppInfo extends StatelessWidget {
                   height: MediaQuery.sizeOf(context).height * 0.6,
                   width: MediaQuery.sizeOf(context).width,
                   child: ListView.builder(
-                    itemCount: list!.length,
+                    itemCount: widget.list!.length,
                     itemBuilder: (context, index) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            list == null ? "" : list![index].title,
+                            widget.list == null
+                                ? ""
+                                : widget.list![index].title,
                             style: FontManager.w400s16cB,
                             overflow: TextOverflow.fade,
                           ),
                           Text(
-                            list == null ? "" : list![index].text,
+                            widget.list == null ? "" : widget.list![index].text,
                             style: FontManager.w400s14cG,
                             overflow: TextOverflow.fade,
                           ),
@@ -61,7 +72,26 @@ class AppInfo extends StatelessWidget {
                     },
                   ),
                 ),
-                ButtonPrimary(press: () {}, text: "متابعة")
+                Visibility(
+                    visible: widget.isRegister ?? false,
+                    child: Column(
+                      children: [
+                        Row(children: [
+                          Checkbox(
+                            value: chec,
+                            onChanged: (val) => setState(() {
+                              chec = val!;
+                            }),
+                          ),
+                          const Text('أنا اقبل بشروط الاستخدام المذكورة أعلاه ')
+                        ]),
+                        ButtonPrimary(
+                            press: chec
+                                ? () => Get.off(const RegisterScreen())
+                                : null,
+                            text: "متابعة"),
+                      ],
+                    ))
               ],
             ),
           ),

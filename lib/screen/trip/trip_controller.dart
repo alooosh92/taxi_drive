@@ -314,7 +314,7 @@ class TripController extends GetxController {
     var loc = await Geolocator.getCurrentPosition();
     cam = CameraPosition(
       target: LatLng(loc.latitude, loc.longitude),
-      zoom: 12,
+      zoom: 15,
     );
     update();
   }

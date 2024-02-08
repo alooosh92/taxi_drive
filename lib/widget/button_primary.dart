@@ -10,7 +10,7 @@ class ButtonPrimary extends StatelessWidget {
     this.color,
   });
   final String text;
-  final void Function() press;
+  final void Function()? press;
   final Color? color;
   @override
   Widget build(BuildContext context) {
