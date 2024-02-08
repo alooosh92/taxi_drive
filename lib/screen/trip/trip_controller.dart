@@ -17,7 +17,6 @@ import 'package:taxi_drive/screen/trip/widget/buttom_sheet.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
 import 'package:taxi_drive/widget/button_primary.dart';
-import 'package:taxi_drive/widget/progress_def.dart';
 import 'package:taxi_drive/widget/route_sheet.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -251,7 +250,7 @@ class TripController extends GetxController {
 
   Future<void> addPolyLine(String name) async {
     if (startPostion != null && endPostion != null) {
-      Get.dialog(const ProgressDef());
+      //Get.dialog(const ProgressDef());
       PolylinePoints polylinePoints = PolylinePoints();
       PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
           HosttingTaxi.mapKey,
@@ -404,8 +403,7 @@ class TripController extends GetxController {
                           const ImageConfiguration(),
                           'lib/asset/images/to_pin.png',
                         );
-                        mark.removeWhere((element) =>
-                            element.markerId.value != trip.id.toString());
+                        mark.removeWhere((element) => true);
                         mark.add(Marker(
                             markerId: const MarkerId("from"),
                             position: LatLng(trip.fromLate, trip.fromLong),
@@ -537,19 +535,25 @@ class TripController extends GetxController {
             mark.add(Marker(
               markerId: MarkerId(car.id),
               position: LatLng(double.parse(car.late), double.parse(car.long)),
-              onTap: () {
-                Get.dialog(AlertDialog(
-                  actions: [
-                    ButtonPrimary(
-                        press: () {
-                          Get.back();
-                        },
-                        text: 'موافق')
-                  ],
-                  title: const Text('معلومات السائق'),
-                  content: Text(
-                      'اسم السائق: ${car.firstName} ${car.lastName}\nرقم الجوال: ${car.phone}\nلون السيارة: ${car.carColor}\nنوع السيارة: ${car.carType}\nرقم اللوحة: ${car.carNumber}'),
-                ));
+              onTap: () async {
+                if (tripUserAdd != null && tripUserAdd!.id == car.tripId) {
+                  icon = await BitmapDescriptor.fromAssetImage(
+                      const ImageConfiguration(), 'lib/asset/images/myCar.png');
+                  Get.dialog(
+                    AlertDialog(
+                      actions: [
+                        ButtonPrimary(
+                            press: () {
+                              Get.back();
+                            },
+                            text: 'موافق')
+                      ],
+                      title: const Text('معلومات السائق'),
+                      content: Text(
+                          'اسم السائق: ${car.firstName} ${car.lastName}\nرقم الجوال: ${car.phone}\nلون السيارة: ${car.carColor}\nنوع السيارة: ${car.carType}\nرقم اللوحة: ${car.carNumber}'),
+                    ),
+                  );
+                }
               },
               icon: icon,
             ));
