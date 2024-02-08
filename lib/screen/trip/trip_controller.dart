@@ -17,6 +17,7 @@ import 'package:taxi_drive/screen/trip/widget/buttom_sheet.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
 import 'package:taxi_drive/widget/button_primary.dart';
+import 'package:taxi_drive/widget/progress_def.dart';
 import 'package:taxi_drive/widget/route_sheet.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -250,7 +251,7 @@ class TripController extends GetxController {
 
   Future<void> addPolyLine(String name) async {
     if (startPostion != null && endPostion != null) {
-      //Get.dialog(const ProgressDef());
+      Get.dialog(const ProgressDef());
       PolylinePoints polylinePoints = PolylinePoints();
       PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
           HosttingTaxi.mapKey,
@@ -292,12 +293,16 @@ class TripController extends GetxController {
         authController.cityInfo!.cityCenterLong);
     if (s <= authController.cityInfo!.farFromCity &&
         e <= authController.cityInfo!.farFromCity) {
-      return ((result.distanceValue! * authController.cityInfo!.innerPrice) +
+      return ((result.distanceValue! /
+                  1000 *
+                  authController.cityInfo!.innerPrice) +
               authController.cityInfo!.plusPrice)
           .toInt()
           .toString();
     } else {
-      return ((result.distanceValue! * authController.cityInfo!.outerPrice) +
+      return ((result.distanceValue! /
+                  1000 *
+                  authController.cityInfo!.outerPrice) +
               authController.cityInfo!.plusPrice)
           .toInt()
           .toString();
