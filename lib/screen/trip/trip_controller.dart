@@ -72,7 +72,8 @@ class TripController extends GetxController {
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
-      driverBalance = body['balance'].toString();
+      driverBalance =
+          double.parse(body['balance'].toString()).toStringAsFixed(2);
       update();
     }
   }
