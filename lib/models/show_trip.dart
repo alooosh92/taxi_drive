@@ -6,7 +6,7 @@ class ShowTrip {
   late double toLong;
   late String userName;
   late String phone;
-  late int? userRating;
+  late double? userRating;
   late double price;
   late DateTime created;
   late DateTime? accepted;
@@ -46,7 +46,9 @@ class ShowTrip {
       toLong: double.parse(json["toLong"].toString()),
       userName: json["userName"],
       phone: json["phone"],
-      userRating: json["userRating"],
+      userRating: json["userRating"] != null
+          ? double.parse(json["userRating"].toString())
+          : null,
       price: double.parse(json["price"].toString()),
       created: DateTime.parse(json["created"].toString()),
       accepted: json["accepted"] == null

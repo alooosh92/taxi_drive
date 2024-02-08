@@ -259,13 +259,14 @@ class TripController extends GetxController {
           PointLatLng(endPostion!.latitude, endPostion!.longitude));
       listPostionForPolyline.clear();
       for (var element in result.points) {
-        listPostionForPolyline.add(LatLng(element.latitude, element.longitude));
+        listPostionForPolyline
+            .addNonNull(LatLng(element.latitude, element.longitude));
       }
       start.text = result.startAddress!;
       end.text = result.endAddress!;
       masafa = result.distance;
       time = result.duration;
-      price = priceCalculation(result);
+      price = await priceCalculation(result);
       polyline.add(
         Polyline(
           polylineId: PolylineId(name),
@@ -279,8 +280,11 @@ class TripController extends GetxController {
     }
   }
 
-  String? priceCalculation(PolylineResult result) {
+  Future<String?> priceCalculation(PolylineResult result) async {
     AuthController authController = Get.find();
+    if (authController.cityInfo == null) {
+      await authController.checkToken();
+    }
     double s = Geolocator.distanceBetween(
         startPostion!.latitude,
         startPostion!.longitude,

@@ -75,21 +75,20 @@ class _RouteSheetState extends State<RouteSheet> {
               height: 20,
             ),
             ButtonPrimary(
-              press: () {
-                setState(() async {
-                  double averageRating = ratings.isEmpty
-                      ? 0
-                      : ratings.reduce((val1, val2) => val1 + val2) /
-                          ratings.length;
-                  TripController tripController = Get.find();
-                  var b = await tripController.sendRouteTrip(averageRating,
-                      int.parse(widget.tripId), int.parse(widget.driverId));
-                  if (b) {
-                    snackbarDef('ملاحظة', 'شكرا لك لتقييم اداء السائق');
-                  } else {
-                    snackbarDef('تحذير', 'شكرا لك لتقييم اداء السائق');
-                  }
-                });
+              press: () async {
+                double averageRating = ratings.isEmpty
+                    ? 0
+                    : ratings.reduce((val1, val2) => val1 + val2) /
+                        ratings.length;
+                TripController tripController = Get.find();
+                var b = await tripController.sendRouteTrip(averageRating,
+                    int.parse(widget.tripId), int.parse(widget.driverId));
+                if (b) {
+                  snackbarDef('ملاحظة', 'شكرا لك لتقييم اداء السائق');
+                } else {
+                  snackbarDef('تحذير', 'شكرا لك لتقييم اداء السائق');
+                }
+                setState(() {});
               },
               text: 'ارسل تقييمك الآن',
             ),
