@@ -45,7 +45,8 @@ class TripController extends GetxController {
   BuildContext? context;
   TripModelForSocket? tripUserAdd;
   String? driverBalance;
-  bool state = false;
+  int? tripId;
+  // bool state = false;
 
   @override
   void onInit() async {
@@ -134,7 +135,7 @@ class TripController extends GetxController {
               userId: 1,
               phone: '',
               username: '');
-          state = true;
+          //state = true;
           var iconFrom = await BitmapDescriptor.fromAssetImage(
             const ImageConfiguration(),
             'lib/asset/images/from_pin.png',
@@ -189,7 +190,7 @@ class TripController extends GetxController {
       var b = jsonDecode(response.body)['message'];
       if (b.toString() == 'true') {
         await getDriverBalance();
-        state = true;
+        //state = true;
         update();
         return true;
       } else {
@@ -207,7 +208,7 @@ class TripController extends GetxController {
     if (response.statusCode == 200) {
       var t = jsonDecode(response.body);
       if (t) {
-        state = false;
+        // state = false;
         update();
       }
       return t;
@@ -271,6 +272,8 @@ class TripController extends GetxController {
     http.Response response = await http.post(HosttingTaxi.addTrip,
         headers: HosttingTaxi().getHeader(), body: jsonEncode(trip.toJson()));
     if (response.statusCode == 200 && jsonDecode(response.body)["message"]) {
+      //  state = true;
+      //update();
       return true;
     }
     var b =
@@ -526,10 +529,22 @@ class TripController extends GetxController {
   Future<bool> deleteTrip(int id) async {
     http.Response response = await http.delete(HosttingTaxi.deleteTrip(id),
         headers: HosttingTaxi().getHeader());
+
     if (response.statusCode == 200) {
+      // state = false;
       return jsonDecode(response.body)['message'];
     }
     return false;
+  }
+
+  Future<TripModelForSocket?> getTrip(int tripId) async {
+    http.Response response = await http.get(HosttingTaxi.getTrip(tripId),
+        headers: HosttingTaxi().getHeader());
+    if (response.statusCode == 200) {
+      var body = jsonDecode(response.body);
+      return TripModelForSocket.fromJson(body);
+    }
+    return null;
   }
 
   Future<void> addMarkerFromSocket(dynamic data) async {
@@ -540,21 +555,36 @@ class TripController extends GetxController {
       var storeg = GetStorage();
       var dat = jsonDecode(body['data']);
       if (storeg.read('role') == 'driver') {
-        if (body['event'] == "App\\Events\\TripDeleteEvent") {
-          mark.removeWhere(
-              (element) => element.markerId.value == dat['trip_id'].toString());
-          update();
+        if (body['event'] == "App\\Events\\ChangeStatusDriverEvent") {
+          var car = SendDriverStateModel.fromJson(dat['data']);
+          if (car.id == storeg.read('id') &&
+              car.tripId != null &&
+              car.tripId != tripId) {
+            var trip = await getTrip(car.tripId!);
+            if (trip != null) {
+              startPostion = LatLng(trip.fromLate, trip.fromLong);
+              endPostion = LatLng(trip.toLate, trip.toLong);
+              await addPolyLine(trip.id.toString());
+              tripId = trip.id;
+            }
+          }
         } else {
-          if (body['event'] == "App\\Events\\TripOrderEvent") {
-            var trip = TripModelForSocket.fromJson(dat['trip_data']);
-            if (trip.status == 'available') {
-              await addTripInMap(trip);
-              update();
-            } else {
-              if (trip.status == 'selected') {
-                mark.removeWhere(
-                    (element) => element.markerId.value == trip.id.toString());
+          if (body['event'] == "App\\Events\\TripDeleteEvent") {
+            mark.removeWhere((element) =>
+                element.markerId.value == dat['trip_id'].toString());
+            update();
+          } else {
+            if (body['event'] == "App\\Events\\TripOrderEvent") {
+              var trip = TripModelForSocket.fromJson(dat['trip_data']);
+              if (trip.status == 'available') {
+                await addTripInMap(trip);
                 update();
+              } else {
+                if (trip.status == 'selected') {
+                  mark.removeWhere((element) =>
+                      element.markerId.value == trip.id.toString());
+                  update();
+                }
               }
             }
           }
@@ -580,7 +610,7 @@ class TripController extends GetxController {
               position: LatLng(double.parse(car.late), double.parse(car.long)),
               onTap: () async {
                 if (tripUserAdd != null && tripUserAdd!.id == car.tripId) {
-                  state = true;
+                  // state = true;
                   icon = await BitmapDescriptor.fromAssetImage(
                       const ImageConfiguration(), 'lib/asset/images/myCar.png');
                   Get.dialog(
