@@ -202,19 +202,19 @@ class TripController extends GetxController {
     return false;
   }
 
-  Future<bool> endTrip(int id) async {
-    http.Response response = await http.put(HosttingTaxi.endedTrip(id),
-        headers: HosttingTaxi().getHeader());
-    if (response.statusCode == 200) {
-      var t = jsonDecode(response.body);
-      if (t) {
-        // state = false;
-        update();
-      }
-      return t;
-    }
-    return false;
-  }
+  // Future<bool> endTrip(int id) async {
+  //   http.Response response = await http.put(HosttingTaxi.endedTrip(id),
+  //       headers: HosttingTaxi().getHeader());
+  //   if (response.statusCode == 200) {
+  //     var t = jsonDecode(response.body);
+  //     if (t) {
+  //       // state = false;
+  //       update();
+  //     }
+  //     return t;
+  //   }
+  //   return false;
+  // }
 
   Future<void> getTripForDriver() async {
     var g = await Geolocator.getCurrentPosition();
@@ -495,14 +495,14 @@ class TripController extends GetxController {
     Get.dialog(
       AlertDialog(
         actions: [
-          ElevatedButton(
-              style: const ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll(ColorManager.red)),
-              onPressed: () async {
-                await endTrip(trip.id);
-                Get.back();
-              },
-              child: const Text("انهاء")),
+          // ElevatedButton(
+          //     style: const ButtonStyle(
+          //         backgroundColor: MaterialStatePropertyAll(ColorManager.red)),
+          //     onPressed: () async {
+          //       await endTrip(trip.id);
+          //       Get.back();
+          //     },
+          //     child: const Text("انهاء")),
           ElevatedButton(
               style: const ButtonStyle(
                   backgroundColor:
