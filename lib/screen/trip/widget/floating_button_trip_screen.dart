@@ -60,34 +60,55 @@ class FloatingButtonTripScreen extends StatelessWidget {
               ),
             ),
             Visibility(
-              visible: storeg.read("role") == "user",
-              child: SizedBox(
-                child: FloatingActionButton(
-                  onPressed: () => {
-                    if (tripController.startPostion != null &&
-                        tripController.endPostion != null &&
-                        tripController.price != null)
-                      {
-                        buttomSheet(
-                          context: context,
-                          headerText: "إضافة طلب",
-                          contener: const ChoiseTrip(),
-                        )
-                      }
-                    else
-                      {
-                        snackbarDef(
-                            "تحزير", "يجب تحديد نقطة البدايو والنهاية للرحلة")
-                      }
-                  },
-                  backgroundColor: ColorManager.primary,
-                  child: const Icon(
-                    Icons.add,
-                    color: ColorManager.white,
-                    size: 30,
-                  ),
-                ),
-              ),
+              visible:
+                  storeg.read("role") == "user" || tripController.state == true,
+              child: tripController.state
+                  ? SizedBox(
+                      child: FloatingActionButton(
+                          onPressed: () async {
+                            var b = await tripController
+                                .deleteTrip(tripController.tripUserAdd!.id);
+                            if (b) {
+                              tripController.state = false;
+                              tripController.tripUserAdd = null;
+                              tripController.endPostion = null;
+                              tripController.startPostion = null;
+                              tripController.polyline = {};
+                            }
+                          },
+                          backgroundColor: ColorManager.red,
+                          child: const Text(
+                            'الغاء',
+                            style: FontManager.w500s22cW,
+                          )),
+                    )
+                  : SizedBox(
+                      child: FloatingActionButton(
+                        onPressed: () => {
+                          if (tripController.startPostion != null &&
+                              tripController.endPostion != null &&
+                              tripController.price != null)
+                            {
+                              buttomSheet(
+                                context: context,
+                                headerText: "إضافة طلب",
+                                contener: const ChoiseTrip(),
+                              )
+                            }
+                          else
+                            {
+                              snackbarDef("تحزير",
+                                  "يجب تحديد نقطة البدايو والنهاية للرحلة")
+                            }
+                        },
+                        backgroundColor: ColorManager.primary,
+                        child: const Icon(
+                          Icons.add,
+                          color: ColorManager.white,
+                          size: 30,
+                        ),
+                      ),
+                    ),
             ),
           ],
         );

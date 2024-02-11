@@ -45,6 +45,7 @@ class TripController extends GetxController {
   BuildContext? context;
   TripModelForSocket? tripUserAdd;
   String? driverBalance;
+  bool state = false;
 
   @override
   void onInit() async {
@@ -121,20 +122,45 @@ class TripController extends GetxController {
         var trip = ShowTrip.fromJson(element);
         if (trip.ended == null) {
           var tr = trip;
-          var icon = await BitmapDescriptor.fromAssetImage(
+          tripUserAdd = TripModelForSocket(
+              fromLate: tr.fromLate,
+              fromLong: tr.fromLong,
+              id: tr.id,
+              price: tr.price,
+              toLate: tr.toLate,
+              toLong: tr.toLong,
+              created: tr.created.toString(),
+              status: '',
+              userId: 1,
+              phone: '',
+              username: '');
+          state = true;
+          var iconFrom = await BitmapDescriptor.fromAssetImage(
             const ImageConfiguration(),
-            'lib/asset/images/trip2.png',
+            'lib/asset/images/from_pin.png',
+          );
+          var iconTo = await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(),
+            'lib/asset/images/to_pin.png',
           );
           startPostion = LatLng(tr.fromLate, tr.fromLong);
           endPostion = LatLng(tr.toLate, tr.toLong);
-          addPolyLine(tr.id.toString());
           mark.add(
             Marker(
               markerId: MarkerId(tr.id.toString()),
               position: LatLng(tr.fromLate, tr.fromLong),
-              icon: icon,
+              icon: iconFrom,
             ),
           );
+          mark.add(
+            Marker(
+              markerId: const MarkerId('to'),
+              position: LatLng(tr.toLate, tr.toLong),
+              icon: iconTo,
+            ),
+          );
+          addPolyLine(tr.id.toString());
+          Get.back();
           update();
         }
         list.add(trip);
@@ -163,6 +189,8 @@ class TripController extends GetxController {
       var b = jsonDecode(response.body)['message'];
       if (b.toString() == 'true') {
         await getDriverBalance();
+        state = true;
+        update();
         return true;
       } else {
         if (b.toString().contains('The Balance not Enough')) {
@@ -177,7 +205,12 @@ class TripController extends GetxController {
     http.Response response = await http.put(HosttingTaxi.endedTrip(id),
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      var t = jsonDecode(response.body);
+      if (t) {
+        state = false;
+        update();
+      }
+      return t;
     }
     return false;
   }
@@ -547,6 +580,7 @@ class TripController extends GetxController {
               position: LatLng(double.parse(car.late), double.parse(car.long)),
               onTap: () async {
                 if (tripUserAdd != null && tripUserAdd!.id == car.tripId) {
+                  state = true;
                   icon = await BitmapDescriptor.fromAssetImage(
                       const ImageConfiguration(), 'lib/asset/images/myCar.png');
                   Get.dialog(
