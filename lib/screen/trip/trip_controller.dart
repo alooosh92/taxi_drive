@@ -73,10 +73,12 @@ class TripController extends GetxController {
     http.Response response = await http.get(HosttingTaxi.getDriver(id),
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
-      var body = jsonDecode(response.body);
-      driverBalance =
-          double.parse(body['balance'].toString()).toStringAsFixed(2);
-      update();
+      try {
+        var body = jsonDecode(response.body);
+        driverBalance =
+            double.parse(body['balance'].toString()).toStringAsFixed(2);
+        update();
+      } catch (e) {}
     }
   }
 
@@ -117,56 +119,58 @@ class TripController extends GetxController {
     http.Response response = await http.get(HosttingTaxi.getUserTrip,
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
-      var body = jsonDecode(response.body);
-      List<ShowTrip> list = [];
-      for (var element in body) {
-        var trip = ShowTrip.fromJson(element);
-        if (trip.ended == null) {
-          var tr = trip;
-          tripUserAdd = TripModelForSocket(
-              fromLate: tr.fromLate,
-              fromLong: tr.fromLong,
-              id: tr.id,
-              price: tr.price,
-              toLate: tr.toLate,
-              toLong: tr.toLong,
-              created: tr.created.toString(),
-              status: '',
-              userId: 1,
-              phone: '',
-              username: '');
-          //state = true;
-          var iconFrom = await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(),
-            'lib/asset/images/from_pin.png',
-          );
-          var iconTo = await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(),
-            'lib/asset/images/to_pin.png',
-          );
-          startPostion = LatLng(tr.fromLate, tr.fromLong);
-          endPostion = LatLng(tr.toLate, tr.toLong);
-          mark.add(
-            Marker(
-              markerId: MarkerId(tr.id.toString()),
-              position: LatLng(tr.fromLate, tr.fromLong),
-              icon: iconFrom,
-            ),
-          );
-          mark.add(
-            Marker(
-              markerId: const MarkerId('to'),
-              position: LatLng(tr.toLate, tr.toLong),
-              icon: iconTo,
-            ),
-          );
-          addPolyLine(tr.id.toString());
-          Get.back();
-          update();
+      try {
+        var body = jsonDecode(response.body);
+        List<ShowTrip> list = [];
+        for (var element in body) {
+          var trip = ShowTrip.fromJson(element);
+          if (trip.ended == null) {
+            var tr = trip;
+            tripUserAdd = TripModelForSocket(
+                fromLate: tr.fromLate,
+                fromLong: tr.fromLong,
+                id: tr.id,
+                price: tr.price,
+                toLate: tr.toLate,
+                toLong: tr.toLong,
+                created: tr.created.toString(),
+                status: '',
+                userId: 1,
+                phone: '',
+                username: '');
+            //state = true;
+            var iconFrom = await BitmapDescriptor.fromAssetImage(
+              const ImageConfiguration(),
+              'lib/asset/images/from_pin.png',
+            );
+            var iconTo = await BitmapDescriptor.fromAssetImage(
+              const ImageConfiguration(),
+              'lib/asset/images/to_pin.png',
+            );
+            startPostion = LatLng(tr.fromLate, tr.fromLong);
+            endPostion = LatLng(tr.toLate, tr.toLong);
+            mark.add(
+              Marker(
+                markerId: MarkerId(tr.id.toString()),
+                position: LatLng(tr.fromLate, tr.fromLong),
+                icon: iconFrom,
+              ),
+            );
+            mark.add(
+              Marker(
+                markerId: const MarkerId('to'),
+                position: LatLng(tr.toLate, tr.toLong),
+                icon: iconTo,
+              ),
+            );
+            addPolyLine(tr.id.toString());
+            Get.back();
+            update();
+          }
+          list.add(trip);
         }
-        list.add(trip);
-      }
-      return list;
+        return list;
+      } catch (e) {}
     }
     return List.empty();
   }
@@ -235,27 +239,29 @@ class TripController extends GetxController {
     http.Response response = await http.get(HosttingTaxi.getUserLocation,
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
-      var body = jsonDecode(response.body);
-      var icon = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(),
-        'lib/asset/images/location-pin.gif',
-      );
-      for (var element in body) {
-        UserLocation loc = UserLocation.frommJson(element);
-        var mar = Marker(
-            markerId: MarkerId(loc.id!.toString()),
-            position: LatLng(loc.lat, loc.long),
-            infoWindow: InfoWindow(title: loc.name),
-            icon: icon,
-            onTap: () {
-              if (isStart != null) {
-                addTripMarker(LatLng(loc.lat, loc.long));
-              }
-            });
+      try {
+        var body = jsonDecode(response.body);
+        var icon = await BitmapDescriptor.fromAssetImage(
+          const ImageConfiguration(),
+          'lib/asset/images/location-pin.gif',
+        );
+        for (var element in body) {
+          UserLocation loc = UserLocation.frommJson(element);
+          var mar = Marker(
+              markerId: MarkerId(loc.id!.toString()),
+              position: LatLng(loc.lat, loc.long),
+              infoWindow: InfoWindow(title: loc.name),
+              icon: icon,
+              onTap: () {
+                if (isStart != null) {
+                  addTripMarker(LatLng(loc.lat, loc.long));
+                }
+              });
 
-        mark.add(mar);
-      }
-      update();
+          mark.add(mar);
+        }
+        update();
+      } catch (e) {}
     }
   }
 
@@ -657,7 +663,7 @@ class TripController extends GetxController {
         headers: HosttingTaxi().getHeader(), HosttingTaxi.getLastTrip);
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
-      if (body['message'] != 'Rating') {
+      if (body['message'] != 'Rating' && body['message'] != 'Not have trip') {
         if (body['message']['trip_id'] != null &&
             body['message']['driver_id'] != null) {
           Get.bottomSheet(RouteSheet(

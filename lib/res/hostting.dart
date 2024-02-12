@@ -41,7 +41,7 @@ class HosttingTaxi {
   static Uri getLastTrip = Uri.parse("$api/getLastTrip");
   static Uri getVersion = Uri.parse("$api/getVersionApp");
   static Uri getTrip(int id) => Uri.parse("$api/GetTrip?trip_id=$id");
-  static Uri getDriver(int id) => Uri.parse("$api/GetDriver?driver_id=$id");
+  static Uri getDriver(int? id) => Uri.parse("$api/GetDriver?driver_id=$id");
   static Uri rating(double route, int idTrip, int idDriver) => Uri.parse(
       "$api/Rating?driver_id=$idDriver&rating=$route&trip_id=$idTrip");
   static Uri getMyCity(String region) =>

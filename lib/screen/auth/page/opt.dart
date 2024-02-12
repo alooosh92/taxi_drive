@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:get/get.dart';
@@ -56,7 +57,9 @@ class OptScreen extends StatelessWidget {
             ButtonPrimary(
                 press: () async {
                   if (otpval != null && otpval!.length > 3) {
-                    var verify = Verify(code: otpval!, phone: phone);
+                    var toknFCM = await FirebaseMessaging.instance.getToken();
+                    var verify =
+                        Verify(code: otpval!, phone: phone, fcmToken: toknFCM);
                     var b = await authController.verify(verify);
                     if (b) {
                       Get.offAll(const TripScreen());
