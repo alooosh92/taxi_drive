@@ -14,6 +14,7 @@ class AuthController extends GetxController {
   UserRegister? user;
   CityInfo? cityInfo;
   Future<bool> register(UserRegister user) async {
+    user.phone = '+${user.phone}';
     http.Response response =
         await http.post(HosttingTaxi.register, body: user.toJson());
     if (response.statusCode == 200) {
@@ -24,7 +25,7 @@ class AuthController extends GetxController {
 
   Future<bool> login(String phone) async {
     http.Response response =
-        await http.post(HosttingTaxi.login, body: {'phone': phone});
+        await http.post(HosttingTaxi.login, body: {'phone': '+$phone'});
     if (response.statusCode == 200) {
       return true;
     }
@@ -61,6 +62,7 @@ class AuthController extends GetxController {
   }
 
   Future<bool> updateProfile(UpdateUser userUpdate) async {
+    userUpdate.phone = '+${userUpdate.phone}';
     http.Response response = await http.post(HosttingTaxi.updateProfile,
         headers: HosttingTaxi().getHeader(),
         body: jsonEncode(userUpdate.toJson()));

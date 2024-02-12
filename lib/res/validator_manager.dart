@@ -20,8 +20,10 @@ class ValidatorManager {
     if (value == null || value.isEmpty) {
       return "لا يمكن ترك هذا الحقل فارغاً";
     }
-    if (value.length < 9) {
-      return "الرجاء ادخال رقم صحيح مع النداء القطري";
+    if (value.length < 12 ||
+        value.contains('+') ||
+        value.substring(0, 2) == '00') {
+      return "الرجاء ادخال رقم صحيح مع النداء القطري من الشكل 963999999999";
     }
     return null;
   }
