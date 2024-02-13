@@ -33,6 +33,7 @@ class AuthController extends GetxController {
   }
 
   Future<bool> verify(Verify verify) async {
+    verify.phone = '+${verify.phone}';
     http.Response response =
         await http.post(HosttingTaxi.verify, body: verify.toJson());
     if (response.statusCode == 200 &&
