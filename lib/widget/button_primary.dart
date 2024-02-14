@@ -8,10 +8,14 @@ class ButtonPrimary extends StatelessWidget {
     required this.press,
     required this.text,
     this.color,
+    this.textStyle,
+    this.autoSize,
   });
   final String text;
   final void Function()? press;
   final Color? color;
+  final TextStyle? textStyle;
+  final Size? autoSize;
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
@@ -19,11 +23,11 @@ class ButtonPrimary extends StatelessWidget {
         backgroundColor: color ?? ColorManager.primary,
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        maximumSize: Size(MediaQuery.sizeOf(context).width, 50),
-        minimumSize: Size(MediaQuery.sizeOf(context).width, 50),
+        maximumSize: autoSize ?? Size(MediaQuery.sizeOf(context).width, 50),
+        minimumSize: autoSize ?? Size(MediaQuery.sizeOf(context).width, 50),
       ),
       onPressed: press,
-      child: Text(text, style: FontManager.w600s16cW),
+      child: Text(text, style: textStyle ?? FontManager.w600s16cW),
     );
   }
 }

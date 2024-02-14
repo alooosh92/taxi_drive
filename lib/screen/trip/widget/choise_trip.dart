@@ -6,8 +6,6 @@ import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
 import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/trip_controller.dart';
-import 'package:taxi_drive/screen/trip/widget/buttom_sheet.dart';
-import 'package:taxi_drive/screen/trip/widget/search_driver.dart';
 import 'package:taxi_drive/widget/button_primary.dart';
 import 'package:taxi_drive/widget/progress_def.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
@@ -92,11 +90,13 @@ class ChoiseTrip extends StatelessWidget {
                                           if (b) {
                                             Navigator.of(context).pop();
                                             Navigator.of(context).pop();
-                                            buttomSheet(
-                                                heig: 400,
-                                                context: context,
-                                                headerText: "البحث عن سائق",
-                                                contener: const SaerchDriver());
+                                            tripController
+                                                .changetripaccsepted(false);
+                                            // buttomSheet(
+                                            //     heig: 400,
+                                            //     context: context,
+                                            //     headerText: "البحث عن سائق",
+                                            //     contener: const SaerchDriver());
                                           } else {
                                             snackbarDef("خطأ",
                                                 "لا يمكن انشاء رحلتين في ان واحد");

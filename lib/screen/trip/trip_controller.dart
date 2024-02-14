@@ -46,13 +46,12 @@ class TripController extends GetxController {
   TripModelForSocket? tripUserAdd;
   String? driverBalance;
   int? tripId;
-  // bool state = false;
+  bool? tripAccsepted;
 
   @override
   void onInit() async {
     var storg = GetStorage();
     var role = storg.read('role');
-    await getFavoritLocation();
     await getUserTrips();
     if (startPostion == null) {
       await checkPermission();
@@ -60,11 +59,17 @@ class TripController extends GetxController {
       startPostion = LatLng(loc.latitude, loc.longitude);
     }
     if (role == 'user') {
+      await getFavoritLocation();
       await routeTrip();
     } else {
       await getDriverBalance();
     }
     super.onInit();
+  }
+
+  void changetripaccsepted(bool? val) {
+    tripAccsepted = val;
+    update();
   }
 
   Future<void> getDriverBalance() async {
@@ -138,7 +143,6 @@ class TripController extends GetxController {
                 userId: 1,
                 phone: '',
                 username: '');
-            //state = true;
             var iconFrom = await BitmapDescriptor.fromAssetImage(
               const ImageConfiguration(),
               'lib/asset/images/from_pin.png',
@@ -206,19 +210,19 @@ class TripController extends GetxController {
     return false;
   }
 
-  // Future<bool> endTrip(int id) async {
-  //   http.Response response = await http.put(HosttingTaxi.endedTrip(id),
-  //       headers: HosttingTaxi().getHeader());
-  //   if (response.statusCode == 200) {
-  //     var t = jsonDecode(response.body);
-  //     if (t) {
-  //       // state = false;
-  //       update();
-  //     }
-  //     return t;
-  //   }
-  //   return false;
-  // }
+  Future<bool> endTrip(int id) async {
+    http.Response response = await http.put(HosttingTaxi.endedTrip(id),
+        headers: HosttingTaxi().getHeader());
+    if (response.statusCode == 200) {
+      var t = jsonDecode(response.body);
+      if (t) {
+        // state = false;
+        update();
+      }
+      return t;
+    }
+    return false;
+  }
 
   Future<void> getTripForDriver() async {
     var g = await Geolocator.getCurrentPosition();
@@ -645,8 +649,11 @@ class TripController extends GetxController {
               if (trip.phone == storeg.read('phone')) {
                 if (trip.status == 'available') {
                   tripUserAdd = trip;
+                  tripAccsepted = false;
+                  update();
                 } else {
                   if (trip.status == 'selected') {
+                    tripAccsepted = true;
                     Get.back();
                   }
                 }
