@@ -42,6 +42,7 @@ class TripAccsseptedUserTrue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TripController tripController = Get.find();
+    tripController.isStart = null;
     return Container(
       padding: const EdgeInsets.all(20),
       margin: const EdgeInsets.only(right: 30),
@@ -110,6 +111,7 @@ class TripAccsseptedDriverTrue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TripController tripController = Get.find();
+    tripController.isStart = null;
     return Container(
       padding: const EdgeInsets.all(20),
       margin: const EdgeInsets.only(right: 30),

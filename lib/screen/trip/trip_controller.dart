@@ -55,12 +55,6 @@ class TripController extends GetxController {
   void onInit() async {
     var storg = GetStorage();
     var role = storg.read('role');
-    //await getUserTrips();
-    if (startPostion == null) {
-      await checkPermission();
-      var loc = await Geolocator.getCurrentPosition();
-      startPostion = LatLng(loc.latitude, loc.longitude);
-    }
     if (role == 'user') {
       await getFavoritLocation();
       await getUnEndTripForUser();
@@ -68,6 +62,11 @@ class TripController extends GetxController {
     } else {
       await getDriverBalance();
       await getUnEndTripForDriver();
+    }
+    if (startPostion == null) {
+      await checkPermission();
+      var loc = await Geolocator.getCurrentPosition();
+      startPostion = LatLng(loc.latitude, loc.longitude);
     }
     super.onInit();
   }
@@ -171,48 +170,6 @@ class TripController extends GetxController {
         List<ShowTrip> list = [];
         for (var element in body) {
           var trip = ShowTrip.fromJson(element);
-          if (trip.ended == null) {
-            var tr = trip;
-            tripUserAdd = TripModelForSocket(
-                fromLate: tr.fromLate,
-                fromLong: tr.fromLong,
-                id: tr.id,
-                price: tr.price,
-                toLate: tr.toLate,
-                toLong: tr.toLong,
-                created: tr.created.toString(),
-                status: '',
-                userId: 1,
-                phone: '',
-                username: '');
-            var iconFrom = await BitmapDescriptor.fromAssetImage(
-              const ImageConfiguration(),
-              'lib/asset/images/from_pin.png',
-            );
-            var iconTo = await BitmapDescriptor.fromAssetImage(
-              const ImageConfiguration(),
-              'lib/asset/images/to_pin.png',
-            );
-            startPostion = LatLng(tr.fromLate, tr.fromLong);
-            endPostion = LatLng(tr.toLate, tr.toLong);
-            mark.add(
-              Marker(
-                markerId: MarkerId(tr.id.toString()),
-                position: LatLng(tr.fromLate, tr.fromLong),
-                icon: iconFrom,
-              ),
-            );
-            mark.add(
-              Marker(
-                markerId: const MarkerId('to'),
-                position: LatLng(tr.toLate, tr.toLong),
-                icon: iconTo,
-              ),
-            );
-            addPolyLine(tr.id.toString());
-            Get.back();
-            update();
-          }
           list.add(trip);
         }
         return list;
@@ -651,7 +608,7 @@ class TripController extends GetxController {
                 if (trip.status == 'selected') {
                   mark.removeWhere((element) =>
                       element.markerId.value == trip.id.toString());
-                  update();
+                  //update();
                 }
               }
             }
@@ -662,27 +619,39 @@ class TripController extends GetxController {
           if (body['event'] == "App\\Events\\ChangeStatusDriverEvent") {
             var car = SendDriverStateModel.fromJson(dat['data']);
             BitmapDescriptor icon;
-            if (car.state == 'busy') {
+            if (getUserEndLessTrip != null &&
+                getUserEndLessTrip!.phoneDriver == car.phone) {
               icon = await BitmapDescriptor.fromAssetImage(
-                const ImageConfiguration(),
-                'lib/asset/images/car_not_free.png',
-              );
+                  const ImageConfiguration(), 'lib/asset/images/myCar.png');
+              if (getUserEndLessTrip != null && car.state != 'busy') {
+                getUserEndLessTrip = null;
+                tripAccsepted = null;
+                startPostion = null;
+                endPostion = null;
+                isStart = null;
+                listPostionForPolyline = [];
+                polyline = {};
+                masafa = null;
+                price = null;
+                time = null;
+                await routeTrip();
+              }
             } else {
-              icon = await BitmapDescriptor.fromAssetImage(
-                const ImageConfiguration(),
-                'lib/asset/images/car_free.png',
-              );
+              if (car.state == 'busy') {
+                icon = await BitmapDescriptor.fromAssetImage(
+                  const ImageConfiguration(),
+                  'lib/asset/images/car_not_free.png',
+                );
+              } else {
+                icon = await BitmapDescriptor.fromAssetImage(
+                  const ImageConfiguration(),
+                  'lib/asset/images/car_free.png',
+                );
+              }
             }
             mark.add(Marker(
               markerId: MarkerId(car.id),
               position: LatLng(double.parse(car.late), double.parse(car.long)),
-              onTap: () async {
-                if (getUserEndLessTrip != null &&
-                    getUserEndLessTrip!.id.toString() == car.id) {
-                  icon = await BitmapDescriptor.fromAssetImage(
-                      const ImageConfiguration(), 'lib/asset/images/myCar.png');
-                }
-              },
               icon: icon,
             ));
             update();
