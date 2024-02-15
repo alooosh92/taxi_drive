@@ -47,7 +47,9 @@ class _AppInfoState extends State<AppInfo> {
                   width: MediaQuery.sizeOf(context).height * 0.3,
                 ),
                 SizedBox(
-                  height: MediaQuery.sizeOf(context).height * 0.6,
+                  height: widget.isRegister ?? false
+                      ? MediaQuery.sizeOf(context).height * 0.65 - 100
+                      : MediaQuery.sizeOf(context).height * 0.65,
                   width: MediaQuery.sizeOf(context).width,
                   child: ListView.builder(
                     itemCount: widget.list!.length,

@@ -10,6 +10,7 @@ import 'package:taxi_drive/screen/trip/widget/choise_trip.dart';
 import 'package:taxi_drive/widget/button_primary.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
 import 'package:taxi_drive/widget/text_form_fiels_def.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FloatingButtonTripScreen extends StatelessWidget {
   const FloatingButtonTripScreen({
@@ -40,6 +41,7 @@ class TripAccsseptedUserTrue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TripController tripController = Get.find();
     return Container(
       padding: const EdgeInsets.all(20),
       margin: const EdgeInsets.only(right: 30),
@@ -50,28 +52,46 @@ class TripAccsseptedUserTrue extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('اسم السائق: علاء بعاج', style: FontManager.w700s15cB),
-                  Text('رقم الجوال: +963956108642',
+                  Text(
+                      'اسم السائق: ${tripController.getUserEndLessTrip!.firstName} ${tripController.getUserEndLessTrip!.lastName}',
                       style: FontManager.w700s15cB),
-                  Text('لون السيارة: أصفر', style: FontManager.w700s15cB),
-                  Text('رقم اللوحة: 658452', style: FontManager.w700s15cB),
-                  Text('نوع السيارة: كيا', style: FontManager.w700s15cB),
-                  Text('المسافة : 3.2', style: FontManager.w700s15cB),
-                  Text('قيمة الرحلة: 15200', style: FontManager.w700s15cB),
+                  Text(
+                      'رقم الجوال: ${tripController.getUserEndLessTrip!.phoneDriver}',
+                      style: FontManager.w700s15cB),
+                  Text(
+                      'لون السيارة: ${tripController.getUserEndLessTrip!.carColore}',
+                      style: FontManager.w700s15cB),
+                  Text(
+                      'رقم اللوحة: ${tripController.getUserEndLessTrip!.carNumber}',
+                      style: FontManager.w700s15cB),
+                  Text(
+                      'نوع السيارة: ${tripController.getUserEndLessTrip!.carType}',
+                      style: FontManager.w700s15cB),
+                  Text('المسافة : ${tripController.masafa}',
+                      style: FontManager.w700s15cB),
+                  Text(
+                      'قيمة الرحلة: ${tripController.getUserEndLessTrip!.price}',
+                      style: FontManager.w700s15cB),
                 ],
               ),
             ],
           ),
           const SizedBox(height: 20),
           ButtonPrimary(
-            press: () {},
+            press: () async {
+              if (await canLaunchUrl(Uri.parse(
+                  'tel:${tripController.getUserEndLessTrip!.phoneDriver}'))) {
+                await launchUrl(Uri.parse(
+                    'tel:${tripController.getUserEndLessTrip!.phoneDriver}'));
+              }
+            },
             text: 'اتصال',
             color: ColorManager.white,
             textStyle: FontManager.w700s15cB,
@@ -89,6 +109,7 @@ class TripAccsseptedDriverTrue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TripController tripController = Get.find();
     return Container(
       padding: const EdgeInsets.all(20),
       margin: const EdgeInsets.only(right: 30),
@@ -99,18 +120,24 @@ class TripAccsseptedDriverTrue extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('اسم المستخدم: علاء بعاج', style: FontManager.w700s15cB),
-                  Text('رقم الجوال: +963956108642',
+                  Text(
+                      'اسم المستخدم: ${tripController.getDriverEndLessTrip!.username}',
                       style: FontManager.w700s15cB),
-                  Text('المسافة : 3.2', style: FontManager.w700s15cB),
-                  Text('قيمة الرحلة: 15200', style: FontManager.w700s15cB),
+                  Text(
+                      'رقم الجوال: ${tripController.getDriverEndLessTrip!.phone}',
+                      style: FontManager.w700s15cB),
+                  Text('المسافة : ${tripController.masafa}',
+                      style: FontManager.w700s15cB),
+                  Text(
+                      'قيمة الرحلة: ${tripController.getDriverEndLessTrip!.price.toInt()}',
+                      style: FontManager.w700s15cB),
                 ],
               ),
             ],
@@ -120,14 +147,23 @@ class TripAccsseptedDriverTrue extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ButtonPrimary(
-                press: () {},
+                press: () async {
+                  if (await canLaunchUrl(Uri.parse(
+                      'tel:${tripController.getDriverEndLessTrip!.phone}'))) {
+                    await launchUrl(Uri.parse(
+                        'tel:${tripController.getDriverEndLessTrip!.phone}'));
+                  }
+                },
                 text: 'اتصال',
                 color: ColorManager.white,
                 textStyle: FontManager.w700s15cB,
                 autoSize: Size(MediaQuery.sizeOf(context).width / 2 - 50, 50),
               ),
               ButtonPrimary(
-                press: () {},
+                press: () async {
+                  await tripController
+                      .endTrip(tripController.getDriverEndLessTrip!.tripId);
+                },
                 text: 'انهاء الرحلة',
                 color: ColorManager.red,
                 textStyle: FontManager.w700s15cB,

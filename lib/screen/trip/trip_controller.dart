@@ -7,6 +7,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:taxi_drive/models/add_trip.dart';
 import 'package:taxi_drive/models/add_user_location.dart';
+import 'package:taxi_drive/models/get_driver_endless_trip.dart';
+import 'package:taxi_drive/models/get_user_endless_trip.dart';
 import 'package:taxi_drive/models/send_driver_state.dart';
 import 'package:taxi_drive/models/show_trip.dart';
 import 'package:taxi_drive/models/trip_model_for_socket.dart';
@@ -16,7 +18,6 @@ import 'package:taxi_drive/screen/auth/auth_controller.dart';
 import 'package:taxi_drive/screen/trip/widget/buttom_sheet.dart';
 import 'package:taxi_drive/screen/trip/widget/map.dart';
 import 'package:http/http.dart' as http;
-import 'package:taxi_drive/widget/button_primary.dart';
 import 'package:taxi_drive/widget/progress_def.dart';
 import 'package:taxi_drive/widget/route_sheet.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
@@ -47,12 +48,14 @@ class TripController extends GetxController {
   String? driverBalance;
   int? tripId;
   bool? tripAccsepted;
+  GetUserEndLessTrip? getUserEndLessTrip;
+  GetDriverEndLessTrip? getDriverEndLessTrip;
 
   @override
   void onInit() async {
     var storg = GetStorage();
     var role = storg.read('role');
-    await getUserTrips();
+    //await getUserTrips();
     if (startPostion == null) {
       await checkPermission();
       var loc = await Geolocator.getCurrentPosition();
@@ -60,9 +63,11 @@ class TripController extends GetxController {
     }
     if (role == 'user') {
       await getFavoritLocation();
+      await getUnEndTripForUser();
       await routeTrip();
     } else {
       await getDriverBalance();
+      await getUnEndTripForDriver();
     }
     super.onInit();
   }
@@ -70,6 +75,43 @@ class TripController extends GetxController {
   void changetripaccsepted(bool? val) {
     tripAccsepted = val;
     update();
+  }
+
+  Future<void> getUnEndTripForUser() async {
+    http.Response response = await http.get(HosttingTaxi.getUserEndLessTrip,
+        headers: HosttingTaxi().getHeader());
+    if (response.statusCode == 200) {
+      var body = jsonDecode(response.body);
+      getUserEndLessTrip = GetUserEndLessTrip.fromJson(body);
+      isStart = true.obs;
+      await addTripMarker(
+          LatLng(getUserEndLessTrip!.fromLate, getUserEndLessTrip!.fromLong));
+      isStart = false.obs;
+      await addTripMarker(
+          LatLng(getUserEndLessTrip!.toLate, getUserEndLessTrip!.toLong));
+      tripAccsepted = true;
+      update();
+    }
+  }
+
+  Future<void> getUnEndTripForDriver() async {
+    var storeg = GetStorage();
+    int id = storeg.read('id');
+    http.Response response = await http.get(
+        HosttingTaxi.getDriverEndLessTrip(id),
+        headers: HosttingTaxi().getHeader());
+    if (response.statusCode == 200) {
+      var body = jsonDecode(response.body);
+      getDriverEndLessTrip = GetDriverEndLessTrip.fromJson(body);
+      isStart = true.obs;
+      await addTripMarker(LatLng(
+          getDriverEndLessTrip!.fromLate, getDriverEndLessTrip!.fromLong));
+      isStart = false.obs;
+      await addTripMarker(
+          LatLng(getDriverEndLessTrip!.toLate, getDriverEndLessTrip!.toLong));
+      tripAccsepted = true;
+      update();
+    }
   }
 
   Future<void> getDriverBalance() async {
@@ -196,10 +238,10 @@ class TripController extends GetxController {
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
       var b = jsonDecode(response.body)['message'];
-      if (b.toString() == 'true') {
+      if (b) {
         await getDriverBalance();
-        //state = true;
-        update();
+        await getUnEndTripForDriver();
+        Get.back();
         return true;
       } else {
         if (b.toString().contains('The Balance not Enough')) {
@@ -214,9 +256,24 @@ class TripController extends GetxController {
     http.Response response = await http.put(HosttingTaxi.endedTrip(id),
         headers: HosttingTaxi().getHeader());
     if (response.statusCode == 200) {
-      var t = jsonDecode(response.body);
+      var t = jsonDecode(response.body)['message'];
       if (t) {
-        // state = false;
+        tripAccsepted = null;
+        startPostion = null;
+        endPostion = null;
+        isStart = null;
+        listPostionForPolyline = [];
+        polyline = {};
+        masafa = null;
+        price = null;
+        time = null;
+        mark.removeWhere(
+          (element) =>
+              element.markerId.value == 'start' ||
+              element.markerId.value == 'end' ||
+              element.markerId.value == 'from' ||
+              element.markerId.value == 'to',
+        );
         update();
       }
       return t;
@@ -450,6 +507,7 @@ class TripController extends GetxController {
                     if (b != null) {
                       if (b) {
                         Get.back();
+                        Get.back();
                         snackbarDef("ملاحظة", "تم قبول الطلب بنجاح");
                         var iconFrom = await BitmapDescriptor.fromAssetImage(
                           const ImageConfiguration(),
@@ -461,15 +519,15 @@ class TripController extends GetxController {
                         );
                         mark.removeWhere((element) => true);
                         mark.add(Marker(
-                            markerId: const MarkerId("from"),
-                            position: LatLng(trip.fromLate, trip.fromLong),
-                            icon: iconFrom,
-                            onTap: () async => clickMarketTrip(trip)));
+                          markerId: const MarkerId("from"),
+                          position: LatLng(trip.fromLate, trip.fromLong),
+                          icon: iconFrom,
+                        ));
                         mark.add(Marker(
-                            markerId: const MarkerId("to"),
-                            position: LatLng(trip.toLate, trip.toLong),
-                            icon: iconTo,
-                            onTap: () async => clickMarketTrip(trip)));
+                          markerId: const MarkerId("to"),
+                          position: LatLng(trip.toLate, trip.toLong),
+                          icon: iconTo,
+                        ));
                         update();
                       }
                     } else {
@@ -619,24 +677,10 @@ class TripController extends GetxController {
               markerId: MarkerId(car.id),
               position: LatLng(double.parse(car.late), double.parse(car.long)),
               onTap: () async {
-                if (tripUserAdd != null && tripUserAdd!.id == car.tripId) {
-                  // state = true;
+                if (getUserEndLessTrip != null &&
+                    getUserEndLessTrip!.id.toString() == car.id) {
                   icon = await BitmapDescriptor.fromAssetImage(
                       const ImageConfiguration(), 'lib/asset/images/myCar.png');
-                  Get.dialog(
-                    AlertDialog(
-                      actions: [
-                        ButtonPrimary(
-                            press: () {
-                              Get.back();
-                            },
-                            text: 'موافق')
-                      ],
-                      title: const Text('معلومات السائق'),
-                      content: Text(
-                          'اسم السائق: ${car.firstName} ${car.lastName}\nرقم الجوال: ${car.phone}\nلون السيارة: ${car.carColor}\nنوع السيارة: ${car.carType}\nرقم اللوحة: ${car.carNumber}'),
-                    ),
-                  );
                 }
               },
               icon: icon,
@@ -647,15 +691,12 @@ class TripController extends GetxController {
               var trip = TripModelForSocket.fromJson(dat['trip_data']);
               var storeg = GetStorage();
               if (trip.phone == storeg.read('phone')) {
+                if (trip.status == 'selected') {
+                  await getUnEndTripForUser();
+                  Get.back();
+                }
                 if (trip.status == 'available') {
                   tripUserAdd = trip;
-                  tripAccsepted = false;
-                  update();
-                } else {
-                  if (trip.status == 'selected') {
-                    tripAccsepted = true;
-                    Get.back();
-                  }
                 }
               }
             }

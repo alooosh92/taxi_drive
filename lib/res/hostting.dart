@@ -56,4 +56,7 @@ class HosttingTaxi {
   static Uri getAllTripForDriver(double lat, double log) =>
       Uri.parse("$api/GetAllTrip?lat=$lat&long=$log");
   static Uri deleteTrip(int id) => Uri.parse("$api/DeleteTrip?trip_id=$id");
+  static Uri getDriverEndLessTrip(int id) =>
+      Uri.parse('$api/getDriverEndlessTrip?driver_id=$id');
+  static Uri getUserEndLessTrip = Uri.parse('$api/getUserEndlessTrip');
 }
