@@ -123,7 +123,7 @@ class _UserTripState extends State<UserTrip> {
                                       width: 5,
                                     ),
                                     Text(
-                                      DateFormat('yyyy/mm/dd - hh:mm').format(
+                                      DateFormat('yyyy/MM/dd - hh:mm').format(
                                           snapshot.data![index].created),
                                       style: FontManager.w500s17cB,
                                     ),

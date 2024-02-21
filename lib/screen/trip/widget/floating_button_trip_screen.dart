@@ -88,12 +88,12 @@ class TripAccsseptedUserTrue extends StatelessWidget {
           ButtonPrimary(
             press: () async {
               if (await canLaunchUrl(Uri.parse(
-                  'tel:${tripController.getUserEndLessTrip!.phoneDriver}'))) {
+                  'https://wa.me/${tripController.getUserEndLessTrip!.phoneDriver}'))) {
                 await launchUrl(Uri.parse(
-                    'tel:${tripController.getUserEndLessTrip!.phoneDriver}'));
+                    'https://wa.me/${tripController.getUserEndLessTrip!.phoneDriver}'));
               }
             },
-            text: 'اتصال',
+            text: 'تواصل',
             color: ColorManager.white,
             textStyle: FontManager.w700s15cB,
           )
@@ -151,20 +151,41 @@ class TripAccsseptedDriverTrue extends StatelessWidget {
               ButtonPrimary(
                 press: () async {
                   if (await canLaunchUrl(Uri.parse(
-                      'tel:${tripController.getDriverEndLessTrip!.phone}'))) {
+                      'https://wa.me/${tripController.getDriverEndLessTrip!.phone}'))) {
                     await launchUrl(Uri.parse(
-                        'tel:${tripController.getDriverEndLessTrip!.phone}'));
+                        'https://wa.me/${tripController.getDriverEndLessTrip!.phone}'));
                   }
                 },
-                text: 'اتصال',
+                text: 'تواصل',
                 color: ColorManager.white,
                 textStyle: FontManager.w700s15cB,
                 autoSize: Size(MediaQuery.sizeOf(context).width / 2 - 50, 50),
               ),
               ButtonPrimary(
                 press: () async {
-                  await tripController
-                      .endTrip(tripController.getDriverEndLessTrip!.tripId);
+                  Get.dialog(
+                    AlertDialog(
+                      actions: [
+                        ElevatedButton(
+                            style: const ButtonStyle(
+                                backgroundColor: MaterialStatePropertyAll(
+                                    ColorManager.primary)),
+                            onPressed: () async {
+                              await tripController.endTrip(
+                                  tripController.getDriverEndLessTrip!.tripId);
+                              Get.back();
+                            },
+                            child: const Text("قبول")),
+                        ElevatedButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            child: const Text("إلغاء"))
+                      ],
+                      title: const Text('تحذير'),
+                      content: const Text('هل أنت متاكد من انهاء الرحلة؟'),
+                    ),
+                  );
                 },
                 text: 'انهاء الرحلة',
                 color: ColorManager.red,
@@ -300,7 +321,7 @@ class TripAccsseptedNullOrFalse extends StatelessWidget {
                   : CircularCountDownTimer(
                       onComplete: () => controller.changetripaccsepted(null),
                       isReverse: true,
-                      duration: 100,
+                      duration: 300,
                       fillColor: ColorManager.red,
                       ringColor: ColorManager.red,
                       textStyle: const TextStyle(color: ColorManager.white),

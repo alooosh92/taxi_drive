@@ -14,6 +14,13 @@ class AuthController extends GetxController {
   UserRegister? user;
   CityInfo? cityInfo;
   Future<bool> register(UserRegister user) async {
+    if (user.phone.contains('+') && user.phone[0] == '+') {
+      user.phone = user.phone.substring(1);
+    } else {
+      if (user.phone.substring(0, 2) == '00') {
+        user.phone = user.phone.substring(2);
+      }
+    }
     user.phone = '+${user.phone}';
     http.Response response =
         await http.post(HosttingTaxi.register, body: user.toJson());
@@ -24,6 +31,13 @@ class AuthController extends GetxController {
   }
 
   Future<bool> login(String phone) async {
+    if (phone.contains('+') && phone[0] == '+') {
+      phone = phone.substring(1);
+    } else {
+      if (phone.substring(0, 2) == '00') {
+        phone = phone.substring(2);
+      }
+    }
     http.Response response =
         await http.post(HosttingTaxi.login, body: {'phone': '+$phone'});
     if (response.statusCode == 200) {
@@ -33,6 +47,13 @@ class AuthController extends GetxController {
   }
 
   Future<bool> verify(Verify verify) async {
+    if (verify.phone.contains('+') && verify.phone[0] == '+') {
+      verify.phone = verify.phone.substring(1);
+    } else {
+      if (verify.phone.substring(0, 2) == '00') {
+        verify.phone = verify.phone.substring(2);
+      }
+    }
     verify.phone = '+${verify.phone}';
     http.Response response =
         await http.post(HosttingTaxi.verify, body: verify.toJson());
@@ -63,6 +84,13 @@ class AuthController extends GetxController {
   }
 
   Future<bool> updateProfile(UpdateUser userUpdate) async {
+    if (userUpdate.phone.contains('+') && userUpdate.phone[0] == '+') {
+      userUpdate.phone = userUpdate.phone.substring(1);
+    } else {
+      if (userUpdate.phone.substring(0, 2) == '00') {
+        userUpdate.phone = userUpdate.phone.substring(2);
+      }
+    }
     userUpdate.phone = '+${userUpdate.phone}';
     http.Response response = await http.post(HosttingTaxi.updateProfile,
         headers: HosttingTaxi().getHeader(),

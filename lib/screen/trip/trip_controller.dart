@@ -62,6 +62,7 @@ class TripController extends GetxController {
     } else {
       await getDriverBalance();
       await getUnEndTripForDriver();
+      await getTripForDriver();
     }
     if (startPostion == null) {
       await checkPermission();
@@ -460,6 +461,7 @@ class TripController extends GetxController {
                       backgroundColor:
                           MaterialStatePropertyAll(ColorManager.primary)),
                   onPressed: () async {
+                    Get.back();
                     var b = await acceptedTrip(trip.id);
                     if (b != null) {
                       if (b) {

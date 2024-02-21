@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:store_redirect/store_redirect.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/res/font_manager.dart';
+import 'package:taxi_drive/res/key.dart';
 import 'package:taxi_drive/screen/about_us/about_us.dart';
 import 'package:taxi_drive/screen/app_info/app_info.dart';
 import 'package:taxi_drive/screen/app_info/app_info_controller.dart';
@@ -78,7 +79,7 @@ class DrawerHome extends StatelessWidget {
               RowTextPress(
                 icon: Icons.account_box,
                 press: () => Get.to(const LoctionScreen()),
-                text: "مفضلة العناوين",
+                text: "العناوين المفضلة",
               ),
               RowTextPress(
                 icon: Icons.trip_origin,
@@ -91,7 +92,7 @@ class DrawerHome extends StatelessWidget {
                         AppInfo(
                           tileAppBar: "شروط الاستخدام",
                           isRegister: false,
-                          list: await appInfoController.getTream(0),
+                          list: await appInfoController.getTream(1),
                         ),
                       ),
                   text: "شروط الاستخدام"),
@@ -101,7 +102,7 @@ class DrawerHome extends StatelessWidget {
                   AppInfo(
                     tileAppBar: "الخصوصية",
                     isRegister: false,
-                    list: await appInfoController.getTream(1),
+                    list: await appInfoController.getTream(0),
                   ),
                 ),
                 text: "الخصوصية",
@@ -120,8 +121,7 @@ class DrawerHome extends StatelessWidget {
                 icon: Icons.share,
                 press: () async {
                   // ignore: unused_local_variable
-                  final result =
-                      await Share.shareUri(Uri.parse("https://google.com"));
+                  final result = await Share.shareUri(urlGoolePlay);
                 },
                 text: "شارك التطبيق مع اصدقائك",
               ),
