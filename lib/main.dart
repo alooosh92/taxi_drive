@@ -1,4 +1,3 @@
-// shaimaa add app & trip rating 2/2/2024
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,7 @@ import 'package:taxi_drive/firebase_options.dart';
 import 'package:taxi_drive/res/binding_def.dart';
 import 'package:taxi_drive/res/color_manager.dart';
 import 'package:taxi_drive/screen/auth/auth.dart';
+import 'package:flu_wake_lock/flu_wake_lock.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -24,6 +24,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FluWakeLock fluWakeLock = FluWakeLock();
+  fluWakeLock.enable();
   runApp(const MyApp());
 }
 

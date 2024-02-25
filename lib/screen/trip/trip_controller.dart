@@ -297,8 +297,7 @@ class TripController extends GetxController {
     http.Response response = await http.post(HosttingTaxi.addTrip,
         headers: HosttingTaxi().getHeader(), body: jsonEncode(trip.toJson()));
     if (response.statusCode == 200 && jsonDecode(response.body)["message"]) {
-      //  state = true;
-      //update();
+      isStart = null;
       return true;
     }
     var b =

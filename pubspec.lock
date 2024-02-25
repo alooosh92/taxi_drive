@@ -177,6 +177,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.6.4"
+  flu_wake_lock:
+    dependency: "direct main"
+    description:
+      name: flu_wake_lock
+      sha256: ebe8a4bf868061eaa703cb457da98e328a1e9cc2e3330565afc51180d8d49131
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   flutter:
     dependency: "direct main"
     description: flutter

@@ -55,7 +55,8 @@ dependencies:
   store_redirect: ^2.0.1
   rating_dialog: ^2.0.4
   firebase_core: ^2.25.4
-  firebase_messaging: ^14.7.15
+  firebase_messaging: ^14.7.15  
+  flu_wake_lock: ^0.0.2
 
 dev_dependencies:
   flutter_test:
