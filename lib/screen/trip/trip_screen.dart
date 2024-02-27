@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -33,6 +34,11 @@ class _TripScreenState extends State<TripScreen> {
       TripController tripController = Get.find();
       tripController.addMyloction(event.latitude, event.longitude);
     });
+    FirebaseMessaging.onMessage.listen((event) {
+      Get.snackbar(event.notification!.title.toString(),
+          event.notification!.body.toString(),
+          backgroundColor: ColorManager.black, colorText: ColorManager.white);
+    });
     super.initState();
   }
 
@@ -54,7 +60,7 @@ class _TripScreenState extends State<TripScreen> {
     if (storeg.read("role") == "driver") {
       var storeg = GetStorage();
       tripController.getTripForDriver();
-      Timer.periodic(const Duration(seconds: 10), (timer) async {
+      Timer.run(() async {
         if (channel.closeCode != null) {
           channel.sink.add(HosttingTaxi.openSocket);
         }
@@ -65,6 +71,19 @@ class _TripScreenState extends State<TripScreen> {
             long: myMarker.longitude.toString(),
             isOnline: true);
         await http.post(HosttingTaxi.sendDriverState,
+            headers: HosttingTaxi().getHeader(), body: jsonEncode(dr.toJson()));
+      });
+      Timer.periodic(const Duration(seconds: 30), (timer) async {
+        if (channel.closeCode != null) {
+          channel.sink.add(HosttingTaxi.openSocket);
+        }
+        var myMarker = await Geolocator.getCurrentPosition();
+        SendDriverStateModel dr = SendDriverStateModel(
+            id: storeg.read('id').toString(),
+            late: myMarker.latitude.toString(),
+            long: myMarker.longitude.toString(),
+            isOnline: true);
+        http.post(HosttingTaxi.sendDriverState,
             headers: HosttingTaxi().getHeader(), body: jsonEncode(dr.toJson()));
       });
     }

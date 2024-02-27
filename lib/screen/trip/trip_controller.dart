@@ -55,14 +55,16 @@ class TripController extends GetxController {
   void onInit() async {
     var storg = GetStorage();
     var role = storg.read('role');
-    if (role == 'user') {
-      await getFavoritLocation();
-      await getUnEndTripForUser();
-      await routeTrip();
-    } else {
-      await getDriverBalance();
-      await getUnEndTripForDriver();
-      await getTripForDriver();
+    if (role != null) {
+      if (role == 'user') {
+        await getFavoritLocation();
+        await getUnEndTripForUser();
+        await routeTrip();
+      } else {
+        await getDriverBalance();
+        await getUnEndTripForDriver();
+        await getTripForDriver();
+      }
     }
     if (startPostion == null) {
       await checkPermission();
