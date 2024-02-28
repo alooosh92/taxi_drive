@@ -21,7 +21,6 @@ import 'package:http/http.dart' as http;
 import 'package:taxi_drive/widget/progress_def.dart';
 import 'package:taxi_drive/widget/route_sheet.dart';
 import 'package:taxi_drive/widget/snackbar_def.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class TripController extends GetxController {
   //for map
@@ -144,7 +143,7 @@ class TripController extends GetxController {
       mark.add(
         Marker(
           markerId:
-              isStart!.value ? const MarkerId("satrt") : const MarkerId("end"),
+              isStart!.value ? const MarkerId("start") : const MarkerId("end"),
           position: pos,
           icon: isStart!.value ? icG : icY,
         ),
@@ -420,12 +419,6 @@ class TripController extends GetxController {
     update();
   }
 
-  Future<void> onTapTrip(TripModelForSocket trip) async {
-    startPostion = LatLng(trip.fromLate, trip.fromLong);
-    endPostion = LatLng(trip.toLate, trip.toLong);
-    addPolyLine(trip.id.toString());
-  }
-
   Future<void> addTripInMap(TripModelForSocket trip) async {
     var icon = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(),
@@ -442,114 +435,78 @@ class TripController extends GetxController {
   }
 
   Future<void> clickInTrip(TripModelForSocket trip) async {
-    await onTapTrip(trip);
     startPostion = LatLng(trip.fromLate, trip.fromLong);
     endPostion = LatLng(trip.toLate, trip.toLong);
-    await addPolyLine(trip.id.toString());
-    await buttomSheet(
-      heig: 300,
-      context: context!,
-      headerText: "معلومات الرحلة",
-      contener: Column(
-        children: [
-          Text(
-              "نقطة البداية: ${start.text} \n نقطة النهاية: ${end.text} \n اجور التوصيل: ${trip.price}"),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ElevatedButton(
-                  style: const ButtonStyle(
-                      backgroundColor:
-                          MaterialStatePropertyAll(ColorManager.primary)),
-                  onPressed: () async {
-                    Get.back();
-                    var b = await acceptedTrip(trip.id);
-                    if (b != null) {
-                      if (b) {
-                        Get.back();
-                        Get.back();
-                        snackbarDef("ملاحظة", "تم قبول الطلب بنجاح");
-                        var iconFrom = await BitmapDescriptor.fromAssetImage(
-                          const ImageConfiguration(),
-                          'lib/asset/images/from_pin.png',
-                        );
-                        var iconTo = await BitmapDescriptor.fromAssetImage(
-                          const ImageConfiguration(),
-                          'lib/asset/images/to_pin.png',
-                        );
-                        mark.removeWhere((element) => true);
-                        mark.add(Marker(
-                          markerId: const MarkerId("from"),
-                          position: LatLng(trip.fromLate, trip.fromLong),
-                          icon: iconFrom,
+    addPolyLine(trip.id.toString()).then(
+      (value) async => await buttomSheet(
+        heig: 300,
+        context: context!,
+        headerText: "معلومات الرحلة",
+        contener: Column(
+          children: [
+            Text(
+                "نقطة البداية: ${start.text} \n نقطة النهاية: ${end.text} \n اجور التوصيل: ${trip.price}"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                    style: const ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(ColorManager.primary)),
+                    onPressed: () async {
+                      Get.back();
+                      var b = await acceptedTrip(trip.id);
+                      if (b != null) {
+                        if (b) {
+                          Get.back();
+                          snackbarDef("ملاحظة", "تم قبول الطلب بنجاح");
+                          var iconFrom = await BitmapDescriptor.fromAssetImage(
+                            const ImageConfiguration(),
+                            'lib/asset/images/from_pin.png',
+                          );
+                          var iconTo = await BitmapDescriptor.fromAssetImage(
+                            const ImageConfiguration(),
+                            'lib/asset/images/to_pin.png',
+                          );
+                          mark.removeWhere((element) => true);
+                          mark.add(Marker(
+                            markerId: const MarkerId("from"),
+                            position: LatLng(trip.fromLate, trip.fromLong),
+                            icon: iconFrom,
+                          ));
+                          mark.add(Marker(
+                            markerId: const MarkerId("to"),
+                            position: LatLng(trip.toLate, trip.toLong),
+                            icon: iconTo,
+                          ));
+                          update();
+                        }
+                      } else {
+                        Get.dialog(AlertDialog(
+                          actions: [
+                            TextButton(
+                                onPressed: () => Get.back(),
+                                child: const Text(
+                                  'موافق',
+                                  style: TextStyle(color: ColorManager.red),
+                                ))
+                          ],
+                          title: const Text('تحذير'),
+                          content: const Text(
+                              'عذراً لا تملك رصيد كافي لقبول هذه الرحلة الرجاء شحن رصيد'),
                         ));
-                        mark.add(Marker(
-                          markerId: const MarkerId("to"),
-                          position: LatLng(trip.toLate, trip.toLong),
-                          icon: iconTo,
-                        ));
-                        update();
                       }
-                    } else {
-                      Get.dialog(AlertDialog(
-                        actions: [
-                          TextButton(
-                              onPressed: () => Get.back(),
-                              child: const Text(
-                                'موافق',
-                                style: TextStyle(color: ColorManager.red),
-                              ))
-                        ],
-                        title: const Text('تحذير'),
-                        content: const Text(
-                            'عذراً لا تملك رصيد كافي لقبول هذه الرحلة الرجاء شحن رصيد'),
-                      ));
-                    }
-                  },
-                  child: const Text("قبول")),
-              ElevatedButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  child: const Text("إلغاء"))
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> clickMarketTrip(TripModelForSocket trip) async {
-    Get.dialog(
-      AlertDialog(
-        actions: [
-          // ElevatedButton(
-          //     style: const ButtonStyle(
-          //         backgroundColor: MaterialStatePropertyAll(ColorManager.red)),
-          //     onPressed: () async {
-          //       await endTrip(trip.id);
-          //       Get.back();
-          //     },
-          //     child: const Text("انهاء")),
-          ElevatedButton(
-              style: const ButtonStyle(
-                  backgroundColor:
-                      MaterialStatePropertyAll(ColorManager.primary)),
-              onPressed: () async {
-                if (await canLaunchUrl(Uri.parse('tel:+${trip.phone}'))) {
-                  launchUrl(Uri.parse('tel:+${trip.phone}'));
-                }
-              },
-              child: const Text("اتصال")),
-          ElevatedButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("إلغاء"))
-        ],
-        title: const Text("معلومات المستخدم"),
-        content: Text(
-            "الاسم: ${trip.username} \n رقم المبايل: ${trip.phone} \n نقطة البداية: ${start.text} \n نقطة النهاية: ${end.text} \n اجور التوصيل: ${trip.price}"),
+                    },
+                    child: const Text("قبول")),
+                ElevatedButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    child: const Text("إلغاء"))
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -588,30 +545,32 @@ class TripController extends GetxController {
           if (car.id == storeg.read('id') &&
               car.tripId != null &&
               car.tripId != tripId) {
-            var trip = await getTrip(car.tripId!);
-            if (trip != null) {
-              startPostion = LatLng(trip.fromLate, trip.fromLong);
-              endPostion = LatLng(trip.toLate, trip.toLong);
-              await addPolyLine(trip.id.toString());
-              tripId = trip.id;
-            }
+            getTrip(car.tripId!).then(
+              (trip) {
+                if (trip != null) {
+                  startPostion = LatLng(trip.fromLate, trip.fromLong);
+                  endPostion = LatLng(trip.toLate, trip.toLong);
+                  addPolyLine(trip.id.toString());
+                  tripId = trip.id;
+                }
+              },
+            );
           }
         } else {
           if (body['event'] == "App\\Events\\TripDeleteEvent") {
             mark.removeWhere((element) =>
                 element.markerId.value == dat['trip_id'].toString());
-            update();
+            //   update();
           } else {
             if (body['event'] == "App\\Events\\TripOrderEvent") {
               var trip = TripModelForSocket.fromJson(dat['trip_data']);
               if (trip.status == 'available') {
-                await addTripInMap(trip);
-                update();
+                addTripInMap(trip).then((value) => update());
               } else {
                 if (trip.status == 'selected') {
                   mark.removeWhere((element) =>
                       element.markerId.value == trip.id.toString());
-                  //update();
+                  //  update();
                 }
               }
             }
@@ -637,7 +596,10 @@ class TripController extends GetxController {
                 masafa = null;
                 price = null;
                 time = null;
-                await routeTrip();
+                mark.removeWhere((element) =>
+                    element.markerId.value == 'start' ||
+                    element.markerId.value == 'end');
+                routeTrip();
               }
             } else {
               if (car.state == 'busy') {
@@ -657,15 +619,17 @@ class TripController extends GetxController {
               position: LatLng(double.parse(car.late), double.parse(car.long)),
               icon: icon,
             ));
-            update();
+            //  update();
           } else {
             if (body['event'] == "App\\Events\\TripOrderEvent") {
               var trip = TripModelForSocket.fromJson(dat['trip_data']);
               var storeg = GetStorage();
               if (trip.phone == storeg.read('phone')) {
                 if (trip.status == 'selected') {
-                  await getUnEndTripForUser();
-                  Get.back();
+                  getUnEndTripForUser().then((value) {
+                    Get.back();
+                    Get.back();
+                  });
                 }
                 if (trip.status == 'available') {
                   tripUserAdd = trip;
@@ -675,6 +639,7 @@ class TripController extends GetxController {
           }
         }
       }
+      //   update();
     }
   }
 
