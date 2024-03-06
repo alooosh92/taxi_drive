@@ -212,6 +212,8 @@ class TripController extends GetxController {
           jsonDecode(response.body)['message']
               .toString()
               .contains('selected')) {
+        mark.removeWhere(
+            (element) => element.markerId.value == tripId.toString());
         Get.dialog(AlertDialog(
           actions: [
             ElevatedButton(
