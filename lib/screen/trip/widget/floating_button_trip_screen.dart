@@ -96,7 +96,7 @@ class TripAccsseptedUserTrue extends StatelessWidget {
                         'https://wa.me/${tripController.getUserEndLessTrip!.phoneDriver}'));
                   }
                 },
-                text: 'اتصال وتس',
+                text: 'وتس أب',
                 color: ColorManager.white,
                 textStyle: FontManager.w700s15cB,
                 autoSize: Size(MediaQuery.sizeOf(context).width / 2 - 50, 50),
@@ -109,7 +109,7 @@ class TripAccsseptedUserTrue extends StatelessWidget {
                         'tel:${tripController.getUserEndLessTrip!.phoneDriver}'));
                   }
                 },
-                text: 'اتصال هاتفي',
+                text: 'اتصال',
                 color: ColorManager.white,
                 textStyle: FontManager.w700s15cB,
                 autoSize: Size(MediaQuery.sizeOf(context).width / 2 - 50, 50),
@@ -178,7 +178,7 @@ class TripAccsseptedDriverTrue extends StatelessWidget {
                             'https://wa.me/${tripController.getDriverEndLessTrip!.phone}'));
                       }
                     },
-                    text: 'تواصل وتس',
+                    text: 'وتس أب',
                     color: ColorManager.white,
                     textStyle: FontManager.w700s15cB,
                     autoSize:
@@ -192,7 +192,7 @@ class TripAccsseptedDriverTrue extends StatelessWidget {
                             'tel:${tripController.getDriverEndLessTrip!.phone}'));
                       }
                     },
-                    text: 'اتصال هاتفي',
+                    text: 'اتصال',
                     color: ColorManager.white,
                     textStyle: FontManager.w700s15cB,
                     autoSize:
