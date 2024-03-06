@@ -3,10 +3,11 @@ class CityInfo {
   late String currency;
   late double cityCenterLate;
   late double cityCenterLong;
-  late int farFromCity;
-  late int innerPrice;
-  late int plusPrice;
-  late int outerPrice;
+  late double farFromCity;
+  late double innerPrice;
+  late double plusPrice;
+  late double outerPrice;
+  late double lessPrice;
 
   CityInfo(
       {required this.city,
@@ -16,7 +17,8 @@ class CityInfo {
       required this.farFromCity,
       required this.innerPrice,
       required this.outerPrice,
-      required this.plusPrice});
+      required this.plusPrice,
+      required this.lessPrice});
 
   factory CityInfo.fromJson(Map<String, dynamic> json) {
     return CityInfo(
@@ -24,10 +26,11 @@ class CityInfo {
       cityCenterLate: double.parse(json['city_center_late'].toString()),
       cityCenterLong: double.parse(json['city_center_long'].toString()),
       currency: json['currency'].toString(),
-      farFromCity: int.parse(json['far_from_city'].toString()),
-      innerPrice: int.parse(json['inner_price'].toString()),
-      plusPrice: int.parse(json['plus_price'].toString()),
-      outerPrice: int.parse(json['outer_price'].toString()),
+      farFromCity: double.parse(json['far_from_city'].toString()),
+      innerPrice: double.parse(json['inner_price'].toString()),
+      plusPrice: double.parse(json['plus_price'].toString()),
+      outerPrice: double.parse(json['outer_price'].toString()),
+      lessPrice: double.parse(json['less_price'].toString()),
     );
   }
 }

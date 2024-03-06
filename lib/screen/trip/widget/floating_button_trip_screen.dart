@@ -85,17 +85,36 @@ class TripAccsseptedUserTrue extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          ButtonPrimary(
-            press: () async {
-              if (await canLaunchUrl(Uri.parse(
-                  'https://wa.me/${tripController.getUserEndLessTrip!.phoneDriver}'))) {
-                await launchUrl(Uri.parse(
-                    'https://wa.me/${tripController.getUserEndLessTrip!.phoneDriver}'));
-              }
-            },
-            text: 'تواصل',
-            color: ColorManager.white,
-            textStyle: FontManager.w700s15cB,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ButtonPrimary(
+                press: () async {
+                  if (await canLaunchUrl(Uri.parse(
+                      'https://wa.me/${tripController.getUserEndLessTrip!.phoneDriver}'))) {
+                    await launchUrl(Uri.parse(
+                        'https://wa.me/${tripController.getUserEndLessTrip!.phoneDriver}'));
+                  }
+                },
+                text: 'اتصال وتس',
+                color: ColorManager.white,
+                textStyle: FontManager.w700s15cB,
+                autoSize: Size(MediaQuery.sizeOf(context).width / 2 - 50, 50),
+              ),
+              ButtonPrimary(
+                press: () async {
+                  if (await canLaunchUrl(Uri.parse(
+                      'tel:${tripController.getUserEndLessTrip!.phoneDriver}'))) {
+                    await launchUrl(Uri.parse(
+                        'tel:${tripController.getUserEndLessTrip!.phoneDriver}'));
+                  }
+                },
+                text: 'اتصال هاتفي',
+                color: ColorManager.white,
+                textStyle: FontManager.w700s15cB,
+                autoSize: Size(MediaQuery.sizeOf(context).width / 2 - 50, 50),
+              ),
+            ],
           )
         ],
       ),
@@ -145,21 +164,44 @@ class TripAccsseptedDriverTrue extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ButtonPrimary(
-                press: () async {
-                  if (await canLaunchUrl(Uri.parse(
-                      'https://wa.me/${tripController.getDriverEndLessTrip!.phone}'))) {
-                    await launchUrl(Uri.parse(
-                        'https://wa.me/${tripController.getDriverEndLessTrip!.phone}'));
-                  }
-                },
-                text: 'تواصل',
-                color: ColorManager.white,
-                textStyle: FontManager.w700s15cB,
-                autoSize: Size(MediaQuery.sizeOf(context).width / 2 - 50, 50),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ButtonPrimary(
+                    press: () async {
+                      if (await canLaunchUrl(Uri.parse(
+                          'https://wa.me/${tripController.getDriverEndLessTrip!.phone}'))) {
+                        await launchUrl(Uri.parse(
+                            'https://wa.me/${tripController.getDriverEndLessTrip!.phone}'));
+                      }
+                    },
+                    text: 'تواصل وتس',
+                    color: ColorManager.white,
+                    textStyle: FontManager.w700s15cB,
+                    autoSize:
+                        Size(MediaQuery.sizeOf(context).width / 2 - 50, 50),
+                  ),
+                  ButtonPrimary(
+                    press: () async {
+                      if (await canLaunchUrl(Uri.parse(
+                          'tel:${tripController.getDriverEndLessTrip!.phone}'))) {
+                        await launchUrl(Uri.parse(
+                            'tel:${tripController.getDriverEndLessTrip!.phone}'));
+                      }
+                    },
+                    text: 'اتصال هاتفي',
+                    color: ColorManager.white,
+                    textStyle: FontManager.w700s15cB,
+                    autoSize:
+                        Size(MediaQuery.sizeOf(context).width / 2 - 50, 50),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
               ),
               ButtonPrimary(
                 press: () async {
@@ -190,7 +232,6 @@ class TripAccsseptedDriverTrue extends StatelessWidget {
                 text: 'انهاء الرحلة',
                 color: ColorManager.red,
                 textStyle: FontManager.w700s15cB,
-                autoSize: Size(MediaQuery.sizeOf(context).width / 2 - 50, 50),
               ),
             ],
           )

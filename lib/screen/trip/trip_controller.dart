@@ -207,6 +207,20 @@ class TripController extends GetxController {
           return null;
         }
       }
+    } else {
+      if (response.statusCode == 500 &&
+          jsonDecode(response.body)['message']
+              .toString()
+              .contains('selected')) {
+        Get.dialog(AlertDialog(
+          actions: [
+            ElevatedButton(
+                onPressed: () => Get.back(), child: const Text('موافق'))
+          ],
+          title: const Text('ملاحظة'),
+          content: const Text('تمت الموافقة على هذه الرحلة من قبل سائق اخر'),
+        ));
+      }
     }
     return false;
   }
@@ -344,6 +358,7 @@ class TripController extends GetxController {
 
   Future<String?> priceCalculation(PolylineResult result) async {
     AuthController authController = Get.find();
+    int? price;
     if (authController.cityInfo == null) {
       await authController.checkToken();
     }
@@ -359,20 +374,22 @@ class TripController extends GetxController {
         authController.cityInfo!.cityCenterLong);
     if (s <= authController.cityInfo!.farFromCity &&
         e <= authController.cityInfo!.farFromCity) {
-      return ((result.distanceValue! /
+      price = ((result.distanceValue! /
                   1000 *
                   authController.cityInfo!.innerPrice) +
               authController.cityInfo!.plusPrice)
-          .toInt()
-          .toString();
+          .toInt();
     } else {
-      return ((result.distanceValue! /
+      price = ((result.distanceValue! /
                   1000 *
                   authController.cityInfo!.outerPrice) +
               authController.cityInfo!.plusPrice)
-          .toInt()
-          .toString();
+          .toInt();
     }
+    if (price < authController.cityInfo!.lessPrice) {
+      price = authController.cityInfo!.lessPrice.toInt();
+    }
+    return price.toString();
   }
 
   Future<void> getPosition() async {
